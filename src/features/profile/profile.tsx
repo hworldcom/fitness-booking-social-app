@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   ArrowUpRight,
   MapPin,
@@ -14,10 +14,22 @@ import {
 } from "lucide-react";
 import { classes, people, challenges } from "@/lib/fixtures";
 import { useDemo } from "@/lib/store";
-import { Avatar, ChallengeCard, Empty, Modal, Pill, SectionTitle } from "./ui";
-import { DraftList } from "./challenges";
+import {
+  Avatar,
+  ChallengeCard,
+  Empty,
+  Modal,
+  Pill,
+  SectionTitle,
+} from "@/components/ui";
 
-export function Profile({ personId }: { personId?: string }) {
+export function Profile({
+  personId,
+  drafts,
+}: {
+  personId?: string;
+  drafts?: ReactNode;
+}) {
   const { state, dispatch } = useDemo();
   const [reset, setReset] = useState(false);
   const [tab, setTab] = useState("My sessions");
@@ -142,7 +154,7 @@ export function Profile({ personId }: { personId?: string }) {
             ))}
           </div>
           {tab === "My drafts" ? (
-            <DraftList />
+            drafts
           ) : tab === "My people" ? (
             <div className="rail-card people-list">
               {people.map((p) => (

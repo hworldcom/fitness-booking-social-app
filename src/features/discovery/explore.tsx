@@ -24,10 +24,13 @@ import {
   type ActivityFilter,
   type TimeFilter,
 } from "@/lib/explore";
-import { Artwork, Empty, Modal, Pill } from "./ui";
+import { Artwork, Empty, Modal, Pill } from "@/components/ui";
 
-import { ActivityControl, ScheduleControls } from "./discovery-filters";
-import { EventList } from "./events";
+import {
+  ActivityControl,
+  ScheduleControls,
+} from "@/components/discovery-filters";
+import { EventList } from "@/features/discovery/event-list";
 import { events } from "@/lib/events";
 
 export type ExploreView = "classes" | "events" | "studios";

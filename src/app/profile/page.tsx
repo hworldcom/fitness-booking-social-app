@@ -1,5 +1,6 @@
-import { Profile } from "@/components/profile";
+import { Profile } from "@/features/profile/profile";
+import { DraftList } from "@/features/challenges/challenges";
 export const metadata = { title: "Your profile" };
 export default function Page() {
-  return <Profile />;
+  return <Profile drafts={<DraftList />} />;
 }

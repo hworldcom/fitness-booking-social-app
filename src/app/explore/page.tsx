@@ -1,4 +1,4 @@
-import { Explore } from "@/components/explore";
+import { Explore } from "@/features/discovery/explore";
 export const metadata = { title: "Explore" };
 export default async function Page({
   searchParams,

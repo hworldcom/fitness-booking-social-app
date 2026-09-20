@@ -26,12 +26,19 @@ import {
   type ChallengeSort,
 } from "@/lib/discovery";
 import type { ActivityFilter } from "@/lib/explore";
-import { ActivityControl } from "./discovery-filters";
-import { CopyLink, RelatedActivities } from "./discovery-extras";
+import { ActivityControl } from "@/components/discovery-filters";
+import { CopyLink, RelatedActivities } from "@/components/discovery-extras";
 import { challenges, formatEurc, type ClubChallenge } from "@/lib/fixtures";
 import { type DraftInput, validateDraft } from "@/lib/demo";
 import { useDemo } from "@/lib/store";
-import { Artwork, AvatarStack, ChallengeCard, Empty, Modal, Pill } from "./ui";
+import {
+  Artwork,
+  AvatarStack,
+  ChallengeCard,
+  Empty,
+  Modal,
+  Pill,
+} from "@/components/ui";
 
 export function ChallengeList({
   initialQuery = "",

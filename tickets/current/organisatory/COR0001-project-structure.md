@@ -124,6 +124,8 @@ Coordination started on 2026-09-20. The source and test inventory now assigns ev
 
 DEV0030 delivered the first frontend structural slice. Complete Feed, Explore/discovery, Challenge, Event, Class and Profile screens now live under `src/features`; Search and How-it-works routes are thin adapters; shared shell/interface/discovery controls remain under `src/components`. The final import audit found no shared-to-feature or cross-capability feature imports. Eighteen unit tests and 28 desktop/mobile browser scenarios passed, as did lint, typecheck, formatting and a webpack production build; the ticket records the restricted environment's Turbopack IPC limitation. DEV0031 remains open for the separate domain/preview boundary, so this coordination record remains In progress.
 
+The implementation is recorded by commit `[DEV0030] Organize frontend screen modules`; the one-time preceding DEV0035 baseline commit made the previously ignored ticket system durable without mixing application files into that repository-maintenance change.
+
 The root `.gitignore` already contains `/test-results/`. `git ls-files test-results` returned no tracked files, and `git check-ignore -v test-results test-results/example.png` matched that rule. No ignore-file edit was necessary: Playwright screenshots, traces and last-run metadata are reproducible output, while durable observations remain in the owning ticket records.
 
 No source directory, dependency, import, runtime configuration, database, wallet integration, program, application test or deployment changed in this coordination update. Runtime restructuring has not started. Link each development ticket's delivered file map and summarize only cross-ticket integration evidence here as work proceeds.

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { type ClubClass, formatEurc } from "@/lib/fixtures";
 import { useDemo } from "@/lib/store";
-import { Artwork, Avatar, Modal, Pill } from "./ui";
+import { Artwork, Avatar, Modal, Pill } from "@/components/ui";
 
 export function ClassDetail({ session }: { session: ClubClass }) {
   const { state, dispatch } = useDemo();

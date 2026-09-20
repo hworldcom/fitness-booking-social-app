@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { events } from "@/lib/events";
-import { EventDetail, EventDraftDetail } from "@/components/events";
+import { EventDetail, EventDraftDetail } from "@/features/events/events";
 export default async function Page({
   params,
 }: {

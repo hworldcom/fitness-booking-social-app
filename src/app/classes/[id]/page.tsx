@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { classes } from "@/lib/fixtures";
-import { ClassDetail } from "@/components/class-detail";
+import { ClassDetail } from "@/features/classes/class-detail";
 export default async function Page({
   params,
 }: {

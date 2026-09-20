@@ -1,4 +1,4 @@
-import { ChallengeList } from "@/components/challenges";
+import { ChallengeList } from "@/features/challenges/challenges";
 export const metadata = { title: "Challenges" };
 export default async function Page({
   searchParams,

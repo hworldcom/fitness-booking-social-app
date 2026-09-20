@@ -74,8 +74,9 @@ Domain tests cover validation, local booking transitions, sharing privacy and st
 
 ## Application structure
 
-- `src/app/`: Next.js App Router pages, shared layout and visual styles.
-- `src/components/`: feature screens, navigation and accessible shared UI.
+- `src/app/`: thin Next.js App Router adapters, shared layout and visual styles.
+- `src/features/`: capability-owned Feed, Explore/discovery, challenge, event, class and profile screens.
+- `src/components/`: application shell and reusable accessible interface/discovery controls.
 - `src/lib/fixtures.ts`: typed demonstration catalogue; never live inventory or payment proof.
 - `src/lib/demo.ts` and `src/lib/store.ts`: validated local state transitions and browser persistence under `repx-club-preview-v1`; never an authorization or financial ledger.
 - `tests/`: domain checks and Playwright browser flows.

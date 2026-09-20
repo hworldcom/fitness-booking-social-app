@@ -75,6 +75,8 @@ The map was then applied without changing exports' behavior or public URLs. All 
 
 The repository README now describes `src/app` as the route-adapter boundary, `src/features` as screen ownership and `src/components` as shared UI. No dependency, environment variable, data shape, storage key, public route, product behavior, database, wallet or deployment contract changed. DEV0031 still owns the separate `src/lib` domain/preview split; the existing larger feature files remain cohesive moves rather than being behaviorally redesigned in this ticket.
 
+The repository's ticket history was absent from the first Git commit. Baseline commit `6198ddf` (`[DEV0035] Track project work records`) made this completed record and its dependencies durable immediately before the implementation commit. The DEV0030 commit includes this final reference update alongside the source and README changes; it does not mix the DEV0035 baseline into the application diff.
+
 ## Validation results
 
 - **Import and tree audit — passed:** all nine delivered feature modules exist under capability directories; the six former complete-screen files are absent from `src/components`; searches found no old screen import paths, no shared-component-to-feature imports and no cross-capability feature imports. Search and How-it-works routes contain only metadata, input adaptation and feature rendering.
@@ -94,6 +96,6 @@ The feature modules remain intentionally large because behavior-driven decomposi
 ## Completion and review references
 
 - Completed: 2026-09-20.
-- Commit: Not created.
+- Commit: This commit — `[DEV0030] Organize frontend screen modules`.
 - Review: Implementation self-review completed; no independent review or pull request.
 - Deployment or release: None.

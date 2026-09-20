@@ -1,4 +1,4 @@
-import { CreateEvent } from "@/components/events";
+import { CreateEvent } from "@/features/events/events";
 export const metadata = { title: "Create event" };
 export default function Page() {
   return <CreateEvent />;

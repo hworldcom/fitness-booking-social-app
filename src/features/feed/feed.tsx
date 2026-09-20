@@ -23,7 +23,7 @@ import {
   Empty,
   Pill,
   SectionTitle,
-} from "./ui";
+} from "@/components/ui";
 
 export function Feed() {
   const [filter, setFilter] = useState("For you");

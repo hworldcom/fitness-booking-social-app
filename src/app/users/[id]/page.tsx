@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Profile } from "@/components/profile";
+import { Profile } from "@/features/profile/profile";
 import { people } from "@/lib/fixtures";
 export default async function Page({
   params,
