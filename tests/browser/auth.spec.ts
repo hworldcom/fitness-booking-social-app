@@ -3,6 +3,11 @@ import { test, expect } from "@playwright/test";
 test("sign-in explains the wallet/session boundary without blocking public browsing", async ({
   page,
 }, testInfo) => {
+  let identityRequests = 0;
+  await page.route("**/api/auth/identity", async (route) => {
+    identityRequests += 1;
+    await route.fulfill({ status: 500, body: "unexpected identity request" });
+  });
   await page.goto("/sign-in");
 
   await expect(
@@ -38,6 +43,7 @@ test("sign-in explains the wallet/session boundary without blocking public brows
   await expect(
     page.getByRole("heading", { name: "Find your next move." }),
   ).toBeVisible();
+  expect(identityRequests).toBe(0);
 });
 
 test("the global sign-in control is keyboard reachable", async ({ page }) => {

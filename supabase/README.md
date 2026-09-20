@@ -10,6 +10,7 @@ Prerequisites are Node.js 20.9 or newer, the locked npm dependencies and a runni
 npm ci
 npm run db:start
 npm run db:reset
+npm run db:runtime
 npm run db:test
 npm run test:db
 npm run db:lint
@@ -19,6 +20,8 @@ npm run db:lint
 
 The local integration test uses Supabase's disposable `postgres` credential on `127.0.0.1:55322`; it is not an application credential. The frontend preview does not read `DATABASE_URL`, initialize a database client or require this stack.
 
+`npm run db:runtime` provisions the loopback-only `repx_runtime_login` used by the Next.js application and grants it only the non-bypass `app_runtime` group role. Its fixed `postgres` password is acceptable only for this disposable database bound to the local Supabase port; hosted environments must use a generated secret and the environment-specific login described below. For local DEV0039 enrollment, set `DATABASE_URL=postgresql://repx_runtime_login:postgres@127.0.0.1:55322/postgres` and provide the ignored server-only `PREPARED_PERSONAL_IDENTITIES_JSON` mapping described in `.env.example`.
+
 ## Local Web3 Auth profile
 
 Stop a running database-only profile before switching to the Auth profile, then inspect its public values:
@@ -27,6 +30,7 @@ Stop a running database-only profile before switching to the Auth profile, then 
 npm run db:stop
 npm run auth:start
 npm run auth:status
+npm run db:runtime
 ```
 
 The status command prints only `API_URL` and `ANON_KEY`; copy them into the corresponding public variables documented in `.env.example`. It deliberately omits `SERVICE_ROLE_KEY`. The signing page is exactly `http://localhost:3100/sign-in`. Supabase permits plain HTTP for the literal `localhost` development hostname but rejects `http://127.0.0.1` Web3 message URIs. Solana Web3 Auth is enabled with 30 attempts per five minutes. The local-only workflow does not enable CAPTCHA; public hosting requires a separately reviewed rate-limit/CAPTCHA policy.

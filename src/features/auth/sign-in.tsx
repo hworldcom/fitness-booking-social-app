@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Check, KeyRound, LogOut, ShieldCheck, Wallet } from "lucide-react";
 import {
   useConnect,
   useConnectedWallet,
+  useDisconnect,
   useIsWalletReady,
   useWalletStatus,
   useWallets,
@@ -22,8 +23,10 @@ import { authenticationErrorMessage } from "@/auth/presentation";
 import { WalletAccountChangedError } from "@/auth/wallet-adapter";
 import { solanaAddressFromWeb3Identities } from "@/auth/web3-identity";
 import { browserAuthClient } from "@/auth/client/browser-client";
+import { enrollPreparedIdentity } from "@/auth/client/identity-client";
 import { phantomAuthWallet } from "@/auth/client/phantom-wallet";
 import { useAuthSession } from "@/auth/client/session-provider";
+import type { ApplicationIdentitySnapshot } from "@/auth/identity-contracts";
 import {
   PHANTOM_DOWNLOAD_URL,
   walletClient,
@@ -34,6 +37,14 @@ import {
 } from "@/solana/client/wallet-presentation";
 
 const subscribeToHydration = () => () => {};
+
+type IdentityUiState =
+  ApplicationIdentitySnapshot | Readonly<{ status: "idle" | "checking" }>;
+
+type IdentityResult = Readonly<{
+  key: string;
+  identity: ApplicationIdentitySnapshot;
+}>;
 
 export function SignInScreen() {
   const router = useRouter();
@@ -48,20 +59,65 @@ export function SignInScreen() {
   const walletReady = useIsWalletReady(walletClient);
   const walletStatus = useWalletStatus(walletClient);
   const connect = useConnect(walletClient);
+  const disconnect = useDisconnect(walletClient);
   const [activeAction, setActiveAction] = useState<
     "sign-in" | "sign-out" | null
   >(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [identityResult, setIdentityResult] = useState<IdentityResult | null>(
+    null,
+  );
   const actionLock = useRef(false);
+  const enrollmentKey = useRef<string | null>(null);
   const config = supabasePublicConfig();
   const address = mounted ? (connected?.account.address ?? null) : null;
   const relationship = walletSessionRelationship(session, address);
-  const connectError = walletErrorMessage(connect.error);
+  const identityKey =
+    session.status === "signed-in"
+      ? `${session.subject}:${session.walletAddress}`
+      : null;
+  const applicationIdentity: IdentityUiState = identityKey
+    ? identityResult?.key === identityKey
+      ? identityResult.identity
+      : { status: "checking" }
+    : { status: "idle" };
+  const connectError = walletErrorMessage(connect.error ?? disconnect.error);
   const phantom = wallets[0];
   const canonicalLocation =
     mounted && config
       ? isCanonicalSignInLocation(config, window.location)
       : false;
+
+  useEffect(() => {
+    if (!identityKey) {
+      enrollmentKey.current = null;
+      return;
+    }
+    if (enrollmentKey.current === identityKey) return;
+    enrollmentKey.current = identityKey;
+    let active = true;
+    void enrollPreparedIdentity().then((identity) => {
+      if (active && enrollmentKey.current === identityKey) {
+        setIdentityResult({ key: identityKey, identity });
+      }
+    });
+    return () => {
+      active = false;
+      if (enrollmentKey.current === identityKey) {
+        enrollmentKey.current = null;
+      }
+    };
+  }, [identityKey]);
+
+  async function retryEnrollment() {
+    if (!identityKey) return;
+    enrollmentKey.current = identityKey;
+    setIdentityResult(null);
+    setIdentityResult({
+      key: identityKey,
+      identity: await enrollPreparedIdentity(),
+    });
+  }
 
   async function signIn() {
     if (actionLock.current || !address || !config || !canonicalLocation) return;
@@ -221,19 +277,83 @@ export function SignInScreen() {
             </div>
           )}
 
-          {session.status === "signed-in" && relationship === "matched" && (
-            <div className="auth-notice success" role="status">
-              <strong>Signed in and wallet matched.</strong>
-              <p>
-                The server verified the session for{" "}
-                {shortenWalletAddress(session.walletAddress)}. Application
-                enrollment is still a separate later step.
-              </p>
-            </div>
-          )}
+          {session.status === "signed-in" &&
+            relationship === "matched" &&
+            applicationIdentity.status === "enrolled" && (
+              <div className="auth-notice success" role="status">
+                <strong>
+                  Signed in as {applicationIdentity.profile.displayName}.
+                </strong>
+                <p>
+                  The server matched your verified wallet to the prepared
+                  profile. No second Phantom signature was needed.
+                </p>
+              </div>
+            )}
 
           {session.status === "signed-in" &&
-            relationship === "wallet-disconnected" && (
+            relationship === "matched" &&
+            (applicationIdentity.status === "idle" ||
+              applicationIdentity.status === "checking") && (
+              <div className="auth-notice neutral" role="status">
+                <strong>Preparing your RepX Club profile…</strong>
+                <p>
+                  The server is matching this verified wallet to its prepared
+                  demo profile. Phantom will not open another prompt.
+                </p>
+              </div>
+            )}
+
+          {session.status === "signed-in" &&
+            relationship === "matched" &&
+            (applicationIdentity.status === "not-prepared" ||
+              applicationIdentity.status === "not-enrolled") && (
+              <div className="auth-notice warning" role="alert">
+                <strong>Prepared profile unavailable.</strong>
+                <p>
+                  This signed-in wallet could not be matched to the prepared
+                  local demo profile. No account association was changed.
+                </p>
+              </div>
+            )}
+
+          {session.status === "signed-in" &&
+            relationship === "matched" &&
+            applicationIdentity.status === "unavailable" && (
+              <div className="auth-notice warning" role="alert">
+                <strong>Profile enrollment is unavailable.</strong>
+                <p>
+                  The local database or prepared-profile configuration may be
+                  unavailable. Your verified Supabase session remains active.
+                </p>
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => void retryEnrollment()}
+                >
+                  Try profile enrollment again
+                </button>
+              </div>
+            )}
+
+          {session.status === "signed-in" &&
+            relationship === "wallet-disconnected" &&
+            applicationIdentity.status === "enrolled" && (
+              <div className="auth-notice warning" role="alert">
+                <strong>
+                  {applicationIdentity.profile.displayName} is signed in;
+                  Phantom is disconnected.
+                </strong>
+                <p>
+                  Your saved account link remains. Reconnect the same wallet
+                  before a later payment or other wallet-signing action.
+                </p>
+              </div>
+            )}
+
+          {session.status === "signed-in" &&
+            relationship === "wallet-disconnected" &&
+            applicationIdentity.status !== "enrolled" && (
               <div className="auth-notice warning" role="alert">
                 <strong>Session active; Phantom disconnected.</strong>
                 <p>
@@ -333,6 +453,24 @@ export function SignInScreen() {
               {activeAction === "sign-in"
                 ? "Waiting for message approval…"
                 : "Review and sign login message"}
+            </button>
+          )}
+
+          {address && (
+            <button
+              type="button"
+              className="button secondary full"
+              disabled={
+                disconnect.isRunning ||
+                walletStatus === "disconnecting" ||
+                activeAction !== null
+              }
+              onClick={() => disconnect.dispatch()}
+            >
+              <Wallet size={17} aria-hidden="true" />
+              {disconnect.isRunning || walletStatus === "disconnecting"
+                ? "Disconnecting Phantom…"
+                : "Disconnect Phantom"}
             </button>
           )}
 

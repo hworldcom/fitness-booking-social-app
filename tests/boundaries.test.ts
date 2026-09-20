@@ -136,8 +136,11 @@ test("privileged database entry points carry the Next.js server-only marker", ()
     "src/server/db/client.ts",
     "src/server/db/env.ts",
     "src/server/db/schema/index.ts",
+    "src/server/db/identity/repository.ts",
     "src/server/auth/client.ts",
     "src/server/auth/session.ts",
+    "src/server/identity/env.ts",
+    "src/server/identity/service.ts",
   ]) {
     const contents = readFileSync(path.join(root, relative), "utf8");
     assert.match(contents, /^import ["']server-only["'];/);

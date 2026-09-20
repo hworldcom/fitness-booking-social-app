@@ -2,7 +2,7 @@
 
 - Status: Draft
 - Created: 2026-09-20
-- Last updated: 2026-09-20
+- Last updated: 2026-09-21
 - Milestone: M0 identity / M2 company authority prerequisite
 - Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
 - Related records: depends on [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0040 — Protected access and database context](DEV0040-protected-access-and-database-context.md); implements C14 from [DEV0007 — EURC-only wallet contract](../../archive/blockchain/DEV0007-eurc-only-wallet-contract.md); later financial tickets consume its authority result
@@ -15,8 +15,8 @@ This is an authorization prerequisite, not a payment ticket. It implements the i
 
 ## Scope and non-goals
 
-- In scope: consume DEV0039's mutually exclusive wallet-binding/challenge schema for organization ownership; add prepared company-wallet configuration and company binding/proof repository/service methods; verify active organization membership and primary-admin role from DEV0040's server context; issue/consume company/domain/run/admin/wallet/purpose-bound challenges; expose explicit personal-versus-company authority state; preserve the personal Supabase session during an intentional company-wallet switch; invalidate company proof on disconnect/account change/expiry/revocation; test wrong personal/company/staff/run combinations and concurrent proof use.
-- Out of scope: changing the shared binding/challenge schema owner; Supabase login, profile enrollment or public route guards; organization management UI; multiple primary admins; wallet custody/recovery; balance reads; transaction construction, simulation, signature or submission; EURC transfers, sponsorship, receipts, refunds or on-chain verification.
+- In scope: consume DEV0039's mutually exclusive `wallet_bindings` schema for organization ownership; define and migrate one-time `auth_challenges`; add prepared company-wallet configuration and company binding/proof repository/service methods; verify active organization membership and primary-admin role from DEV0040's server context; issue/consume company/domain/run/admin/wallet/purpose-bound challenges; expose explicit personal-versus-company authority state; preserve the personal Supabase session during an intentional company-wallet switch; invalidate company proof on disconnect/account change/expiry/revocation; test wrong personal/company/staff/run combinations and concurrent proof use.
+- Out of scope: changing DEV0039's shared wallet-binding schema owner; adding another personal enrollment signature; Supabase login, profile enrollment or public route guards; organization management UI; multiple primary admins; wallet custody/recovery; balance reads; transaction construction, simulation, signature or submission; EURC transfers, sponsorship, receipts, refunds or on-chain verification.
 
 ## Expected behavior and edge cases
 
@@ -28,7 +28,7 @@ Switching to the company wallet must not sign the browser in as the company or m
 
 ## Assumptions, decisions, and dependencies
 
-DEV0039 owns the shared `wallet_bindings` and `auth_challenges` tables and their one-owner-per-run/cluster constraints. This ticket must use those contracts rather than add a competing business-wallet table. DEV0040 supplies the verified personal subject/run/organization-role context and private-response protections.
+DEV0039 owns the shared `wallet_bindings` table and its one-owner-per-run/cluster constraints. This ticket owns `auth_challenges` because a fresh proof is required only when the signed-in admin intentionally changes from the verified personal wallet to a different prepared company wallet. It must extend the shared binding contract rather than add a competing business-wallet table. DEV0040 supplies the verified personal subject/run/organization-role context and private-response protections.
 
 Use message signatures only for authority proof. A successful proof does not establish funds, token accounts, a valid recipient, a transaction signature or chain finality. Later financial tickets must recheck current admin/company authority and request explicit transaction approval for each operation.
 
@@ -36,8 +36,8 @@ The MVP supports one seeded primary admin per company. Broader admin delegation,
 
 ## Implementation plan
 
-1. Review the delivered DEV0039 binding/challenge and DEV0040 authorization-context contracts; specify the exact company proof input/output, lifetime, invalidation and prepared-company configuration before implementation.
-2. Add organization binding and company-proof repository/service methods with active primary-admin checks and atomic challenge consumption.
+1. Review the delivered DEV0039 binding and DEV0040 authorization-context contracts; specify the exact `auth_challenges` schema, company proof input/output, lifetime, invalidation and prepared-company configuration before implementation.
+2. Add the challenge migration/mapping plus organization binding and company-proof repository/service methods with active primary-admin checks and atomic challenge consumption.
 3. Add explicit company-mode UI/state that retains the personal application session while treating the selected Phantom account only as company signing authority.
 4. Invalidate authority on mismatch, disconnect, expiry, role/binding revocation or account change; expose a bounded response contract for later transaction services.
 5. Add database/service/browser tests plus real prepared admin/company-wallet rehearsal. Confirm no transaction or balance request is made.
@@ -77,7 +77,7 @@ None yet.
 
 ### Contracts, configuration, and operations
 
-Expected contracts are server-only prepared company-wallet configuration plus a short-lived company-authority response tied to the verified personal admin session. Record exact variables, lifetimes, invalidation and recovery behavior before completion; never record signing material.
+Expected contracts are a one-time `auth_challenges` migration/mapping, server-only prepared company-wallet configuration and a short-lived company-authority response tied to the verified personal admin session. Record exact variables, lifetimes, hashing, invalidation and recovery behavior before completion; never record signing material.
 
 ## Validation results
 

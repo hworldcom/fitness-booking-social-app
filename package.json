@@ -19,6 +19,7 @@
     "auth:status": "supabase status -o env | grep -E '^(API_URL|ANON_KEY)='",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset --local",
+    "db:runtime": "node scripts/prepare-local-runtime-database.mjs",
     "db:seed": "node scripts/seed-local-database.mjs",
     "db:test": "supabase test db --local",
     "db:lint": "supabase db lint --local",

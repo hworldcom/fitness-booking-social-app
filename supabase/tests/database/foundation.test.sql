@@ -11,7 +11,20 @@ select is(
   (
     select count(*)::integer
     from information_schema.tables
-    where table_schema = 'app' and table_type = 'BASE TABLE'
+    where table_schema = 'app'
+      and table_type = 'BASE TABLE'
+      and table_name in (
+        'profiles',
+        'demo_runs',
+        'demo_run_memberships',
+        'organizations',
+        'organization_memberships',
+        'venues',
+        'venue_staff',
+        'trainer_affiliations',
+        'class_sessions',
+        'membership_entitlements'
+      )
   ),
   10,
   'app schema has exactly ten foundation tables'
@@ -43,7 +56,21 @@ select is(
     from pg_class c
     join pg_namespace n on n.oid = c.relnamespace
     join pg_roles r on r.oid = c.relowner
-    where n.nspname = 'app' and c.relkind = 'r' and r.rolname = 'app_owner'
+    where n.nspname = 'app'
+      and c.relkind = 'r'
+      and r.rolname = 'app_owner'
+      and c.relname in (
+        'profiles',
+        'demo_runs',
+        'demo_run_memberships',
+        'organizations',
+        'organization_memberships',
+        'venues',
+        'venue_staff',
+        'trainer_affiliations',
+        'class_sessions',
+        'membership_entitlements'
+      )
   ),
   10,
   'app_owner owns every foundation table'
@@ -146,6 +173,7 @@ select is(
       select table_name, count(*)::integer as column_count
       from information_schema.columns
       where table_schema = 'app'
+        and table_name in (select expected.table_name from expected)
       group by table_name
     )
     select count(*)::integer
@@ -163,7 +191,21 @@ select is(
     from pg_constraint constraint_record
     join pg_namespace namespace_record
       on namespace_record.oid = constraint_record.connamespace
-    where namespace_record.nspname = 'app' and constraint_record.contype = 'f'
+    join pg_class table_record on table_record.oid = constraint_record.conrelid
+    where namespace_record.nspname = 'app'
+      and constraint_record.contype = 'f'
+      and table_record.relname in (
+        'profiles',
+        'demo_runs',
+        'demo_run_memberships',
+        'organizations',
+        'organization_memberships',
+        'venues',
+        'venue_staff',
+        'trainer_affiliations',
+        'class_sessions',
+        'membership_entitlements'
+      )
   ),
   15,
   'all fifteen foundation foreign keys exist'
@@ -178,6 +220,18 @@ select is(
     where namespace_record.nspname = 'app'
       and not trigger_record.tgisinternal
       and trigger_record.tgname like '%_set_updated_at'
+      and table_record.relname in (
+        'profiles',
+        'demo_runs',
+        'demo_run_memberships',
+        'organizations',
+        'organization_memberships',
+        'venues',
+        'venue_staff',
+        'trainer_affiliations',
+        'class_sessions',
+        'membership_entitlements'
+      )
   ),
   10,
   'every foundation table maintains updated_at'

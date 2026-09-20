@@ -30,8 +30,25 @@ test("database-only and Auth-enabled local startup remain separate", () => {
   assert.doesNotMatch(packageJson.scripts["auth:start"], /kong/);
   assert.match(packageJson.scripts["auth:status"], /API_URL\|ANON_KEY/);
   assert.doesNotMatch(packageJson.scripts["auth:status"], /SERVICE_ROLE/);
+  assert.equal(
+    packageJson.scripts["db:runtime"],
+    "node scripts/prepare-local-runtime-database.mjs",
+  );
   assert.equal(packageJson.dependencies["@supabase/supabase-js"], "2.116.0");
   assert.equal(packageJson.dependencies["@supabase/ssr"], "0.12.7");
+});
+
+test("prepared identity configuration and authority remain server-only", () => {
+  const exampleEnvironment = read(".env.example");
+  const route = read("src/app/api/auth/identity/route.ts");
+  const roster = read("src/server/identity/env.ts");
+
+  assert.match(exampleEnvironment, /PREPARED_PERSONAL_IDENTITIES_JSON=/);
+  assert.doesNotMatch(exampleEnvironment, /NEXT_PUBLIC_PREPARED/);
+  assert.match(roster, /^import "server-only";/);
+  assert.match(route, /verifiedAuthSession\(\)/);
+  assert.match(route, /request\.text\(\)/);
+  assert.doesNotMatch(route, /request\.json\(\)/);
 });
 
 test("server Auth verifies claims and never promotes editable metadata", () => {

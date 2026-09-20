@@ -2,7 +2,7 @@
 
 - Status: Draft
 - Created: 2026-09-20
-- Last updated: 2026-09-20
+- Last updated: 2026-09-21
 - Milestone: M0 identity and protected access
 - Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
 - Related records: depends on [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md) and completed [DEV0025 — Next.js backend boundary](../../archive/backend/DEV0025-nextjs-backend-boundary.md); enables [DEV0017 — Persistent catalogue and private drafts](DEV0017-persistent-catalogue-and-drafts.md), [DEV0018 — Membership booking and confirmed visits](DEV0018-membership-booking-and-visits.md), and [DEV0023 — Shared social feed and Cheers](DEV0023-shared-social-feed-and-cheers.md)
@@ -16,7 +16,7 @@ This ticket owns the shared access boundary required by the specification's [pub
 ## Scope and non-goals
 
 - In scope: resolve the current verified Supabase subject to an active profile/run membership; define a narrow server authorization context and response contract; set and clear subject/run/role only inside a database transaction; add the first private grants and row-level security policies for identity/run access; prove pooled connections cannot leak context; add thin framework guards for `/profile`, `/challenges/new`, `/events/new` and protected mutations; validate safe internal return destinations; clear wallet-bound/private browser state when authentication or binding becomes invalid; preserve guest access to Explore, Challenges, classes/events/studios and public details.
-- Out of scope: Supabase provider sign-in owned by DEV0038; enrollment/binding/challenge schema owned by DEV0039; catalogue/draft/follow/bookmark repositories owned by DEV0017; membership booking owned by DEV0018; feed/Cheers owned by DEV0023; company-wallet proof owned by DEV0041; payments, balances, chain verification or broad admin tooling.
+- Out of scope: Supabase provider sign-in owned by DEV0038; personal enrollment and shared wallet-binding schema owned by DEV0039; catalogue/draft/follow/bookmark repositories owned by DEV0017; membership booking owned by DEV0018; feed/Cheers owned by DEV0023; company challenge and wallet proof owned by DEV0041; payments, balances, chain verification or broad admin tooling.
 
 ## Expected behavior and edge cases
 
