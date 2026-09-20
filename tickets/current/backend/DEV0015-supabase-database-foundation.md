@@ -13,8 +13,8 @@ Establish repeatable PostgreSQL schema, secure runtime access and seeded catalog
 
 ## Scope and non-goals
 
-- In scope: pinned Supabase local tooling, Drizzle/Postgres driver, server-only connection module, separate runtime/migration roles, a single SQL migration history, base identity/run/organization/venue/class/membership tables, constraints/indexes and deterministic catalogue seeds; redacted environment example and real setup/test commands.
-- Out of scope: browser sign-in, exposing private business APIs, migrating localStorage, challenge settlement/financial tables, payments, visits, event publication, production deployment or paid upgrades. Do not rewrite the frontend or create every future table now.
+- In scope: pinned Supabase local tooling, Drizzle/Postgres driver, the sole `supabase` configuration/migration/policy/seed history, real server-only database configuration and access modules under `src/server/db`, separate runtime/migration roles, base identity/run/organization/venue/class/membership tables, constraints/indexes and deterministic catalogue seeds; redacted environment example and real setup/test commands.
+- Out of scope: the general server import/layer enforcement owned by DEV0025; browser sign-in, exposing private business APIs, migrating localStorage, challenge settlement/financial tables, payments, visits, event publication, production deployment or paid upgrades. Do not rewrite the frontend or create every future table now.
 
 ## Expected behavior and edge cases
 
@@ -22,11 +22,11 @@ A clean local database can be migrated and seeded repeatedly without duplicate c
 
 ## Assumptions, decisions, and dependencies
 
-The user requested planning; implementation has not been authorized by this ticket's creation. Confirm the recommended provider/project and local runtime prerequisites when starting. Local Supabase may require Docker; hosted setup needs a selected project/region and separately supplied server secrets. Start on Free/local within the existing demo scope; no paid plan is required by the ticket. Use `supabase/migrations/` as the only applied migration history and Drizzle for typed queries. Runtime app tables live outside exposed API schemas, with default-deny RLS and least-privilege roles; policies for authenticated feature access arrive in subsequent slices. Implement [DEV0025](DEV0025-nextjs-backend-boundary.md) concurrently from the first server configuration/database edit so DEV0015's real modules establish the boundary without creating an earlier empty scaffold.
+The user requested planning; implementation has not been authorized by this ticket's creation. Confirm the recommended provider/project and local runtime prerequisites when starting. Local Supabase may require Docker; hosted setup needs a selected project/region and separately supplied server secrets. Start on Free/local within the existing demo scope; no paid plan is required by the ticket. Use `supabase/migrations/` as the only applied migration history and Drizzle for typed queries. Runtime app tables live outside exposed API schemas, with default-deny RLS and least-privilege roles; policies for authenticated feature access arrive in subsequent slices. Implement [DEV0025](DEV0025-nextjs-backend-boundary.md) concurrently from the first server configuration/database edit. DEV0015 owns the database files and evidence; DEV0025 owns the server-only/import rules that constrain them.
 
 ## Implementation plan
 
-1. Inspect the installed framework and current Supabase/Drizzle tooling; begin DEV0025's `src/server` boundary with the real configuration and database modules introduced here; pin compatible packages and add server-only configuration validation, SSL and pooling settings.
+1. Inspect the installed framework and current Supabase/Drizzle tooling; create only the real `src/server/db` configuration, mapping and repository modules required here; pin compatible packages and add server-only configuration validation, SSL and pooling settings. Coordinate with DEV0025's boundary enforcement without assigning these database modules to both tickets.
 2. Add SQL migrations for the phase-DEV0015 entities in the specification, including `auth.users` references through app profiles, run memberships, organizations/staff/venues, trainer affiliations, class sessions and seeded membership entitlements. Keep wallet binding and activity/financial state for later slices.
 3. Add foreign keys, run-scoped uniqueness, typed timestamps/amounts and query indexes; lock down API exposure, schema privileges and default-deny private RLS. Keep migration privileges separate from the runtime role.
    Plan the separate restricted public catalogue read path under C17 for DEV0017; private default-deny rules must not become a blanket login requirement for Explore/Challenges. No browser Data API exposure is needed.
@@ -54,6 +54,8 @@ Project/region selection, credentials and local Docker availability remain input
 Planning update, 2026-09-19 ([DEV0019](../../archive/frontend/DEV0019-public-discovery-access.md)): C17 explicitly requires public discovery. Base private-data restrictions remain; guest catalogue privileges/services will be introduced and tested in DEV0017.
 
 Planning update, 2026-09-20 ([DEV0025](DEV0025-nextjs-backend-boundary.md)): keep the application backend in the existing Next.js package and establish its server-only/service/repository boundary as the first part of this ticket. The boundary must start with real DEV0015 modules rather than unused scaffolding.
+
+Planning refinement, 2026-09-20 ([DEV0036](../../archive/organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket solely owns `supabase` artifacts and the concrete `src/server/db` foundation. DEV0025 starts alongside it but owns boundary enforcement, dependency checks and thin-adapter rules rather than this ticket's schema, connection, mappings or repositories.
 
 Not started. This ticket defines future work only; no code, dependencies, database objects or service configuration have been created. Update this section with affected files, decisions/deviations, contracts and actual evidence during implementation.
 

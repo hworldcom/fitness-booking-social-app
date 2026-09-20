@@ -15,8 +15,8 @@ This ticket extracts wallet discovery and connection concerns from [DEV0016](../
 
 ## Scope and non-goals
 
-- In scope: inspect and pin compatible current Solana Kit, React, and Wallet Standard packages; add a browser-safe Devnet client/provider boundary; discover Phantom through Wallet Standard; connect and disconnect; display the shortened connected address and explicit Devnet/test-fund context; react to wallet/account changes; handle missing, locked, rejected, disconnected, and unsupported-wallet states; preserve public browsing and the existing wallet-free preview; add focused automated states and a real desktop Phantom connection rehearsal.
-- Out of scope: Supabase Auth, message-sign-in challenges, profiles/run enrollment, wallet bindings, personal/company ownership proof, roles or protected routes; transaction construction/signing/simulation/submission; EURC balance authority, payments, refunds, challenge deposits/votes/claims; wallet installation/creation/funding; embedded or custodial wallets; mobile deep links; a general multi-wallet settings screen.
+- In scope: inspect and pin compatible current Solana Kit, React, and Wallet Standard packages; add the first browser-safe Devnet client/provider boundary under `src/solana/client`; discover Phantom through Wallet Standard; connect and disconnect; integrate accessible wallet UI into the existing frontend boundary; display the shortened connected address and explicit Devnet/test-fund context; react to wallet/account changes; handle missing, locked, rejected, disconnected, and unsupported-wallet states; preserve public browsing and the existing wallet-free preview; add focused automated states and a real desktop Phantom connection rehearsal.
+- Out of scope: `src/server/solana` verification/projection/reconciliation, `programs`, or generated program bindings; Supabase Auth, message-sign-in challenges, profiles/run enrollment, wallet bindings, personal/company ownership proof, roles or protected routes; transaction construction/signing/simulation/submission; EURC balance authority, payments, refunds, challenge deposits/votes/claims; wallet installation/creation/funding; embedded or custodial wallets; mobile deep links; a general multi-wallet settings screen.
 
 ## Expected behavior and edge cases
 
@@ -32,12 +32,12 @@ Mainnet configuration is rejected. No seed phrase, private key, signing key, ser
 
 Phantom browser extension and Solana Devnet are adopted by DEV0006/P08. EURC-only financial behavior and separate personal/company wallets are adopted by DEV0007/C13–C15, but this connection slice does not infer wallet ownership or query an authoritative financial balance. Wallet Standard remains the integration boundary. Prefer the current `@solana/kit` client/plugin model and `@solana/react`; inspect official documentation and installed Next.js/React versions before pinning exact compatible packages.
 
-This ticket has no database dependency and can start before or alongside DEV0015/DEV0025. It must finish before DEV0016 relies on a production connection provider. A mocked connector can cover deterministic automated states, but completion requires one real prepared Phantom connect/account-change/disconnect rehearsal; that evidence does not satisfy authentication or transaction acceptance.
+This ticket has no database dependency and can start before or alongside DEV0015/DEV0025. It must finish before DEV0016 relies on a production connection provider. It owns browser wallet connection only; separate future tickets own trusted server-Solana verification and the Anchor/program-generated-client contract. A mocked connector can cover deterministic automated states, but completion requires one real prepared Phantom connect/account-change/disconnect rehearsal; that evidence does not satisfy authentication or transaction acceptance.
 
 ## Implementation plan
 
 1. Inspect the installed Next.js/React versions and current official Solana Kit, React, Wallet Standard, and Phantom documentation. Select and pin the smallest compatible package set; record why each dependency is needed.
-2. Add browser-safe Solana configuration and client/provider modules with Devnet fixed explicitly. Keep RPC/public configuration separate from future server verification and prevent mainnet selection.
+2. Add browser-safe Solana configuration and client/provider modules under `src/solana/client`, with Devnet fixed explicitly. Keep public RPC configuration separate from future `src/server/solana` verification, do not create `programs` or generated program bindings, and prevent mainnet selection.
 3. Add a reusable wallet connection state boundary and accessible connection UI using Phantom discovered through Wallet Standard. Preserve server rendering and avoid hydration-dependent false connected states.
 4. Handle missing/locked/rejected/disconnected providers, repeated connection attempts, account changes, and disconnect cleanup. Keep connection, future authentication, and future transaction status visibly distinct.
 5. Add focused state tests and browser coverage for public access, keyboard/mobile rendering, failures, account switching, and preview regression. Rehearse connect, account change, and disconnect with a real prepared Phantom extension on Devnet and record observed provider behavior.
@@ -67,6 +67,7 @@ Created on 2026-09-20 by splitting browser connection concerns from DEV0016 befo
 - [The ticket index](../../README.md) records DEV0027 under Blockchain and the new dependency for DEV0016.
 - [The MVP specification](../../../docs/mvp-spec.md) now separates connection from authentication and orders DEV0027 before or alongside DEV0015/DEV0025, with DEV0016 following both DEV0015 and DEV0027.
 - [The repository README](../../../README.md) links the independent wallet foundation and preserves its previous `#planned-backend-work` anchor for archived references.
+- [DEV0036](../../archive/organisatory/DEV0036-explicit-architecture-boundaries.md) later fixed this ticket's structural ownership at `src/solana/client` plus frontend wallet integration. Trusted server verification, Anchor programs and generated program bindings remain explicitly outside this ticket.
 
 This planning split changes ticket ownership and delivery order only. No package, source module, environment variable, RPC endpoint, wallet connection, signature, transaction, database record, secret, or deployment was added. There was no deviation from the requested split.
 
