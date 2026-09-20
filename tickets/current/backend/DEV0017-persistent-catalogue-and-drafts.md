@@ -13,7 +13,7 @@ Deliver the first useful shared-backend checkpoint: guests browse the public Exp
 
 ## Scope and non-goals
 
-- In scope: DB-backed public catalogue/list/detail reads, authorized profile reads, owner-scoped challenge/event drafts, follows/bookmarks, server validation and authorization, frontend loading/error states and an explicit boundary between fixture preview and database mode.
+- In scope: DB-backed public catalogue/list/detail reads, authorized profile reads, owner-scoped challenge/event drafts, follows/bookmarks, capability-owned catalogue/profile/draft/social repositories and services, server validation and authorization, frontend loading/error states and an explicit boundary between fixture preview and database mode.
 - Out of scope: reservations, shared booking/feed events, Cheers/reactions, tickets, real balances, challenge publication/funding, voting, uploads, notifications, Realtime, paid organization onboarding or importing the entire browser store.
 
 ## Expected behavior and edge cases
@@ -26,12 +26,12 @@ SQL rows distinguish local/seeded examples and off-chain drafts from future veri
 
 ## Assumptions, decisions, and dependencies
 
-Private reads and mutations require verified session/run context from DEV0016; public discovery uses its own restricted server read path under C17. Use server-side service/repository methods and existing components rather than client Data API writes. Catalogue prices become exact base-unit strings at the server boundary while UI formatting stays familiar. Draft past dates are allowed for planning; real publication will validate future time and resolved policy separately. Seeding examples must never populate funded/payment states. Do not build a draft-import feature unless separately requested.
+Private reads and mutations require verified session/run context from DEV0016; public discovery uses its own restricted server read path under C17. DEV0015 provides the connection and Drizzle table mappings but no catalogue repository. This ticket owns the first public catalogue/profile and private draft/follow/bookmark repository methods plus the services that map their raw rows into `src/domain` or explicit response contracts. Use those server-side services and existing components rather than client Data API writes. Catalogue prices become exact base-unit strings at the server boundary while UI formatting stays familiar. Draft past dates are allowed for planning; real publication will validate future time and resolved policy separately. Seeding examples must never populate funded/payment states. Do not build a draft-import feature unless separately requested.
 
 ## Implementation plan
 
 1. Add metadata/draft, follow and bookmark migrations with ownership/run/visibility constraints, unique directed follow pairs and no-self-follow checks, versioning/idempotent save semantics and feature-specific RLS.
-2. Add public catalogue/list/detail services with restricted read-only SQL access and safe row/field projections; keep the Data API disabled. Separately add authenticated profile/draft/follow/bookmark services. Validate input, derive the public catalogue scope on the server and derive actor/run for private operations from verified context; return only fields appropriate to that viewer.
+2. Add capability-owned repositories and services for public catalogue/list/detail reads with restricted read-only SQL access and safe row/field projections; keep the Data API disabled. Separately add authenticated profile/draft/follow/bookmark repositories and services. Validate input, derive the public catalogue scope on the server and derive actor/run for private operations from verified context; return only fields appropriate to that viewer. Raw Drizzle row types remain inside `src/server/db`.
 3. Adapt Explore, profile, challenge/event creation/detail and save/follow controls to server-backed data, retaining preview adapters and visible fixture labels. Hide/disable unimplemented financial controls instead of deriving their state from sample rows.
 4. Handle save/delete conflicts, loading and backend failures without losing text or mixing users' caches. Confirm ordinary profile displays never include private wallet/receipt fields.
 5. Verify persistence from two authenticated browsers and ownership denial with direct API attempts. Add an anonymous context for direct public routes, expired sessions, detail/private-ID/run probes and sign-out/cache leakage; preserve class/event filter boundaries, keyboard flows and current routes.
@@ -62,6 +62,8 @@ Planning update, 2026-09-20 ([DEV0022](../../archive/backend/DEV0022-social-cont
 Planning update, 2026-09-19 ([DEV0020](../../archive/frontend/DEV0020-discovery-and-how-it-works.md)): preserve public global search/grouping, challenge filters/order and rules, guide links, copy-link fallback and related catalogue destinations when replacing fixtures. Search must use the safe public projection and exclude private drafts. Keep the entry panel in an honest preview/draft state until M2 verified funding/registration/decision/claim state supplies the real next action and deadline; never derive these states from fixture dates.
 
 Planning update, 2026-09-19 ([DEV0019](../../archive/frontend/DEV0019-public-discovery-access.md)): replaced the authenticated-only catalogue plan with C17 guest discovery, separate private overlays and explicit anonymous privacy/route tests. The same first checkpoint now covers visitors and authenticated users.
+
+Planning refinement, 2026-09-20: this ticket, not DEV0015 or DEV0025, owns catalogue/profile/draft/follow/bookmark repositories and their application services. DEV0015 owns only the foundation connection/mappings and DEV0025 enforces the server dependency boundary.
 
 Not started. This ticket defines future work only; no code, dependencies, database objects or service configuration have been created. Update this section with affected files, decisions/deviations, contracts and actual evidence during implementation.
 

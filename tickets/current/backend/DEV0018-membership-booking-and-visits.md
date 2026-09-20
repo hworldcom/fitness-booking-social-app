@@ -13,7 +13,7 @@ Replace the browser-only membership booking with one complete server-backed path
 
 ## Scope and non-goals
 
-- In scope: server-checked seeded membership, atomic class capacity/reservations/access, idempotent booking/cancel, staff-scoped check-in, deduplicated visits, shared class-join/hide/cancel activity and durable delivery records.
+- In scope: server-checked seeded membership, capability-owned booking/attendance/activity repositories and services, atomic class capacity/reservations/access, idempotent booking/cancel, staff-scoped check-in, deduplicated visits, shared class-join/hide/cancel activity and durable delivery records.
 - Out of scope: paid passes or payment holds, EURC transfers/refunds, event-ticket redemption, challenge winner scoring or payouts, live external gym inventory, production staff onboarding, Cheer/reaction services and verified challenge activity sources. Cafe/event participation never produces a gym visit through this route.
 
 ## Expected behavior and edge cases
@@ -24,7 +24,7 @@ Only staff assigned to that venue/run may redeem valid class access. An attendee
 
 ## Assumptions, decisions, and dependencies
 
-DEV0015–DEV0017 provide data, verified users/roles and shared screens. **P07 remains proposed:** decide daily deduplication and check-in window before freezing schema indexes/check-in rules. This ticket does not count planning as approval. Class schedules/operators are simulated hackathon fixtures; staff authorization and database transitions are real. Membership cancellation releases its place under a stated access policy; no payment refund is involved. Use append-only transition/audit evidence for terminal access changes, and a transaction/outbox model for reliable social delivery.
+DEV0015–DEV0017 provide foundation mappings, verified users/roles and shared screens. This ticket owns the repositories and services for its reservation/access/check-in/visit/activity tables; it does not add methods to a generic DEV0015 repository. **P07 remains proposed:** decide daily deduplication and check-in window before freezing schema indexes/check-in rules. This ticket does not count planning as approval. Class schedules/operators are simulated hackathon fixtures; staff authorization and database transitions are real. Membership cancellation releases its place under a stated access policy; no payment refund is involved. Use append-only transition/audit evidence for terminal access changes, and a transaction/outbox model for reliable social delivery.
 
 ## Implementation plan
 
@@ -53,6 +53,8 @@ P07 and staff fixture assignment are prerequisites to implementation, not waived
 ## Implementation record
 
 Planning update, 2026-09-20 ([DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md)): align activity source fields, stable chronology and signed-in visibility with C19; leave reaction/feed refinement and challenge sources to DEV0023/DEV0024. No booking, attendance or database feature was implemented by this update.
+
+Planning refinement, 2026-09-20: this ticket owns booking/attendance/activity repositories and services for the tables it introduces. DEV0015 supplies only the database foundation and mappings for its base tables; DEV0025 supplies boundary enforcement.
 
 Not started. This ticket defines future work only; no code, dependencies, database objects or service configuration have been created. Update this section with affected files, decisions/deviations, contracts and actual evidence during implementation.
 

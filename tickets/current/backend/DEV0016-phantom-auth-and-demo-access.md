@@ -13,7 +13,7 @@ Replace the implicit Anna persona with verified app identity using the Phantom c
 
 ## Scope and non-goals
 
-- In scope: prove Supabase Solana Web3 login using the connected Phantom account, server-verified sessions, profile/run enrollment from a prepared allowlist, one-time wallet proof storage, company/personal binding separation, authenticated response to wallet/account changes, and reusable server/SQL authorization context.
+- In scope: prove Supabase Solana Web3 login using the connected Phantom account, server-verified sessions, profile/run enrollment from a prepared allowlist, one-time wallet proof storage, company/personal binding separation, authenticated response to wallet/account changes, capability-owned identity/access repositories, and reusable server/SQL authorization context.
 - Out of scope: the Wallet Standard connector/provider and connection UI owned by DEV0027; email/password or embedded wallets, open signup, self-assigned organizer/staff roles, token transfers, wallet key custody, creating/funding users' wallets, a general organization admin dashboard or automatic account merging.
 
 ## Expected behavior and edge cases
@@ -26,12 +26,12 @@ Business operations keep the authenticated admin's personal app session and requ
 
 ## Assumptions, decisions, and dependencies
 
-Requires DEV0015, DEV0027, and prepared personal/company public-key mapping. Ticket DEV0027 proves connection interoperability but does not prove Auth compatibility. Supabase Auth's Web3 provider is recommended, not proven in this app. Begin this ticket with a real sign-in and replay-resistance check through the established connection provider. Supabase's standard domain/timestamp verification is not assumed to satisfy our single-use run proof. Use a server-consumed app proof when required; update the plan before any material provider change rather than weakening the account contract. Application identity is off-chain; EURC mint/Devnet checks remain required separately for future transactions.
+Requires DEV0015, DEV0027, and prepared personal/company public-key mapping. DEV0015 supplies migrated identity/run/organization tables, the server database client and Drizzle mappings but deliberately supplies no identity repository. This ticket owns the identity/access repository methods and verified transaction-context helper that use those mappings; DEV0025 owns only their import/layer enforcement. Ticket DEV0027 proves connection interoperability but does not prove Auth compatibility. Supabase Auth's Web3 provider is recommended, not proven in this app. Begin this ticket with a real sign-in and replay-resistance check through the established connection provider. Supabase's standard domain/timestamp verification is not assumed to satisfy our single-use run proof. Use a server-consumed app proof when required; update the plan before any material provider change rather than weakening the account contract. Application identity is off-chain; EURC mint/Devnet checks remain required separately for future transactions.
 
 ## Implementation plan
 
 1. Read the Solana development skill and current Supabase/Phantom/Next.js docs; use DEV0027's connected account to test one prepared Phantom sign-in through Supabase, recording returned verified identity and nonce/replay guarantees. Keep authentication signatures separate from payment prompts.
-2. Add wallet bindings/auth challenges and controlled auth-user/profile enrollment. Bind a seeded actor only through a server-configured matching verified wallet; enforce personal/business owner exclusivity in SQL.
+2. Add wallet bindings/auth challenges and the identity/access repositories for controlled auth-user/profile/run enrollment and role lookup. Bind a seeded actor only through a server-configured matching verified wallet; enforce personal/business owner exclusivity in SQL.
 3. Add SSR session refresh/verification and auth UI using the installed framework conventions. Preserve the domain/run/user challenge requirement, consume nonce atomically, and reject unsupported replay or account switching. Apply route/action guards according to C17/C19, with safe return destinations and no automatic participation or financial mutation after login.
 4. Implement shared server authorization and transaction-local database context, scoped RLS/grants and tests. Avoid unverified session-cookie data and cross-user cached responses; maintain server-side origin/request checks for mutations.
 5. Support the prepared company's authorized admin context and wallet proof, without financial transfers. Test allowlist denial, role revocation, cross-run access, wrong-company wallet and pooled context isolation.
@@ -64,6 +64,8 @@ Planning update, 2026-09-20 ([DEV0022](../../archive/backend/DEV0022-social-cont
 Planning update, 2026-09-19 ([DEV0020](../../archive/frontend/DEV0020-discovery-and-how-it-works.md)): retain guest access to search and How it works as well as catalogue routes; global search never requires wallet connection.
 
 Planning update, 2026-09-19 ([DEV0019](../../archive/frontend/DEV0019-public-discovery-access.md)): added confirmed C17 guest discovery and action-scoped authentication. This corrects the earlier preview-only public-browsing wording before implementation.
+
+Planning refinement, 2026-09-20: repository ownership is explicit after the DEV0015 schema refinement. This ticket owns identity/profile/run/organization access repositories and the transaction-local verified context helper; DEV0015 owns their underlying tables, connection and Drizzle mappings, while DEV0025 enforces import direction.
 
 Not started. This ticket defines future work only; no code, dependencies, database objects or service configuration have been created. Update this section with affected files, decisions/deviations, contracts and actual evidence during implementation.
 

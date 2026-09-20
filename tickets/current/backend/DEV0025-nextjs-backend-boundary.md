@@ -1,6 +1,6 @@
 # Ticket DEV0025: Next.js backend boundary
 
-- Status: Draft
+- Status: In progress
 - Created: 2026-09-20
 - Last updated: 2026-09-20
 - Milestone: M0 backend foundation
@@ -16,7 +16,7 @@ This ticket implements the single-web-package architecture in [the MVP specifica
 ## Scope and non-goals
 
 - In scope: establish and enforce the server-only boundary around real `src/server` modules; own client/server import protection and boundary checks; define dependency direction for request adapters, services, repositories, shared domain contracts and external adapters; keep Next.js pages, Route Handlers and Server Actions thin; document where background reconciliation will run and the conditions that justify a separate worker.
-- Out of scope: implementing or owning DEV0015's `supabase` schema/migrations/seeds, database configuration, row mappings or repository modules; authentication owned by DEV0016; persistent product flows owned by later tickets; creating placeholder modules for every future feature; introducing a separate API framework/service; selecting a hosting vendor; running continuous chain listeners; or implementing/deploying a Solana program.
+- Out of scope: implementing or owning DEV0015's `supabase` schema/migrations/seeds, database configuration or Drizzle table mappings; implementing feature repositories owned by DEV0016 onward; authentication owned by DEV0016; persistent product flows owned by later tickets; creating placeholder modules for every future feature; introducing a separate API framework/service; selecting a hosting vendor; running continuous chain listeners; or implementing/deploying a Solana program.
 
 ## Expected behavior and edge cases
 
@@ -32,16 +32,16 @@ The adopted MVP decision is one Next.js/TypeScript web package, Supabase Postgre
 
 Use `src/server` for modules that must never enter browser bundles. Keep shared, framework-independent value objects and response contracts outside that directory only when both browser and server need them. Do not expose Drizzle rows as the public UI contract. Inspect the installed Next.js version and its bundled/current documentation before choosing exact Server Action, Route Handler, caching, and server-only APIs.
 
-Implementation should begin together with DEV0015, before its first server configuration or Drizzle module is added. The user has authorized this planning ticket, not backend implementation. Starting DEV0025 later than DEV0015 would defeat its purpose; starting it without DEV0015 would produce scaffolding without executable behavior. Parallel timing does not create joint ownership: DEV0015 owns database artifacts/access modules, while this ticket owns the guards and dependency contract applied to them.
+Implementation was authorized on 2026-09-20 and begins together with DEV0015, before its first server configuration or Drizzle module is added. Starting DEV0025 later than DEV0015 would defeat its purpose; starting it without DEV0015 would produce scaffolding without executable behavior. Parallel timing does not create joint ownership: DEV0015 owns database artifacts, connection modules and table mappings, while this ticket owns the guards and dependency contract applied to them. DEV0016 and later feature tickets own the repositories/services that consume those mappings.
 
 ## Implementation plan
 
 1. At the start of DEV0015, inspect the installed Next.js version and confirm the supported server-only, Server Component, Route Handler, Server Action, and caching behavior used by the project.
-2. As DEV0015 adds its real `src/server/db` modules, add `server-only` protection plus an import rule or equivalent build-time check that prevents client modules from reaching server configuration, drivers or repositories. Do not create or claim DEV0015's database modules in this ticket.
+2. As DEV0015 adds its real `src/server/db` environment, client and schema-mapping modules, add `server-only` protection plus an import rule or equivalent build-time check that prevents client modules from reaching server configuration, drivers, mappings or later repositories. Do not create or claim DEV0015's database modules in this ticket.
 3. Establish dependency direction in code and documentation: Next.js adapters call application services; services call repositories and external adapters; repositories map PostgreSQL records; browser-safe domain/view contracts contain no secrets or database clients.
 4. Keep any request adapter introduced by the paired work limited to input parsing, verified actor/context resolution, service invocation, and response mapping. Do not place business state transitions or raw SQL in `src/app`.
 5. Define a callable server command/job entry point only when an owning financial or delivery ticket needs reconciliation. Record measurable extraction triggers before adding a separately deployed worker.
-6. Update the README application structure and exact validation commands to describe the modules that actually exist. Record boundary-enforcement files and results here; keep schema, connection, mapping, repository and database-test evidence in DEV0015.
+6. Update the README application structure and exact validation commands to describe the modules that actually exist. Record boundary-enforcement files and results here; keep schema, connection, mapping and database-test evidence in DEV0015, and repository evidence in each later owning feature ticket.
 
 ## Acceptance criteria
 
@@ -59,9 +59,11 @@ Add a focused boundary check that attempts or statically detects a client-to-ser
 
 Planning created on 2026-09-20 after reviewing the current frontend, specification, installed Next.js package, and tickets DEV0014–DEV0018. The decision is to keep the application backend in Next.js and introduce its code boundary with the first real backend slice, ticket DEV0015. No source directory, dependency, server endpoint, database connection, environment variable, worker, or deployment was added by this planning change.
 
-Planning refinement, 2026-09-20 ([DEV0036](../../archive/organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket owns server-only/import enforcement, dependency-direction checks and thin-adapter rules. DEV0015 remains the sole owner of `supabase` artifacts and concrete `src/server/db` configuration, mappings and repositories. The tickets start together but do not duplicate files or implementation evidence.
+Planning refinement, 2026-09-20 ([DEV0036](../../archive/organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket owns server-only/import enforcement, dependency-direction checks and thin-adapter rules. DEV0015 remains the sole owner of `supabase` artifacts and its concrete `src/server/db` foundation modules. The tickets start together but do not duplicate files or implementation evidence.
 
-Implementation has not started. Before the first implementation edit, change this ticket and DEV0015 to `In progress` and update both plans if the actual framework or deployment constraints require a different boundary.
+Planning refinement, 2026-09-20: DEV0015 now owns only database dependencies, migrations/seeds/roles, server environment/client modules, Drizzle table mappings and database tests. DEV0016 and later feature tickets own repositories/services for their capabilities. This ticket enforces the direction for all of them but implements none of those database files or repositories.
+
+Work started on 2026-09-20 by marking this ticket and DEV0015 `In progress` after their paired scope and ownership review. No boundary source or configuration has been added yet. The first implementation edit must add enforcement around DEV0015's real server database modules, not standalone placeholder scaffolding; update both plans first if actual framework or deployment constraints require a different boundary.
 
 ## Validation results
 
@@ -73,7 +75,7 @@ The exact hosting runtime and Supabase project remain unselected. Next.js reques
 
 ## Completion and review references
 
-- Completed: Not completed; backend implementation has not started.
+- Completed: Not completed; implementation is in progress.
 - Commit: Not created.
 - Review: Planning self-review only; no independent implementation review.
 - Deployment: None.

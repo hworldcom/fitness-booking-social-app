@@ -13,7 +13,7 @@ Replace the fixture-based For you/Following feed with shared chronological activ
 
 ## Scope and non-goals
 
-- In scope: Community/Following feed queries, visible activity on profiles, pagination/empty/error states, persisted Cheer/remove, aggregate/viewer reaction state, class-detail copy links, privacy and two-user integration.
+- In scope: capability-owned feed/reaction repositories and services, Community/Following feed queries, visible activity on profiles, pagination/empty/error states, persisted Cheer/remove, aggregate/viewer reaction state, class-detail copy links, privacy and two-user integration.
 - Out of scope: comments, messages, notifications, free-form posts, friend requests, multiple reaction types, ranking, new attendance/financial state and challenge source publication. Reuse DEV0017 follows and DEV0018 class events; DEV0024 owns verified challenge sources.
 
 ## Expected behavior and edge cases
@@ -24,7 +24,7 @@ Cheer/remove changes only the signed-in actor's reaction. Rapid taps, retried re
 
 ## Assumptions, decisions, and dependencies
 
-The user authorized documenting this work, not implementing it in DEV0022. The dependencies must deliver real identity, profiles/follows and source class activity first. The current prototype has no secure multi-user backend; do not treat browser storage as shared evidence. Chronological ordering, cursor tie-breaking, no self-follow, desired-state mutations and count-plus-viewer reaction responses are adopted implementation details in section 9/social data design, not separately elicited product decisions. No Supabase Realtime or new payment signature is needed for this slice.
+The user authorized documenting this work, not implementing it in DEV0022. The dependencies must deliver real identity, profiles/follows and source class activity first. This ticket owns the feed/profile projection and reaction repositories/services that it introduces; it does not extend a generic foundation repository. The current prototype has no secure multi-user backend; do not treat browser storage as shared evidence. Chronological ordering, cursor tie-breaking, no self-follow, desired-state mutations and count-plus-viewer reaction responses are adopted implementation details in section 9/social data design, not separately elicited product decisions. No Supabase Realtime or new payment signature is needed for this slice.
 
 ## Implementation plan
 
@@ -64,6 +64,8 @@ No implementation deviations yet. Reuse upstream follow/source models instead of
 ### Contracts, configuration, and operations
 
 Planned reaction table, protected feed/reaction services and cursor contract; none applied. No new service provider or notification infrastructure planned. Document the actual migration/rollback compatibility and setup changes during implementation.
+
+Planning refinement, 2026-09-20: this ticket owns feed/profile-projection and reaction repositories/services for its capability. DEV0015 owns only database foundation modules and DEV0025 owns import/layer enforcement; neither supplies a generic social repository.
 
 ## Validation results
 
