@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: Post-MVP wallet onboarding refinement
 - Coordination: None — independent development ticket
-- Related records: follows completed [DEV0027 — Phantom wallet connection foundation](../../archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md); may refine [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md), especially [DEV0038 — Phantom Supabase Web3 authentication](../backend/DEV0038-phantom-supabase-web3-authentication.md), after the extension-first authentication slice exists
+- Related records: follows completed [DEV0027 — Phantom wallet connection foundation](../../archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md); may refine [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md), especially completed [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md), after the extension-first authentication slice exists
 
 ## Objective and context
 

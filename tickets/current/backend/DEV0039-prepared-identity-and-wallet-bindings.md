@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M0 identity / M2 wallet prerequisite
 - Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on [DEV0038 — Phantom Supabase Web3 authentication](DEV0038-phantom-supabase-web3-authentication.md) and completed [DEV0015 — Supabase database foundation](../../archive/backend/DEV0015-supabase-database-foundation.md); enables [DEV0040 — Protected access and database context](DEV0040-protected-access-and-database-context.md) and [DEV0041 — Company wallet authorization](DEV0041-company-wallet-authorization.md)
+- Related records: depends on completed [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md) and [DEV0015 — Supabase database foundation](../../archive/backend/DEV0015-supabase-database-foundation.md); enables [DEV0040 — Protected access and database context](DEV0040-protected-access-and-database-context.md) and [DEV0041 — Company wallet authorization](DEV0041-company-wallet-authorization.md)
 
 ## Objective and context
 
@@ -28,7 +28,7 @@ The browser never supplies an authoritative profile, run, role or owner type. Pu
 
 ## Assumptions, decisions, and dependencies
 
-Implementation starts only after DEV0038 records the real Supabase subject/session and signer-adapter contracts. DEV0015 already provides `auth.users`, `profiles`, `demo_runs` and membership tables plus default-deny row-level security. Extend that schema through a new replayable migration; never rewrite the completed foundation migration.
+Completed DEV0038 records the real Supabase subject/session and signer-adapter contracts, satisfying this ticket's authentication dependency. DEV0015 already provides `auth.users`, `profiles`, `demo_runs` and membership tables plus default-deny row-level security. Extend that schema through a new replayable migration; never rewrite the completed foundation migration.
 
 One shared `wallet_bindings` contract must support mutually exclusive personal and organization ownership so the same `(run, cluster, address)` can have exactly one owner. This ticket owns that shared table and its personal enrollment path; DEV0041 owns organization-binding creation/use and company proof behavior. Record the exact column/check/index matrix in this ticket before the first migration edit.
 
@@ -81,7 +81,7 @@ Expected contracts are a forward-only database migration, Drizzle mappings, serv
 
 ## Validation results
 
-Pending validation. DEV0038 must complete before implementation evidence can begin.
+Pending validation. The DEV0038 dependency is complete; this ticket's exact schema and prepared-roster decisions must still be reviewed before implementation begins.
 
 | Criterion | Evidence | Result  |
 | --------- | -------- | ------- |
