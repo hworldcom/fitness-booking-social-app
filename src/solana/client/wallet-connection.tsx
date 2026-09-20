@@ -1,6 +1,7 @@
 "use client";
 
 import { Wallet } from "lucide-react";
+import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import {
   useConnect,
@@ -63,7 +64,7 @@ export function WalletStatusButton({ onOpen }: { onOpen: () => void }) {
   );
 }
 
-export function WalletConnectionPanel() {
+export function WalletConnectionPanel({ onSignIn }: { onSignIn?: () => void }) {
   const wallets = useWallets(walletClient);
   const connected = useConnectedWallet(walletClient);
   const isReady = useIsWalletReady(walletClient);
@@ -107,8 +108,9 @@ export function WalletConnectionPanel() {
         <div className="notice">
           <strong>Wallet connected. RepX Club signed out.</strong>
           <p>
-            This connection shares only your public address. Authentication,
-            balances, signatures and payments are not enabled in this slice.
+            This connection shares only your public address. Sign-in is a
+            separate, fee-free message approval; payments always require their
+            own transaction approval.
           </p>
         </div>
         {error && (
@@ -126,6 +128,9 @@ export function WalletConnectionPanel() {
             ? "Disconnecting…"
             : "Disconnect Phantom"}
         </button>
+        <Link href="/sign-in" className="button dark full" onClick={onSignIn}>
+          Continue to RepX Club sign-in
+        </Link>
       </div>
     );
   }

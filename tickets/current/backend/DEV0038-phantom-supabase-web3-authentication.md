@@ -1,6 +1,6 @@
 # Ticket DEV0038: Phantom Supabase Web3 authentication
 
-- Status: Ready
+- Status: In progress
 - Created: 2026-09-20
 - Last updated: 2026-09-20
 - Milestone: M0 identity / M2 wallet prerequisite
@@ -20,7 +20,7 @@ This is the first implementation ticket under COR0002. It implements the provide
 
 ## Expected behavior and edge cases
 
-A connected prepared Phantom account can choose `Sign in to RepX Club`, review and approve a Sign-In With Solana message, and receive a Supabase session. This is a message signature only: it moves no funds and requests no transaction signature. Reload restores the verified Supabase session; explicit sign-out clears it without disconnecting Phantom or deleting preview data.
+A connected prepared Phantom account can open the dedicated `/sign-in` page, choose `Sign in to RepX Club`, review and approve a Sign-In With Solana message, and receive a Supabase session. The global shell links to this page instead of signing from an arbitrary route so the signed URI has one exact allow-listed origin/path. This is a message signature only: it moves no funds and requests no transaction signature. Reload restores the verified Supabase session; explicit sign-out clears it without disconnecting Phantom or deleting preview data.
 
 Wallet-connected and application-signed-in states remain separate. Rejection, locked wallet, expired provider proof, invalid origin/domain, unavailable local Auth service, malformed provider response and rate limiting leave a usable connected-but-signed-out state. Rapid repeated requests produce one active attempt. Browser copy never echoes arbitrary provider text.
 
@@ -31,6 +31,16 @@ Disconnecting or selecting a different Phantom account must not silently transfe
 Completed DEV0027 supplies the only Wallet Standard connection store. Reuse its Solana Kit account/signer and do not add legacy wallet adapters, `window.phantom`, `@solana/web3.js`, Phantom Connect or a second wallet store. Verify the adapter shape against the installed package versions and current official documentation before source changes.
 
 Use local Supabase for implementation and validation. A hosted project, production origin, region and billing plan are not required for this ticket. Record every new public environment variable and setup step, but never record a service-role key, wallet secret, recovery phrase or private key. Supabase's verified Web3 subject is only an authentication subject; DEV0039 decides which prepared application actor it may claim.
+
+Adopt the reviewed implementation defaults before source work:
+
+- Pin `@supabase/supabase-js` 2.116.0 and `@supabase/ssr` 0.12.7. Keep the beta SSR integration behind small browser/server modules.
+- Use `/sign-in` as the one canonical signing page and pass its exact URL to Supabase. Supabase Auth rejects insecure Web3 message URIs unless the hostname is the literal `localhost`, so the local application and allow-list use `http://localhost:3100/sign-in`; broad route wildcards are not needed. The existing `127.0.0.1:3101` browser-test server remains a separate unsigned test origin.
+- Adapt the existing Kit wallet client without passing the Kit signer directly or accessing a Phantom browser global. Prefer Wallet Standard `solana:signIn` when the connected wallet advertises it so Supabase receives the wallet's exact `signedMessage` bytes and signature; retain the narrow `publicKey.toBase58()` plus `signMessage(message)` adapter as the fallback. In both paths, bind the proof to the selected normalized account and re-check the active account around approval.
+- Use the newline-free statement `Sign in to RepX Club. This proves control of your wallet and does not authorize a transaction.` It records proof of wallet control, not terms acceptance or purchase authorization.
+- Treat the verified Web3 identity identifier as the session wallet only for connection/session presentation. A disconnected or different connected wallet creates an explicit mismatch and cannot silently replace or merge the existing session. The Supabase subject remains the authentication identity; later application bindings remain owned by DEV0039.
+- Keep `db:start` as the lean database-only command and add a separate Auth-enabled local workflow. Retain the local Web3 limit of 30 requests per five minutes. CAPTCHA is not required for loopback-only development, but a hosted/public rollout requires its own abuse-control decision before enabling signup.
+- Refresh and validate server sessions with the current cookie-based SSR contract and `getClaims()`; never use `getSession()` as server authorization evidence. No protected product route or safe-return behavior is added in this ticket.
 
 ## Implementation plan
 
@@ -57,43 +67,67 @@ Add unit tests around the signer adapter and state mapping, integration checks f
 
 ## Implementation record
 
-Pending implementation. This ticket was created when the unimplemented DEV0016 plan was converted to COR0002. It owns only the provider/session proof; later peer tickets own application identity, database authorization and company authority.
+Implementation and automated validation are complete through the corrected local signer boundary. The first real prepared-Phantom rehearsal exposed an adapter interoperability failure before any request reached Supabase Auth; after the adapter began preferring Phantom's advertised Wallet Standard structured sign-in result, the corrected real-wallet approval succeeded and produced a server-verified matched session. Reload/account-change/sign-out must still be rehearsed against that session. This ticket still owns only provider/session proof. Later peer tickets own application identity, database authorization and company authority.
 
 ### Changes and rationale
 
-Not implemented.
+- Added cookie-based browser and per-request server Supabase clients using pinned `@supabase/supabase-js` 2.116.0 and `@supabase/ssr` 0.12.7. Next.js `proxy.ts` calls `getClaims()` to refresh and verify tokens before rendering, while server session reads additionally call `getUser()` to retrieve the current Auth identity. Public requests remain available when configuration or Auth is absent.
+- Added a structural Solana wallet adapter around DEV0027's one Wallet Standard client. The initial adapter exposed only the selected public key and `signMessage`; the real-wallet rehearsal showed that this path failed inside the browser before GoTrue received a request. The corrected boundary prefers `solana:signIn` when Phantom advertises it so the wallet-produced signed message and signature stay paired, retains the low-level message path as a compatibility fallback, re-checks the account before and after approval, and never constructs or requests a transaction.
+- Corrected error attribution at the same boundary. A local Phantom signing failure no longer claims that Supabase rejected a signature; server errors carrying an HTTP status remain distinguishable from wallet feature, authorization and rejection failures without echoing provider text.
+- Added a dedicated `/sign-in` screen and global session control. The interface distinguishes connection, signed-out, server-unavailable, matched session, disconnected signer and mismatched signer states; a mismatch cannot invoke another sign-in or merge accounts. Local-device sign-out clears the Supabase session without disconnecting Phantom or modifying preview storage.
+- Enabled local Solana Web3 Auth and retained the 30-per-five-minute Web3 rate limit. Kept the existing PostgreSQL-only command and added an Auth/Kong profile plus a public-only status command. Public setup, recovery, local CAPTCHA limitation and the three required public environment variables are documented.
+- Added pure adapter/config/identity/error/session tests, configuration enforcement and desktop/mobile browser coverage for the sign-in explanation, no-Phantom/configuration state, keyboard access and continued public browsing.
 
 ### Affected files
 
-| File or component | Change and purpose                        |
-| ----------------- | ----------------------------------------- |
-| Pending           | Record exact files during implementation. |
+| File or component                                                                                                                                                                                                                                                                   | Change and purpose                                                                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`src/auth/config.ts`](../../../src/auth/config.ts), [`contracts.ts`](../../../src/auth/contracts.ts), [`web3-identity.ts`](../../../src/auth/web3-identity.ts), [`wallet-adapter.ts`](../../../src/auth/wallet-adapter.ts), [`presentation.ts`](../../../src/auth/presentation.ts) | Define public configuration, the exact statement/route, serializable verified-session states, bounded Web3 identity extraction, account-stable message signing and non-echoing user errors.                         |
+| [`src/auth/client/`](../../../src/auth/client/)                                                                                                                                                                                                                                     | Create the singleton cookie-backed browser client, bind the existing Kit wallet to the narrow adapter, keep server-verified state in a React provider and expose the global session link.                           |
+| [`src/server/auth/`](../../../src/server/auth/), [`src/proxy.ts`](../../../src/proxy.ts), [`src/app/api/auth/session/route.ts`](../../../src/app/api/auth/session/route.ts)                                                                                                         | Create request-scoped server clients, refresh cookies with `getClaims()`, fetch a current Auth identity with `getUser()`, and expose a private/no-store verified session snapshot without protecting public routes. |
+| [`src/features/auth/sign-in.tsx`](../../../src/features/auth/sign-in.tsx), [`src/app/sign-in/page.tsx`](../../../src/app/sign-in/page.tsx), [`src/components/shell.tsx`](../../../src/components/shell.tsx), [`src/app/globals.css`](../../../src/app/globals.css)                  | Add the accessible canonical sign-in flow, status/mismatch/sign-out states and responsive presentation; link it separately from the existing wallet connection control.                                             |
+| [`src/solana/client/wallet-connection.tsx`](../../../src/solana/client/wallet-connection.tsx)                                                                                                                                                                                       | Update connected-wallet guidance and link to sign-in while retaining independent disconnect behavior.                                                                                                               |
+| [`supabase/config.toml`](../../../supabase/config.toml), [`package.json`](../../../package.json), [`.env.example`](../../../.env.example), [`README.md`](../../../README.md), [`supabase/README.md`](../../../supabase/README.md)                                                   | Enable local Web3 Auth, use the literal `localhost` signing origin, add separate Auth operations/dependencies and document public values and recovery.                                                              |
+| [`tests/auth.test.ts`](../../../tests/auth.test.ts), [`tests/supabase-auth-config.test.ts`](../../../tests/supabase-auth-config.test.ts), [`tests/browser/auth.spec.ts`](../../../tests/browser/auth.spec.ts), [`tests/boundaries.test.ts`](../../../tests/boundaries.test.ts)      | Cover configuration, signer account stability, identity parsing, mismatch mapping, bounded errors, server verification rules, architecture boundaries and responsive browser behavior.                              |
 
 ### Decisions and deviations
 
-None yet.
+- The reviewed `127.0.0.1` signing URL was changed before application source work to `http://localhost:3100/sign-in`. The installed GoTrue implementation accepts insecure Web3 message URIs only for the literal `localhost`; the API itself remains loopback-only at `127.0.0.1:55321`.
+- The browser receives the wallet address immediately from the signed Auth response, but the application session UI is refreshed from `/api/auth/session`, whose server path validates claims and fetches the current Auth identity. Neither the address nor editable Auth metadata is treated as application authorization.
+- `signOut({ scope: "local" })` signs out this browser without disconnecting Phantom or revoking other device sessions. Global session management and account recovery are outside this local MVP slice.
+- CAPTCHA remains disabled only for loopback development. The existing Web3 rate limit is enforced locally; public hosted signup is not authorized until a separate operational abuse-control decision is recorded.
+- The default Turbopack build cannot bind its internal worker port in the agent sandbox. The planned webpack production build succeeds and is the recorded production evidence; no application workaround was added for the sandbox restriction.
 
 ### Contracts, configuration, and operations
 
-Expected to add local Supabase Auth/public client configuration and an application-owned signer adapter. Final variable names, dependency versions and recovery steps must be recorded after the installed-version review. No secrets may be committed.
+- Public variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `NEXT_PUBLIC_SITE_URL`. All three must parse together; otherwise Auth is disabled safely. `NEXT_PUBLIC_SITE_URL` must be HTTPS outside local development, and plain HTTP is accepted only for `localhost`.
+- Browser wallet contract: either Wallet Standard structured `signIn(input)` returning the wallet's account, exact `signedMessage` and signature, or the fallback `{ publicKey: { toBase58(): string }, signMessage(message: Uint8Array): Promise<Uint8Array> }`. The implementation selects only an advertised capability and checks the selected address on both sides of the prompt.
+- Session response contract: `disabled`, `signed-out`, `unavailable`, or `signed-in` with the verified Supabase subject, provider identity address and optional JWT expiry. This is presentation/session evidence only, not a `profile_id`, `run_id`, membership or role.
+- Local operations: `db:start` remains database-only; `auth:start` starts database, GoTrue and Kong while excluding unrelated services; `auth:status` prints only `API_URL` and `ANON_KEY`; `db:stop` stops either profile. No migration or product schema changed.
+- An ignored `.env.local` was prepared for the current local rehearsal from the disposable stack's public values. No service-role key, provider credential, private key or recovery phrase was written to the repository.
 
 ## Validation results
 
-Pending validation. Planning/link checks do not satisfy AC1–AC6.
-
-| Criterion | Evidence | Result  |
-| --------- | -------- | ------- |
-| AC1–AC6   | Not run  | Not run |
+| Criterion               | Evidence                                                                                                                                                                                                                                                                                                                                                                                       | Result                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| AC1                     | Auth-enabled application opened at exact `http://localhost:3100/sign-in`. The first real Phantom approval ended before Auth and localized the problem to the browser adapter. After the structured Wallet Standard correction, the user observed `Signed in and wallet matched`; GoTrue recorded the Web3 token grant as `200`, later authenticated user reads as `200`, and an aggregate database query found exactly one non-anonymous Auth user. Reload and sign-out remain to be observed. | Corrected approval passed; reload/sign-out pending                                  |
+| AC2–AC4                 | After the correction, `npm test` passed 36/36, including structured signed-message preservation, before/after account-change rejection, identity parsing, mismatch state, local-versus-server error attribution and source-boundary/server-verification assertions. `npm run typecheck` and `npm run lint` passed.                                                                              | Passed automatically; real rejection/account switching still part of AC1 rehearsal |
+| AC5                     | `npm run auth:start` passed. Repository containers `supabase_db`, `supabase_auth` and `supabase_kong` reported healthy. `/auth/v1/health` returned GoTrue v2.196.0. A deliberately malformed Web3 grant returned `400 validation_failed: message is too short`, proving the provider is enabled without accepting a proof. `npm run auth:status` printed only public URL/anonymous-key values. | Passed locally                                                                     |
+| AC5–AC6 public fallback | Configuration-free webpack build passed; `npm run test:e2e` passed all 34 desktop/mobile checks, including new sign-in, wallet-free, keyboard and public-navigation checks. Screenshots were visually reviewed at 1440×1040 and 393×852.                                                                                                                                                       | Passed                                                                             |
+| AC6 configured build    | After the correction, `npm run build -- --webpack`, `npm run format:check`, lint and typecheck passed with `.env.local`. The freshly restarted production server returned `200` for `/sign-in` and `200 {"status":"signed-out"}` for `/api/auth/session`. The earlier configured `npm run test:e2e` run passed all 34 desktop/mobile cases.                                                                 | Passed                                                                             |
+| Environment-only check  | Plain `npm run build` hit Turbopack's `creating new process / binding to a port / EPERM` sandbox panic. The webpack build passed twice and is the required ticket check.                                                                                                                                                                                                                       | Explained; not an application failure                                              |
 
 ## Risks, limitations, and follow-ups
 
-The installed Solana Kit signer may require a small adapter because Supabase examples often use other wallet interfaces; prove the real combination before relying on it. Local Web3 Auth configuration and CAPTCHA/rate-limit capabilities may differ from hosted Supabase, so record local limitations and create a separate operational ticket before public deployment if needed.
+The corrected real Phantom approval is proven. The remaining interoperability evidence is rejection, reload, disconnect, account change and sign-out. The first attempt demonstrated why the extension rehearsal is required: the low-level signature-only adapter failed before the request reached Auth even though its static package shapes matched. Automated browser contexts do not contain the user's extension and therefore cannot replace the remaining real-wallet checks.
+
+`@supabase/ssr` remains a beta package and is pinned behind small client modules. Local Web3 Auth configuration and rate-limit behavior do not establish a hosted production posture; CAPTCHA, hosted origin, plan/region, monitoring and identity recovery remain later operational work.
 
 DEV0039 remains blocked until the verified Auth subject/session contract is known. This ticket does not make a Supabase user an allowed RepX Club actor.
 
 ## Completion and review references
 
 - Completed: Not completed.
-- Commit: Not created.
-- Review: Planning self-review only; no independent review.
+- Commit: Current implementation checkpoint — `[DEV0038] Add Phantom Supabase authentication`.
+- Review: Implementation self-review completed; real Phantom approval passed, with reload/rejection/account-change/disconnect/sign-out checks pending.
 - Deployment or release: None.

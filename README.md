@@ -8,7 +8,7 @@ The MVP supports two challenge models: community challenges funded by their part
 
 Solana provides the financial settlement layer for the hackathon demo. Participants connect prepared Phantom wallets, while financially active companies use distinct company wallets. Those wallets will approve Devnet transactions using test EURC for passes, event tickets, challenge pools, payouts and returns; test SOL is used only for network costs. Product discovery, application identity, permissions and social data stay in the backend rather than being placed onchain. Embedded Phantom onboarding remains a later refinement because the Phantom Developer Portal currently pauses new developer sign-ups.
 
-**Current status:** the responsive Next.js frontend preview is implemented with typed fixtures and browser-local persistence. It demonstrates discovery, challenge and event planning, membership booking, and social interactions without moving funds. The local Supabase schema/migration foundation and server-only Drizzle boundary are implemented and validated, but no product screen reads from them yet. Completed DEV0027 upgraded the project to Node 24 and delivered the normal Phantom extension connection UI with automated desktop/mobile coverage and a real-extension rehearsal. Application authentication, balances, transaction signatures, real Devnet payments and the Solana challenge program remain unimplemented.
+**Current status:** the responsive Next.js frontend preview is implemented with typed fixtures and browser-local persistence. It demonstrates discovery, challenge and event planning, membership booking, and social interactions without moving funds. The local Supabase schema/migration foundation and server-only Drizzle boundary are implemented and validated, but no product screen reads from them yet. Completed DEV0027 upgraded the project to Node 24 and delivered the normal Phantom extension connection UI. DEV0038 is implementing the separate Phantom message-signature/Supabase session boundary; prepared application enrollment and protected product data remain later work. Balances, transaction signatures, real Devnet payments and the Solana challenge program remain unimplemented.
 
 **Start with the [MVP specification](docs/mvp-spec.md).** It is the single current product document, including project status, scope, architecture, milestones, acceptance checks, and the demo script.
 
@@ -25,7 +25,7 @@ Solana provides the financial settlement layer for the hackathon demo. Participa
 
 ## Backend and wallet work
 
-The [database and authentication plan](docs/mvp-spec.md#database-provider-recommendation--19-september-2026) uses Supabase PostgreSQL and scopes the next steps. Completed [DEV0015](tickets/archive/backend/DEV0015-supabase-database-foundation.md) contains the local configuration, first migration, deterministic seed, database tests and server Drizzle mappings; completed [DEV0025](tickets/archive/backend/DEV0025-nextjs-backend-boundary.md) owns their server-only/import enforcement. Completed [DEV0027](tickets/archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md) establishes the prepared Phantom extension connection. [COR0002](tickets/current/organisatory/COR0002-phantom-auth-and-demo-access.md) now coordinates the separate Supabase/application identity, protected access and company-wallet boundaries, beginning with ready [DEV0038](tickets/current/backend/DEV0038-phantom-supabase-web3-authentication.md). [DEV0037](tickets/current/blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) retains embedded Phantom onboarding but is blocked until new Portal developer accounts and a project App ID become available. No hosted Supabase project, product database mode or Auth integration exists yet. The local frontend instructions below remain current. The [social contract and data design](docs/mvp-spec.md#9-social-behavior-and-permissions) and [tickets DEV0023–DEV0024](tickets/README.md#ticket-index) cover the accepted social refinement; shared feeds, Cheers and verified challenge activity are planned, not implemented.
+The [database and authentication plan](docs/mvp-spec.md#database-provider-recommendation--19-september-2026) uses Supabase PostgreSQL and scopes the next steps. Completed [DEV0015](tickets/archive/backend/DEV0015-supabase-database-foundation.md) contains the local configuration, first migration, deterministic seed, database tests and server Drizzle mappings; completed [DEV0025](tickets/archive/backend/DEV0025-nextjs-backend-boundary.md) owns their server-only/import enforcement. Completed [DEV0027](tickets/archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md) establishes the prepared Phantom extension connection. [COR0002](tickets/current/organisatory/COR0002-phantom-auth-and-demo-access.md) coordinates the separate Supabase/application identity, protected access and company-wallet boundaries, beginning with in-progress [DEV0038](tickets/current/backend/DEV0038-phantom-supabase-web3-authentication.md). [DEV0037](tickets/current/blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) retains embedded Phantom onboarding but is blocked until new Portal developer accounts and a project App ID become available. No hosted Supabase project or product database mode exists yet. The [social contract and data design](docs/mvp-spec.md#9-social-behavior-and-permissions) and [tickets DEV0023–DEV0024](tickets/README.md#ticket-index) cover the accepted social refinement; shared feeds, Cheers and verified challenge activity are planned, not implemented.
 
 ## Run locally
 
@@ -37,7 +37,7 @@ npm run build
 npm run start
 ```
 
-Open [localhost:3100](http://127.0.0.1:3100). No environment variables, wallet, database or external service account are required for this frontend slice.
+Open [localhost:3100](http://localhost:3100). No environment variables, wallet, database or external service account are required for public preview browsing. Wallet sign-in uses the optional local Auth setup below.
 
 The preview serves already-built pages, avoiding route compilation while you navigate. After changing application code, stop the preview, run `npm run build` again and restart `npm run start` to see the changes.
 
@@ -65,13 +65,29 @@ npm run db:lint
 
 The isolated local workflow uses database port `55322`, avoiding Supabase's default range. DEV0015's `db:start` launches PostgreSQL only; Auth, the Data API, Realtime, Storage and Studio remain disabled until their owning feature ticket needs them. `db:reset` recreates only this repository's disposable local database from checked-in SQL and seeds it. Do not use a linked reset on hosted data. `test:db` uses the local test credential; application runtime credentials are provisioned separately and supplied only through the server-side `DATABASE_URL` shown in `.env.example`. See [the database operations guide](supabase/README.md) for seed-idempotency, role and hosted-migration details.
 
+## Local Phantom sign-in
+
+Sign-in is optional for public browsing. To exercise it, start Docker Desktop. If the database-only stack is already running, stop it first, then launch the Auth-enabled profile and print its public connection values:
+
+```sh
+npm run db:stop
+npm run auth:start
+npm run auth:status
+```
+
+Create an ignored `.env.local` from `.env.example`. The status command intentionally prints only public values: copy `API_URL` to `NEXT_PUBLIC_SUPABASE_URL`, copy `ANON_KEY` to `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and keep `NEXT_PUBLIC_SITE_URL=http://localhost:3100`. Never substitute `SERVICE_ROLE_KEY`. Build or restart the app after changing public environment variables, open [the exact sign-in route](http://localhost:3100/sign-in), connect the prepared Phantom account and approve the readable message. The prompt is not a transaction and costs no SOL.
+
+The local profile enables Solana Web3 Auth and permits 30 Web3 login requests per five minutes. CAPTCHA is intentionally absent on loopback-only development; a public hosted rollout needs a separate abuse-control decision. The server verifies and refreshes cookie sessions, while wallet connection, Supabase authentication and later application enrollment stay separate. If Auth is stopped or variables are absent, authenticated state fails closed and public preview routes remain usable.
+
+Recovery is local and disposable: sign out in the application to clear this browser session, use `npm run db:stop` to stop the stack, and restart with `npm run auth:start`. A reset removes local Auth users together with the disposable database. No hosted project is linked by DEV0038.
+
 ## What you can try
 
 The [frontend foundation ticket](tickets/archive/frontend/DEV0008-repx-club-frontend.md) records this slice. Explore Feed, Explore, Challenges and Profile; filter the demonstration catalogue; follow people; save challenges; create community or sponsored challenge drafts; discover Run & Coffee under Explore → Events and save a paid-event draft; and try Anna's seeded Kru Tiger membership booking. Sharing, hiding and cancellation update the local feed. Drafts and choices persist in this browser; **Profile → Reset preview** clears them.
 
 The [discovery and guidance refinement](tickets/archive/frontend/DEV0020-discovery-and-how-it-works.md) adds **How it works**, global catalogue search, challenge activity/search/sort controls, comparable card details, public copy links and related activities.
 
-The header wallet control now discovers the Phantom browser wallet through Wallet Standard on Solana Devnet. It can connect, show the public address and disconnect, while explicitly keeping RepX Club signed out. Without Phantom it preserves public browsing and links only to the official Phantom download page. It does not read balances or request any message/transaction signature.
+The header wallet control discovers Phantom through Wallet Standard on Solana Devnet. It can connect, show the public address and disconnect without authenticating. The separate `/sign-in` page can ask that connected wallet to approve a readable login message and establish a server-verified Supabase session. It never requests a transaction during connection or sign-in, never reads balances, and never treats the session as a prepared profile, membership or role.
 
 This is a frontend preview. People, venue schedules, visit history, membership, prize pools and balances are explicitly labelled examples. Payment and entry buttons open informational previews, with no real signatures, funds, reservations, attendance confirmations or published challenges. Paid passes/event tickets, authorized host redemption, gym operations, server authorization, database persistence and Phantom/Devnet integration remain outstanding; see the [current implementation status](docs/mvp-spec.md) and its acceptance criteria.
 
@@ -97,6 +113,8 @@ The database commands above add SQL catalogue/constraint/RLS checks and Drizzle 
 - `src/domain/`: framework-independent catalogue/event contracts and deterministic challenge/discovery rules; no browser, network or persistence authority.
 - `src/features/preview/`: typed demonstration catalogue, derived discovery data, validated local state transitions and browser persistence under `repx-club-preview-v1`; never live inventory, authorization, payment proof or a financial ledger.
 - `src/solana/client/`: browser-safe, Devnet-only Phantom discovery/connection state and accessible wallet presentation; no RPC, authentication, balance or transaction authority.
+- `src/auth/`: public Auth configuration, session contracts, bounded presentation rules and the browser-only Phantom-to-Supabase message adapter.
+- `src/server/auth/`: server-only Supabase client and verified session boundary; `src/proxy.ts` refreshes session cookies without protecting public routes.
 - `src/server/db/`: server-only environment parsing, bounded Postgres.js connection and Drizzle mappings. Feature repositories arrive in their owning later tickets.
 - `src/components/`: application shell, presentation formatting and reusable accessible interface/discovery controls.
 - `supabase/`: local configuration, the sole SQL migration history, deterministic seeds and database tests.

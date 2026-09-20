@@ -16,6 +16,7 @@ import {
   CircleHelp,
 } from "lucide-react";
 import { Avatar, Brand, Modal, Pill } from "./ui";
+import { AuthStatusLink } from "@/auth/client/auth-status-link";
 import {
   WalletConnectionPanel,
   WalletStatusButton,
@@ -142,6 +143,7 @@ export function Shell({
               <CircleHelp size={17} aria-hidden="true" />
               <span>How it works</span>
             </Link>
+            <AuthStatusLink />
             <WalletStatusButton onOpen={() => setModal("wallet")} />
             <Link
               href="/profile"
@@ -199,7 +201,7 @@ export function Shell({
           onClose={() => setModal(null)}
         >
           {modal === "wallet" ? (
-            <WalletConnectionPanel />
+            <WalletConnectionPanel onSignIn={() => setModal(null)} />
           ) : (
             <>
               <p className="dialog-copy">
