@@ -92,5 +92,6 @@ Implement against the specification's [participation/attendance evidence](docs/m
 ## Writing style
 
 - Write direct, concrete notes for future developers. Explain necessary acronyms on first use.
+- Write for readers who have not seen the conversation and do not assume they already know project-specific terminology. Define an unfamiliar term in plain language at first use and distinguish it from likely everyday or technical meanings when confusion is possible; for example, explain that a `demo run` is an isolated demonstration dataset, not a fitness activity or login session. Established code or schema identifiers may remain unchanged when the surrounding text explains them clearly.
 - Keep planning intent distinct from implementation evidence and distinguish facts from assumptions.
 - Maintain enough detail to review or continue the work without reconstructing conversation history.
