@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M0 shared app data
 - Coordination: None — independent development ticket
-- Related tickets: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](DEV0015-supabase-database-foundation.md), [DEV0016](DEV0016-phantom-auth-and-demo-access.md); precedes [DEV0018](DEV0018-membership-booking-and-visits.md)
+- Related tickets: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0016](DEV0016-phantom-auth-and-demo-access.md); precedes [DEV0018](DEV0018-membership-booking-and-visits.md)
 
 ## Objective and context
 

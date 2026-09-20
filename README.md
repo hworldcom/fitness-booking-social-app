@@ -8,7 +8,7 @@ The MVP supports two challenge models: community challenges funded by their part
 
 Solana provides the financial settlement layer for the hackathon demo. Prepared Phantom wallets will sign Devnet transactions using test EURC for passes, event tickets, challenge pools, payouts, and returns; test SOL is used only for network costs. Product discovery, identity, permissions, and social data stay in the application backend rather than being placed onchain.
 
-**Current status:** the responsive Next.js frontend preview is implemented with typed fixtures and browser-local persistence. It demonstrates discovery, challenge and event planning, membership booking, and social interactions without moving funds. Supabase persistence and authentication, Phantom connection, real Devnet payments, and the Solana challenge program are planned but not yet implemented.
+**Current status:** the responsive Next.js frontend preview is implemented with typed fixtures and browser-local persistence. It demonstrates discovery, challenge and event planning, membership booking, and social interactions without moving funds. The local Supabase schema/migration foundation and server-only Drizzle boundary are implemented and validated, but no product screen reads from them yet. Authentication, Phantom connection, real Devnet payments, and the Solana challenge program remain unimplemented.
 
 **Start with the [MVP specification](docs/mvp-spec.md).** It is the single current product document, including project status, scope, architecture, milestones, acceptance checks, and the demo script.
 
@@ -23,9 +23,9 @@ Solana provides the financial settlement layer for the hackathon demo. Prepared 
 
 <a id="planned-backend-work"></a>
 
-## Planned backend and wallet work
+## Backend and wallet work
 
-The [database and authentication plan](docs/mvp-spec.md#database-provider-recommendation--19-september-2026) recommends Supabase PostgreSQL and scopes the next steps. [Tickets DEV0015–DEV0018](tickets/README.md#ticket-index) are draft implementation work; [ticket DEV0025](tickets/current/backend/DEV0025-nextjs-backend-boundary.md) keeps their application backend in Next.js and starts its server-only boundary with DEV0015. [Ticket DEV0027](tickets/current/blockchain/DEV0027-phantom-wallet-connection-foundation.md) independently establishes the Phantom/Wallet Standard browser connection before DEV0016 adds authenticated identity and bindings. No Supabase project, database, wallet connection, Auth integration or new setup commands are present yet. The local frontend instructions below remain current. The [social contract and data design](docs/mvp-spec.md#9-social-behavior-and-permissions) and [tickets DEV0023–DEV0024](tickets/README.md#ticket-index) cover the accepted social refinement; shared feeds, Cheers and verified challenge activity are planned, not implemented.
+The [database and authentication plan](docs/mvp-spec.md#database-provider-recommendation--19-september-2026) uses Supabase PostgreSQL and scopes the next steps. Completed [DEV0015](tickets/archive/backend/DEV0015-supabase-database-foundation.md) contains the local configuration, first migration, deterministic seed, database tests and server Drizzle mappings; completed [DEV0025](tickets/archive/backend/DEV0025-nextjs-backend-boundary.md) owns their server-only/import enforcement. [DEV0027](tickets/current/blockchain/DEV0027-phantom-wallet-connection-foundation.md) independently establishes the Phantom/Wallet Standard browser connection before DEV0016 adds authenticated identity and bindings. No hosted Supabase project, product database mode, Auth integration or wallet connection exists yet. The local frontend instructions below remain current. The [social contract and data design](docs/mvp-spec.md#9-social-behavior-and-permissions) and [tickets DEV0023–DEV0024](tickets/README.md#ticket-index) cover the accepted social refinement; shared feeds, Cheers and verified challenge activity are planned, not implemented.
 
 ## Run locally
 
@@ -51,6 +51,20 @@ Development mode compiles routes when first visited and recompiles after changes
 
 Both modes use port 3100. Stop the existing server with Ctrl+C before switching modes, then refresh your browser once to load the new client. Switching modes on the same address preserves this browser's saved preview data.
 
+## Local database foundation
+
+Database work is optional for the current frontend preview. To validate the in-progress foundation, start Docker Desktop and run:
+
+```sh
+npm run db:start
+npm run db:reset
+npm run db:test
+npm run test:db
+npm run db:lint
+```
+
+The isolated local workflow uses database port `55322`, avoiding Supabase's default range. DEV0015's `db:start` launches PostgreSQL only; Auth, the Data API, Realtime, Storage and Studio remain disabled until their owning feature ticket needs them. `db:reset` recreates only this repository's disposable local database from checked-in SQL and seeds it. Do not use a linked reset on hosted data. `test:db` uses the local test credential; application runtime credentials are provisioned separately and supplied only through the server-side `DATABASE_URL` shown in `.env.example`. See [the database operations guide](supabase/README.md) for seed-idempotency, role and hosted-migration details.
+
 ## What you can try
 
 The [frontend foundation ticket](tickets/archive/frontend/DEV0008-repx-club-frontend.md) records this slice. Explore Feed, Explore, Challenges and Profile; filter the demonstration catalogue; follow people; save challenges; create community or sponsored challenge drafts; discover Run & Coffee under Explore → Events and save a paid-event draft; and try Anna's seeded Kru Tiger membership booking. Sharing, hiding and cancellation update the local feed. Drafts and choices persist in this browser; **Profile → Reset preview** clears them.
@@ -72,13 +86,17 @@ npm run test:e2e
 
 Domain tests cover validation, local booking transitions, sharing privacy and storage recovery. Browser tests exercise desktop and mobile layouts and keyboard flows using **installed Google Chrome**. Build first; Playwright starts a separate production server on port 3101 and refuses to reuse an existing server, so another local project cannot be mistaken for RepX Club. Browser evidence and failure traces go to ignored `test-results/`. In restricted agent environments, the test runner, build worker and browser/server may require permission to use local IPC/ports.
 
+The database commands above add SQL catalogue/constraint/RLS checks and Drizzle integration coverage. They require the isolated local stack and are intentionally separate from the configuration-free `npm test` preview suite.
+
 ## Application structure
 
 - `src/app/`: thin Next.js App Router adapters, shared layout and visual styles.
 - `src/features/`: capability-owned Feed, Explore/discovery, challenge, event, class and profile screens.
 - `src/domain/`: framework-independent catalogue/event contracts and deterministic challenge/discovery rules; no browser, network or persistence authority.
 - `src/features/preview/`: typed demonstration catalogue, derived discovery data, validated local state transitions and browser persistence under `repx-club-preview-v1`; never live inventory, authorization, payment proof or a financial ledger.
+- `src/server/db/`: server-only environment parsing, bounded Postgres.js connection and Drizzle mappings. Feature repositories arrive in their owning later tickets.
 - `src/components/`: application shell, presentation formatting and reusable accessible interface/discovery controls.
+- `supabase/`: local configuration, the sole SQL migration history, deterministic seeds and database tests.
 - `tests/`: domain checks and Playwright browser flows.
 - `public/`: local branding and artwork. The running-club image was generated for RepX Club on 19 September 2026 using OpenAI image generation and exported as WebP. Its people and setting are illustrative. Other graphics are CSS/SVG with Lucide icons. Manrope is self-hosted through Fontsource; the app does not fetch external fonts or stock imagery.
 

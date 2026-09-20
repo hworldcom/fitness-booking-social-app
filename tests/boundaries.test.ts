@@ -36,18 +36,45 @@ function within(target: string, directory: string) {
   return target === directory || target.startsWith(`${directory}${path.sep}`);
 }
 
-test("source imports respect domain, component and feature boundaries", () => {
+test("source imports respect domain, client, server and feature boundaries", () => {
   const domain = path.join(src, "domain");
   const components = path.join(src, "components");
   const features = path.join(src, "features");
+  const preview = path.join(features, "preview");
   const server = path.join(src, "server");
+  const database = path.join(server, "db");
   const violations: string[] = [];
 
   for (const file of sourceFiles(src)) {
+    const contents = readFileSync(file, "utf8");
+    const isClientModule = /^\s*["']use client["'];/m.test(contents);
+
     for (const specifier of imports(file)) {
       const target = resolveImport(file, specifier);
-      if (!target) continue;
       const relativeFile = path.relative(root, file);
+
+      if (
+        within(file, src) &&
+        !within(file, database) &&
+        [
+          "postgres",
+          "drizzle-orm",
+          "drizzle-orm/pg-core",
+          "drizzle-orm/postgres-js",
+        ].includes(specifier)
+      ) {
+        violations.push(
+          `${relativeFile} imports database package ${specifier} outside src/server/db`,
+        );
+      }
+
+      if (!target) continue;
+
+      if (isClientModule && within(target, server)) {
+        violations.push(
+          `${relativeFile} is a client module importing ${specifier} from src/server`,
+        );
+      }
 
       if (within(file, domain) && !within(target, domain)) {
         violations.push(
@@ -85,8 +112,25 @@ test("source imports respect domain, component and feature boundaries", () => {
           }
         }
       }
+
+      if (within(file, server) && within(target, preview)) {
+        violations.push(
+          `${relativeFile} imports preview-only data via ${specifier}`,
+        );
+      }
     }
   }
 
   assert.deepEqual(violations, []);
+});
+
+test("privileged database entry points carry the Next.js server-only marker", () => {
+  for (const relative of [
+    "src/server/db/client.ts",
+    "src/server/db/env.ts",
+    "src/server/db/schema/index.ts",
+  ]) {
+    const contents = readFileSync(path.join(root, relative), "utf8");
+    assert.match(contents, /^import ["']server-only["'];/);
+  }
 });

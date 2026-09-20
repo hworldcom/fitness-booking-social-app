@@ -1,11 +1,11 @@
 # Ticket DEV0025: Next.js backend boundary
 
-- Status: In progress
+- Status: Completed
 - Created: 2026-09-20
 - Last updated: 2026-09-20
 - Milestone: M0 backend foundation
-- Coordination: [COR0001 — Project structure](../organisatory/COR0001-project-structure.md)
-- Related tickets: [DEV0014 — Database and backend plan](../../archive/backend/DEV0014-database-and-backend-plan.md); implement with [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md); establishes the boundary used by [DEV0016](DEV0016-phantom-auth-and-demo-access.md), [DEV0017](DEV0017-persistent-catalogue-and-drafts.md), [DEV0018](DEV0018-membership-booking-and-visits.md), [DEV0023](DEV0023-shared-social-feed-and-cheers.md), and later Solana integration tickets
+- Coordination: [COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md)
+- Related tickets: [DEV0014 — Database and backend plan](DEV0014-database-and-backend-plan.md); implemented with [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md); establishes the boundary used by [DEV0016](../../current/backend/DEV0016-phantom-auth-and-demo-access.md), [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018](../../current/backend/DEV0018-membership-booking-and-visits.md), [DEV0023](../../current/backend/DEV0023-shared-social-feed-and-cheers.md), and later Solana integration tickets
 
 ## Objective and context
 
@@ -45,11 +45,11 @@ Implementation was authorized on 2026-09-20 and begins together with DEV0015, be
 
 ## Acceptance criteria
 
-- [ ] AC1: All server runtime code introduced by DEV0015 lives behind an explicit `src/server` boundary, each added module supports real database-foundation behavior rather than placeholder scaffolding, and file ownership remains recorded in DEV0015.
-- [ ] AC2: Client modules cannot import privileged environment parsing, database drivers/repositories, migration credentials, or future reconciliation modules; lint/type/build checks detect a boundary violation and no server secret is included in a browser bundle or log.
-- [ ] AC3: The implemented dependency direction is documented and observable: framework adapters depend on services, services depend on repositories/adapters, and shared UI contracts do not expose Drizzle row types or accept browser-supplied identity/role authority.
-- [ ] AC4: The existing explicit local preview still builds and runs without backend configuration. Database mode and server configuration fail clearly when required values are missing instead of silently returning fixtures.
-- [ ] AC5: README setup/structure and both tickets' implementation records state what exists, how it was verified, and when a separate worker would become necessary; no separate backend service or deployment is claimed.
+- [x] AC1: All server runtime code introduced by DEV0015 lives behind an explicit `src/server` boundary, each added module supports real database-foundation behavior rather than placeholder scaffolding, and file ownership remains recorded in DEV0015.
+- [x] AC2: Client modules cannot import privileged environment parsing, database drivers/repositories, migration credentials, or future reconciliation modules; lint/type/build checks detect a boundary violation and no server secret is included in a browser bundle or log.
+- [x] AC3: The implemented dependency direction is documented and observable: framework adapters depend on services, services depend on repositories/adapters, and shared UI contracts do not expose Drizzle row types or accept browser-supplied identity/role authority.
+- [x] AC4: The existing explicit local preview still builds and runs without backend configuration. Database mode and server configuration fail clearly when required values are missing instead of silently returning fixtures.
+- [x] AC5: README setup/structure and both tickets' implementation records state what exists, how it was verified, and when a separate worker would become necessary; no separate backend service or deployment is claimed.
 
 ## Validation plan
 
@@ -59,15 +59,20 @@ Add a focused boundary check that attempts or statically detects a client-to-ser
 
 Planning created on 2026-09-20 after reviewing the current frontend, specification, installed Next.js package, and tickets DEV0014–DEV0018. The decision is to keep the application backend in Next.js and introduce its code boundary with the first real backend slice, ticket DEV0015. No source directory, dependency, server endpoint, database connection, environment variable, worker, or deployment was added by this planning change.
 
-Planning refinement, 2026-09-20 ([DEV0036](../../archive/organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket owns server-only/import enforcement, dependency-direction checks and thin-adapter rules. DEV0015 remains the sole owner of `supabase` artifacts and its concrete `src/server/db` foundation modules. The tickets start together but do not duplicate files or implementation evidence.
+Planning refinement, 2026-09-20 ([DEV0036](../organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket owns server-only/import enforcement, dependency-direction checks and thin-adapter rules. DEV0015 remains the sole owner of `supabase` artifacts and its concrete `src/server/db` foundation modules. The tickets start together but do not duplicate files or implementation evidence.
 
 Planning refinement, 2026-09-20: DEV0015 now owns only database dependencies, migrations/seeds/roles, server environment/client modules, Drizzle table mappings and database tests. DEV0016 and later feature tickets own repositories/services for their capabilities. This ticket enforces the direction for all of them but implements none of those database files or repositories.
 
-Work started on 2026-09-20 by marking this ticket and DEV0015 `In progress` after their paired scope and ownership review. No boundary source or configuration has been added yet. The first implementation edit must add enforcement around DEV0015's real server database modules, not standalone placeholder scaffolding; update both plans first if actual framework or deployment constraints require a different boundary.
+Implementation started on 2026-09-20 around DEV0015's real database modules. `src/server/db/env.ts`, `client.ts` and `schema/index.ts` carry Next.js's `server-only` marker; the environment parser remains separately testable and does not evaluate `DATABASE_URL` until database initialization is requested. No feature repository, request adapter, job or placeholder service was created.
+
+`tests/boundaries.test.ts` now rejects direct client-to-server imports, feature/component imports of `src/server`, server imports of preview fixtures and database-driver imports outside `src/server/db`; it also verifies the privileged entry-point markers. `tests/database-config.test.ts` proves missing/malformed configuration fails with redacted messages, local connections disable TLS and hosted connections require it. README structure and `.env.example` preserve the configuration-free preview boundary.
 
 ## Validation results
 
-Planning-only validation on 2026-09-20: reviewed the current source tree and confirmed there is no `src/server`, Supabase, Drizzle, authentication, API, worker, or program implementation to migrate. Checked the dependency and start sequence against the current architecture and DEV0015 scope. A Python local-link check passed for this ticket, DEV0015, the ticket index, and README; an `rg` uniqueness/section check confirmed one DEV0025 record with all required ticket sections. Prettier passed for this ticket and DEV0015. A combined Markdown check warned only that the existing compact tables in README and the ticket index are not padded into Prettier's aligned-table style; they were kept in the repository's current compact style. Application checks were not run because this change only creates and links a future implementation ticket; planning review does not satisfy AC1–AC5.
+- **Boundary/configuration tests — passed:** `npm test` passed 23/23 tests, including both server-boundary cases and three database configuration cases. The suite demonstrates current client modules cannot reach `src/server`, database packages stay inside `src/server/db`, server modules cannot depend on preview fixtures and malformed values do not disclose their input.
+- **Type safety — passed:** `npm run typecheck` generated Next.js route types and completed `tsc --noEmit` with no errors against the real Drizzle/client modules.
+- **Production boundary evidence — passed with a builder limitation:** `npm run lint` passed. Turbopack could not bind its internal CSS-worker port in this environment, so `npx next build --webpack` supplied the production evidence and generated all 14 routes successfully. `.next/static` contains no `DATABASE_URL`, PostgreSQL URL, app role, Drizzle or Postgres.js marker. `npm run test:e2e` passed all 28 desktop/mobile preview scenarios with no database configuration. A request adapter/job check is not applicable because neither was introduced.
+- **Paired foundation integration — passed:** DEV0015's database-only start, clean reset, repeat seed, 23-check pgTAP suite, 5-check Drizzle suite and schema lint passed through the protected modules. The final outage check rejects through the real driver rather than falling back to preview fixtures; no endpoint, repository or worker was added to manufacture boundary evidence.
 
 ## Risks, limitations, and follow-ups
 
@@ -75,7 +80,7 @@ The exact hosting runtime and Supabase project remain unselected. Next.js reques
 
 ## Completion and review references
 
-- Completed: Not completed; implementation is in progress.
+- Completed: 2026-09-20.
 - Commit: Not created.
-- Review: Planning self-review only; no independent implementation review.
+- Review: Implementation self-review completed; no independent review.
 - Deployment: None.

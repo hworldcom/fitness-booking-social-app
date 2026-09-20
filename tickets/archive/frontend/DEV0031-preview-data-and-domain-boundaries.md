@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: Cross-cutting application foundation
 - Coordination: [COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md)
-- Related records: direct peer development ticket tracked by [Coordination COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md); follows completed peer [DEV0030 — Frontend screen module boundaries](DEV0030-frontend-screen-module-boundaries.md); prepares clean contracts for [DEV0015 — Database foundation](../../current/backend/DEV0015-supabase-database-foundation.md) and [DEV0017 — Persistent catalogue and drafts](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md)
+- Related records: direct peer development ticket tracked by [Coordination COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md); follows completed peer [DEV0030 — Frontend screen module boundaries](DEV0030-frontend-screen-module-boundaries.md); prepares clean contracts for [DEV0015 — Database foundation](../backend/DEV0015-supabase-database-foundation.md) and [DEV0017 — Persistent catalogue and drafts](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md)
 
 ## Objective and context
 

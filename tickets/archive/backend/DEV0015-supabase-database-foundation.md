@@ -1,11 +1,11 @@
 # Ticket DEV0015: Supabase database foundation
 
-- Status: In progress
+- Status: Completed
 - Created: 2026-09-19
 - Last updated: 2026-09-20
 - Milestone: M0 database foundation
-- Coordination: [COR0001 — Project structure](../organisatory/COR0001-project-structure.md)
-- Related tickets: [DEV0014 — Planning record](../../archive/backend/DEV0014-database-and-backend-plan.md), [DEV0008 — Frontend](../../archive/frontend/DEV0008-repx-club-frontend.md); implement the server boundary with [DEV0025](DEV0025-nextjs-backend-boundary.md); next [DEV0016](DEV0016-phantom-auth-and-demo-access.md)
+- Coordination: [COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md)
+- Related tickets: [DEV0014 — Planning record](DEV0014-database-and-backend-plan.md), [DEV0008 — Frontend](../frontend/DEV0008-repx-club-frontend.md); implemented the server boundary with [DEV0025](DEV0025-nextjs-backend-boundary.md); next [DEV0016](../../current/backend/DEV0016-phantom-auth-and-demo-access.md)
 
 ## Objective and context
 
@@ -26,7 +26,9 @@ Implementation was authorized on 2026-09-20 after the schema and ownership revie
 
 Use `supabase/migrations/` as the only applied migration history and Drizzle for typed server queries. Runtime app tables live in an unexposed `app` schema, with default-deny row-level security (RLS) and least-privilege roles; policies for authenticated feature access arrive in subsequent slices. Implement [DEV0025](DEV0025-nextjs-backend-boundary.md) concurrently from the first server configuration/database edit. DEV0015 owns database dependencies, SQL artifacts, server-only connection configuration, Drizzle table mappings and database integration evidence. DEV0025 owns the server-only/import rules that constrain them. Feature tickets own the repositories and services that query those mappings; DEV0015 must not pre-build catalogue, identity, draft or booking repositories.
 
-The completed [DEV0031 boundary](../../archive/frontend/DEV0031-preview-data-and-domain-boundaries.md) is the frontend baseline. Database rows and inferred Drizzle row types stay server-only. Later repositories map selected rows into explicit `src/domain` or response contracts; they never import `src/features/preview`, expose raw row types to features, or silently replace preview data.
+The completed [DEV0031 boundary](../frontend/DEV0031-preview-data-and-domain-boundaries.md) is the frontend baseline. Database rows and inferred Drizzle row types stay server-only. Later repositories map selected rows into explicit `src/domain` or response contracts; they never import `src/features/preview`, expose raw row types to features, or silently replace preview data.
+
+The DEV0015 local start command launches PostgreSQL only. Auth, Realtime, Storage, Studio, the Data API and other auxiliary services are outside this ticket and are enabled by the feature ticket that first needs them. This keeps database validation repeatable alongside another running Supabase project and avoids treating unrelated service health as schema evidence. The same-database seed command uses the checked-in Postgres.js dependency against the fixed loopback development port because Supabase CLI 2.117.0 no longer applies general SQL through `supabase seed --local`; it must never accept or target a hosted connection.
 
 ## Foundation schema contract
 
@@ -89,11 +91,11 @@ DEV0015 integration tests may issue direct Drizzle queries through the foundatio
 
 ## Acceptance criteria
 
-- [ ] AC1: A fresh disposable local Supabase database applies the exact table/role matrix through the sole SQL migration history; reset plus a second same-database seed execution is deterministic, mappings match the migrated schema and no duplicate seeds appear.
-- [ ] AC2: Base relationships, same-run constraints, uniqueness and invalid amount/time boundaries are enforced by PostgreSQL, not only form validation.
-- [ ] AC3: Runtime role has no DDL/table ownership/BYPASSRLS and cannot read private rows without context; browser Data API cannot expose app tables; migration secrets never appear in bundles/logs.
-- [ ] AC4: Existing frontend preview builds/runs without evaluating database configuration; direct server database initialization fails visibly on missing/malformed configuration or outage rather than returning fabricated state. User-facing database mode remains DEV0017 scope.
-- [ ] AC5: Actual setup/test commands and redacted environment names are documented; local tests, lint/types/build pass. Any hosted schema applied is identified and verified; no hosted completion is assumed from local tests.
+- [x] AC1: A fresh disposable local Supabase database applies the exact table/role matrix through the sole SQL migration history; reset plus a second same-database seed execution is deterministic, mappings match the migrated schema and no duplicate seeds appear.
+- [x] AC2: Base relationships, same-run constraints, uniqueness and invalid amount/time boundaries are enforced by PostgreSQL, not only form validation.
+- [x] AC3: Runtime role has no DDL/table ownership/BYPASSRLS and cannot read private rows without context; browser Data API cannot expose app tables; migration secrets never appear in bundles/logs.
+- [x] AC4: Existing frontend preview builds/runs without evaluating database configuration; direct server database initialization fails visibly on missing/malformed configuration or outage rather than returning fabricated state. User-facing database mode remains DEV0017 scope.
+- [x] AC5: Actual setup/test commands and redacted environment names are documented; local tests, lint/types/build pass. Any hosted schema applied is identified and verified; no hosted completion is assumed from local tests.
 
 ## Validation plan
 
@@ -101,30 +103,42 @@ Use a disposable local database for clean apply, upgrade/reapply, same-database 
 
 ## Risks, limitations, and follow-ups
 
-Project/region selection, credentials and local Docker availability remain inputs. SQL reset tests are local-only. A running database does not establish user authorization; DEV0016 is required before private runtime endpoints are enabled. Later tables must arrive with their own feature's invariants/tests.
+Project/region selection and credentials remain future inputs. SQL reset tests are local-only. Local validation requires Docker disk capacity for the pinned PostgreSQL image; unrelated images and other projects' containers must not be removed implicitly. DEV0015 deliberately starts PostgreSQL without auxiliary Supabase services, so Auth/API/Realtime/Storage health remains for the ticket that enables each service. A running database does not establish user authorization; DEV0016 is required before private runtime endpoints are enabled. Later tables must arrive with their own feature's invariants/tests.
 
 ## Implementation record
 
-Planning update, 2026-09-19 ([DEV0019](../../archive/frontend/DEV0019-public-discovery-access.md)): C17 explicitly requires public discovery. Base private-data restrictions remain; guest catalogue privileges/services will be introduced and tested in DEV0017.
+Planning update, 2026-09-19 ([DEV0019](../frontend/DEV0019-public-discovery-access.md)): C17 explicitly requires public discovery. Base private-data restrictions remain; guest catalogue privileges/services will be introduced and tested in DEV0017.
 
 Planning update, 2026-09-20 ([DEV0025](DEV0025-nextjs-backend-boundary.md)): keep the application backend in the existing Next.js package and establish its server-only/service/repository boundary as the first part of this ticket. The boundary must start with real DEV0015 modules rather than unused scaffolding.
 
-Planning refinement, 2026-09-20 ([DEV0036](../../archive/organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket solely owns `supabase` artifacts and the concrete `src/server/db` foundation. DEV0025 starts alongside it but owns boundary enforcement, dependency checks and thin-adapter rules rather than this ticket's schema, connection, mappings or database-test evidence.
+Planning refinement, 2026-09-20 ([DEV0036](../organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket solely owns `supabase` artifacts and the concrete `src/server/db` foundation. DEV0025 starts alongside it but owns boundary enforcement, dependency checks and thin-adapter rules rather than this ticket's schema, connection, mappings or database-test evidence.
 
 Planning refinement, 2026-09-20: added the exact ten-table column/key/check/index/seed matrix, role/RLS contract and local-first validation method before implementation. Resolved repository ownership prospectively: DEV0015 owns SQL, connection configuration and Drizzle table mappings but no feature repository; DEV0016 owns identity/access repositories and verified context; DEV0017 owns the first catalogue/draft/social repositories; later feature tickets own their repositories. This supersedes the earlier broad reference to DEV0015 foundation repositories without rewriting the historical DEV0036 record. No runtime or database change was made.
 
-Work started on 2026-09-20 by finalizing the schema/repository boundaries and marking DEV0015 and paired DEV0025 `In progress`. No source code, dependency, database object or service configuration has been added yet. The next implementation action is to pin the local Supabase/Drizzle dependencies and establish the real configuration and server-database modules with DEV0025's boundary guard.
+Implementation started on 2026-09-20. `package.json`/`package-lock.json` now pin Supabase CLI 2.117.0, Drizzle ORM 0.45.2, Postgres.js 3.4.9 and `server-only` 0.0.1, with explicit local start/reset/seed/test/lint commands. `supabase/config.toml` uses an isolated `5532x` port range because another local Supabase project already owns the default ports; its Data API schema list excludes `app` and automatic public-table exposure is disabled. `.env.example` documents the sole server-only runtime variable without a usable credential.
+
+`supabase/migrations/20260920000100_create_database_foundation.sql` creates the exact ten-table matrix, named constraints/indexes, update triggers, the `app_owner`/`app_runtime` roles, forced default-deny RLS and explicit grants/revocations. Supabase's migration `postgres` role is intentionally not a superuser: implementation therefore validates that the app roles are not superuser/BYPASSRLS, grants the migration role membership for ownership transfer and does not attempt privileged attribute toggles. `supabase/seed.sql` inserts stable fixture IDs for six unclaimed profiles, one run, four organizations/venues, three classes and Anna's membership using conflict-safe inserts; a second execution inserted zero rows.
+
+`src/server/db/config.ts`, `env.ts`, `client.ts` and `schema/foundation.ts` add redacted lazy URL validation, local-versus-hosted TLS selection, a one-connection Postgres.js client with prepared statements disabled and typed Drizzle mappings. There is deliberately no feature repository, Route Handler, Server Action or product database mode. `supabase/README.md` and the root README document local operations, roles, credentials, hosted safety and the current preview/database boundary.
+
+Final validation replaced the obsolete `supabase seed --local` script—which Supabase CLI 2.117.0 treats as a help-only command—with `scripts/seed-local-database.mjs`. The replacement reads the sole checked-in seed and targets only the fixed loopback development port through Postgres.js; it cannot accept a hosted connection. `db:start` now excludes Auth, Realtime, Storage, Studio, the Data API and other auxiliary containers because DEV0015 needs PostgreSQL only. This also lets the project coexist with another active Supabase stack without making unrelated service health part of database acceptance.
+
+Validation code now lives in `supabase/tests/database/foundation.test.sql`, `tests/database/foundation.test.ts`, `tests/database-config.test.ts` and the expanded boundary test. The SQL test queries PostgreSQL catalogues, roles, privileges, RLS, seeds, foreign keys, triggers and indexes and exercises negative amount/time, duplicate and cross-run constraint cases. The TypeScript integration reads real seeded rows through Drizzle and proves runtime RLS/DDL denial and amount enforcement.
 
 ## Validation results
 
 - **Planning consistency — passed:** the ten tables match the DEV0015 logical group in the MVP specification; every column records nullability, and entity versus relationship primary-key conventions, run-scoped foreign keys, indexes, seeds, roles and default-deny RLS have explicit implementation owners.
 - **Repository ownership — passed:** reviewed DEV0015, DEV0016, DEV0017, DEV0018, DEV0023, DEV0025 and COR0001. DEV0015 stops at SQL, database configuration/client modules and Drizzle mappings; each feature ticket owns its repositories/services; DEV0025 owns enforcement only.
-- **Document checks — passed:** `prettier --check` passed for all seven changed records; `git diff --check` reported no whitespace errors; the repository-local Markdown target check resolved links across all 51 Markdown files.
-- **Implementation validation — not run:** implementation has not started. Planning/link/format checks do not satisfy AC1–AC5; record exact database, application and browser commands and their results before completion.
+- **Dependency/security baseline — passed:** `npm install --save-exact drizzle-orm postgres server-only` and `npm install --save-dev --save-exact supabase` completed with zero reported vulnerabilities. `npm test` passed 23/23 tests, including URL redaction/TLS and server boundary checks; `npm run typecheck` passed.
+- **Migration and seed against PostgreSQL 17.6 — passed with a noted execution path:** the project-local Supabase database container initialized on `127.0.0.1:55322`; applying the checked-in migration with `psql -v ON_ERROR_STOP=1` created all objects. The first and second seed executions inserted `6/1/6/4/3/4/1/3/3/1` and then zero rows respectively.
+- **Database tests — passed:** after a clean reset and second same-database seed, `npm run db:test` passed all 23 expanded pgTAP checks covering exact columns, all 15 foreign keys, ten update triggers, required indexes, roles, privileges, forced RLS, deterministic fixture counts and invalid amount/time/duplicate/cross-run cases. `npm run test:db` passed 5/5 Drizzle integration tests covering mapped fixture reads, runtime-role row/DDL denial, amount enforcement and explicit outage propagation. `npm run db:lint` returned `No schema errors found`.
+- **Clean CLI replay — passed after resolving the environment blocker:** after free space increased from about 1.2 GiB to 14 GiB, every required image downloaded successfully. A first full-stack boot applied the migration/seed but timed out waiting for unrelated auxiliary services while another Supabase project was active. The documented database-only `npm run db:start` then passed from both fresh and stopped states; `npm run db:reset` recreated the database and replayed `20260920000100_create_database_foundation.sql` plus `seed.sql`; the corrected `npm run db:seed` reapplied the seed on the same database; and the expanded SQL/Drizzle suites passed. The pre-existing project on ports `5432x` remained running and untouched.
+- **Application checks — passed with a builder limitation:** `npm run lint` and `npm run typecheck` passed. `npm run build` reached a Turbopack environment failure because its CSS worker could not bind an internal local port, including outside the managed sandbox; `npx next build --webpack` then compiled, typechecked and generated all 14 routes successfully without `DATABASE_URL`. A scan of `.next/static` found no database URL, role, Drizzle or Postgres.js markers. `npm run test:e2e` passed all 28 desktop/mobile scenarios in 3.3 minutes with the database stopped. Browser database behavior is not applicable because DEV0015 introduces no endpoint or UI mode.
+- **Final repository checks — passed:** `npm test` passed 23/23, `npm run lint`, `npm run typecheck` and `npm run format:check` passed, Prettier accepted the updated Markdown, `npx next build --webpack` generated all 14 routes, `.next/static` contained no database URL/role/driver markers and `git diff --check` reported no whitespace errors. The previously completed browser run remains 28/28; no UI, route or browser behavior changed during the final database-only validation.
 
 ## Completion and review references
 
-- Completed: Not completed.
-- Commit: Not created.
-- Review: Planning self-review only; no independent implementation review.
+- Completed: 2026-09-20.
+- Commit: Not created for implementation.
+- Review: Implementation self-review completed; no independent review.
 - Deployment: None.
