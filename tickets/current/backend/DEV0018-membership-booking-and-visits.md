@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M3 membership access slice / M4 shared class activity
 - Coordination: None — independent development ticket
-- Related tickets: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0016](DEV0016-phantom-auth-and-demo-access.md), [DEV0017](DEV0017-persistent-catalogue-and-drafts.md)
+- Related tickets: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0040](DEV0040-protected-access-and-database-context.md), and [DEV0017](DEV0017-persistent-catalogue-and-drafts.md)
 
 ## Objective and context
 

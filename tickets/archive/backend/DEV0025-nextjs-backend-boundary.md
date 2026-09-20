@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M0 backend foundation
 - Coordination: [COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md)
-- Related tickets: [DEV0014 — Database and backend plan](DEV0014-database-and-backend-plan.md); implemented with [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md); establishes the boundary used by [DEV0016](../../current/backend/DEV0016-phantom-auth-and-demo-access.md), [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018](../../current/backend/DEV0018-membership-booking-and-visits.md), [DEV0023](../../current/backend/DEV0023-shared-social-feed-and-cheers.md), and later Solana integration tickets
+- Related tickets: [DEV0014 — Database and backend plan](DEV0014-database-and-backend-plan.md); implemented with [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md); establishes the boundary used by [COR0002](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016, [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018](../../current/backend/DEV0018-membership-booking-and-visits.md), [DEV0023](../../current/backend/DEV0023-shared-social-feed-and-cheers.md), and later Solana integration tickets
 
 ## Objective and context
 
@@ -16,7 +16,7 @@ This ticket implements the single-web-package architecture in [the MVP specifica
 ## Scope and non-goals
 
 - In scope: establish and enforce the server-only boundary around real `src/server` modules; own client/server import protection and boundary checks; define dependency direction for request adapters, services, repositories, shared domain contracts and external adapters; keep Next.js pages, Route Handlers and Server Actions thin; document where background reconciliation will run and the conditions that justify a separate worker.
-- Out of scope: implementing or owning DEV0015's `supabase` schema/migrations/seeds, database configuration or Drizzle table mappings; implementing feature repositories owned by DEV0016 onward; authentication owned by DEV0016; persistent product flows owned by later tickets; creating placeholder modules for every future feature; introducing a separate API framework/service; selecting a hosting vendor; running continuous chain listeners; or implementing/deploying a Solana program.
+- Out of scope: implementing or owning DEV0015's `supabase` schema/migrations/seeds, database configuration or Drizzle table mappings; implementing feature repositories owned by the then-current DEV0016 onward; authentication then owned by DEV0016 and now split under COR0002; persistent product flows owned by later tickets; creating placeholder modules for every future feature; introducing a separate API framework/service; selecting a hosting vendor; running continuous chain listeners; or implementing/deploying a Solana program.
 
 ## Expected behavior and edge cases
 
@@ -32,7 +32,7 @@ The adopted MVP decision is one Next.js/TypeScript web package, Supabase Postgre
 
 Use `src/server` for modules that must never enter browser bundles. Keep shared, framework-independent value objects and response contracts outside that directory only when both browser and server need them. Do not expose Drizzle rows as the public UI contract. Inspect the installed Next.js version and its bundled/current documentation before choosing exact Server Action, Route Handler, caching, and server-only APIs.
 
-Implementation was authorized on 2026-09-20 and begins together with DEV0015, before its first server configuration or Drizzle module is added. Starting DEV0025 later than DEV0015 would defeat its purpose; starting it without DEV0015 would produce scaffolding without executable behavior. Parallel timing does not create joint ownership: DEV0015 owns database artifacts, connection modules and table mappings, while this ticket owns the guards and dependency contract applied to them. DEV0016 and later feature tickets own the repositories/services that consume those mappings.
+Implementation was authorized on 2026-09-20 and begins together with DEV0015, before its first server configuration or Drizzle module is added. Starting DEV0025 later than DEV0015 would defeat its purpose; starting it without DEV0015 would produce scaffolding without executable behavior. Parallel timing does not create joint ownership: DEV0015 owns database artifacts, connection modules and table mappings, while this ticket owns the guards and dependency contract applied to them. The then-current DEV0016 and later feature tickets own the repositories/services that consume those mappings; COR0002 later split DEV0016's work among DEV0038–DEV0041 without changing this boundary.
 
 ## Implementation plan
 
@@ -61,7 +61,7 @@ Planning created on 2026-09-20 after reviewing the current frontend, specificati
 
 Planning refinement, 2026-09-20 ([DEV0036](../organisatory/DEV0036-explicit-architecture-boundaries.md)): this ticket owns server-only/import enforcement, dependency-direction checks and thin-adapter rules. DEV0015 remains the sole owner of `supabase` artifacts and its concrete `src/server/db` foundation modules. The tickets start together but do not duplicate files or implementation evidence.
 
-Planning refinement, 2026-09-20: DEV0015 now owns only database dependencies, migrations/seeds/roles, server environment/client modules, Drizzle table mappings and database tests. DEV0016 and later feature tickets own repositories/services for their capabilities. This ticket enforces the direction for all of them but implements none of those database files or repositories.
+Planning refinement, 2026-09-20: DEV0015 now owns only database dependencies, migrations/seeds/roles, server environment/client modules, Drizzle table mappings and database tests. The then-current DEV0016 and later feature tickets own repositories/services for their capabilities. COR0002 later assigned DEV0016's planned authentication/access work to DEV0038–DEV0041. This ticket enforces the direction for all of them but implements none of those database files or repositories.
 
 Implementation started on 2026-09-20 around DEV0015's real database modules. `src/server/db/env.ts`, `client.ts` and `schema/index.ts` carry Next.js's `server-only` marker; the environment parser remains separately testable and does not evaluate `DATABASE_URL` until database initialization is requested. No feature repository, request adapter, job or placeholder service was created.
 

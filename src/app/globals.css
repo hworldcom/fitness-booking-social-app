@@ -458,6 +458,11 @@ button {
 .wallet-button:hover {
   background: #eff4e4;
 }
+.wallet-button.connected {
+  border-color: #b9ca91;
+  background: #eff4e4;
+  color: #314326;
+}
 .demo-strip {
   display: flex;
   justify-content: center;
@@ -2032,6 +2037,60 @@ h1 {
   border-radius: 12px;
   padding: 23px;
   margin: 22px 0;
+}
+.wallet-state > strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.wallet-state > p:not(.dialog-copy, .wallet-error, .wallet-safety) {
+  color: #626c56;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.wallet-address {
+  display: grid;
+  gap: 4px;
+  margin: 18px 0 12px;
+}
+.wallet-address > span {
+  color: #626c56;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.wallet-address > strong {
+  font-size: 23px;
+  letter-spacing: -0.5px;
+}
+.wallet-address > code {
+  color: #626c56;
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+.wallet-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+.wallet-error {
+  color: #853d2a;
+  background: #fff0eb;
+  border: 1px solid #f1c7bb;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 14px 0;
+  padding: 10px 12px;
+}
+.wallet-safety {
+  color: #626c56;
+  font-size: 10px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  text-align: center;
 }
 .checkout-summary {
   border-top: 1px solid var(--line);

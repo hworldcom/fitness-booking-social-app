@@ -224,7 +224,7 @@ export function Profile({
               </h2>
               <LockKeyhole size={15} />
             </div>
-            <Pill tone="amber">Sample balance · Wallet not connected</Pill>
+            <Pill tone="amber">Sample balance · Not live</Pill>
             <p>Available test EURC</p>
             <strong className="balance-amount">€40.00</strong>
             <div className="balance-secondary">

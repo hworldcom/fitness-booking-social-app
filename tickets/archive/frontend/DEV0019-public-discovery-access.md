@@ -5,7 +5,7 @@
 - Last updated: 2026-09-19
 - Milestone: Product contract / M0 authentication and catalogue planning
 - Coordination: None — independent development ticket
-- Related tickets: [DEV0016 — Authentication](../../current/backend/DEV0016-phantom-auth-and-demo-access.md), [DEV0017 — Persistent catalogue](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0015 — Database foundation](../backend/DEV0015-supabase-database-foundation.md)
+- Related tickets: [COR0002 — Authentication and access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016; [DEV0017 — Persistent catalogue](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md); [DEV0015 — Database foundation](../backend/DEV0015-supabase-database-foundation.md)
 
 ## Objective and context
 
@@ -48,7 +48,7 @@ The existing frontend routes already render without authentication. The gap was 
 
 - [Specification](../../../docs/mvp-spec.md#public-browsing-and-sign-in-boundaries): added C17, public listing/detail scope, sign-in boundaries and return behavior; aligned server/SQL access, demo-run checks and social privacy. Added definition-of-done item 15 and A54–A55 for guests and private-data protection. Public catalogue visibility does not grant challenge entry or reveal restricted content.
 - [DEV0015](../backend/DEV0015-supabase-database-foundation.md): linked the future restricted guest read path while retaining private default-deny access.
-- [DEV0016](../../current/backend/DEV0016-phantom-auth-and-demo-access.md): specified route/action-scoped login, safe internal return destinations, no automatic booking/payment after login, and anonymous/expired-session tests.
+- [COR0002](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016: preserves route/action-scoped login, safe internal return destinations, no automatic booking/payment after login, and anonymous/expired-session tests across its direct tickets.
 - [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md): replaced authenticated-only catalogue reads with public safe projections, separate private overlays, scoped read-only SQL access and anonymous browser/database/cache checks.
 - [Ticket index](../../README.md#ticket-index): records this completed contract update. Future implementation tickets remain Draft; completed historical records were preserved.
 

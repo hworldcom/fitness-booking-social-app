@@ -317,7 +317,8 @@ test("keyboard dialog focus and blocked/corrupt storage recover gracefully", asy
   ).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.locator("#main-content")).toBeFocused();
-  const wallet = page.getByRole("button", { name: "Wallet preview" });
+  const wallet = page.getByRole("button", { name: "Connect Phantom wallet" });
+  await expect(wallet).toBeEnabled();
   await wallet.focus();
   await page.keyboard.press("Enter");
   await expect(
@@ -328,7 +329,7 @@ test("keyboard dialog focus and blocked/corrupt storage recover gracefully", asy
   ).toBeFocused();
   await page.keyboard.press("Shift+Tab");
   await expect(
-    page.getByRole("button", { name: "See the sample balance" }),
+    page.getByRole("link", { name: "Get Phantom from the official site" }),
   ).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(wallet).toBeFocused();

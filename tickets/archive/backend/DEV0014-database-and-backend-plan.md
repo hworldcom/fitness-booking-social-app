@@ -49,7 +49,7 @@ The frontend currently uses seeded identities/catalogue and browser-local drafts
 
 - [Specification, section 5](../../../docs/mvp-spec.md#5-architecture-and-storage): added the provider/cost assessment, Auth and server/SQL access boundaries, staged record groups, one SQL migration history, seed/environment rules and implementation order. Existing financial authority and product decisions are preserved; the recommendation is not recorded as a new confirmed user decision.
 - [DEV0015](DEV0015-supabase-database-foundation.md): scoped local database tooling, base schema, restricted roles, migrations and reproducible seeds.
-- [DEV0016](../../current/backend/DEV0016-phantom-auth-and-demo-access.md): scoped real Phantom login validation, verified profiles/run access, wallet separation and protected queries.
+- [COR0002](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016: coordinates fresh tickets for real Phantom login validation, verified profiles/run access, wallet separation and protected queries.
 - [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md): scoped the first shared catalogue/private-draft checkpoint, with cross-user denial and honest preview/error states.
 - [DEV0018](../../current/backend/DEV0018-membership-booking-and-visits.md): scoped atomic membership booking, authorized staff confirmation and shared activity; P07 remains a prerequisite. Paid passes/event tickets and challenge program work remain separate later slices.
 - [Ticket index](../../README.md#ticket-index) and [project README](../../../README.md#planned-backend-work): added navigation/status without copying the architecture into a second plan or inventing setup commands.

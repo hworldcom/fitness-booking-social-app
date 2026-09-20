@@ -117,10 +117,10 @@ export function HowItWorksScreen() {
         <details>
           <summary>Do I need a wallet?</summary>
           <p>
-            You can browse without one. The planned demo uses Phantom for
-            sign-in and Solana Devnet transactions with test EURC. Signing in
-            proves ownership; each payment needs its own approval. Wallet
-            sign-in and payments are not connected in this preview.
+            You can browse without one. The demo uses Phantom for a public
+            wallet connection and later Solana Devnet transactions with test
+            EURC. RepX Club sign-in and payments are not connected yet; each
+            future signature will need its own approval.
           </p>
         </details>
         <details>

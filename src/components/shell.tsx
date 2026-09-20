@@ -11,12 +11,15 @@ import {
   MapPin,
   Search,
   ArrowUpRight,
-  Wallet,
   Info,
   ArrowRight,
   CircleHelp,
 } from "lucide-react";
 import { Avatar, Brand, Modal, Pill } from "./ui";
+import {
+  WalletConnectionPanel,
+  WalletStatusButton,
+} from "@/solana/client/wallet-connection";
 
 const navigation = [
   { label: "Feed", href: "/", Icon: Activity },
@@ -139,14 +142,7 @@ export function Shell({
               <CircleHelp size={17} aria-hidden="true" />
               <span>How it works</span>
             </Link>
-            <button
-              className="wallet-button"
-              aria-label="Wallet preview"
-              onClick={() => setModal("wallet")}
-            >
-              <Wallet size={17} />
-              <span>Wallet preview</span>
-            </button>
+            <WalletStatusButton onOpen={() => setModal("wallet")} />
             <Link
               href="/profile"
               className="header-avatar"
@@ -203,32 +199,7 @@ export function Shell({
           onClose={() => setModal(null)}
         >
           {modal === "wallet" ? (
-            <>
-              <div className="wallet-illustration">
-                <Wallet size={38} strokeWidth={1.2} />
-                <Pill tone="lime">EURC only</Pill>
-              </div>
-              <p className="dialog-copy">
-                RepX Club will connect to your Phantom wallet on Solana Devnet
-                for passes, challenge entries and payouts.
-              </p>
-              <div className="notice">
-                <strong>No wallet is connected in this preview.</strong>
-                <p>
-                  Balances are examples. No signing requests, payments or
-                  onchain actions are available yet.
-                </p>
-              </div>
-              <button
-                className="button dark full"
-                onClick={() => {
-                  setModal(null);
-                  router.push("/profile");
-                }}
-              >
-                See the sample balance <ArrowRight size={17} />
-              </button>
-            </>
+            <WalletConnectionPanel />
           ) : (
             <>
               <p className="dialog-copy">

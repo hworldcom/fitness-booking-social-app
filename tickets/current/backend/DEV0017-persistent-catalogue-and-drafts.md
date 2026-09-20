@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M0 shared app data
 - Coordination: None — independent development ticket
-- Related tickets: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0016](DEV0016-phantom-auth-and-demo-access.md); precedes [DEV0018](DEV0018-membership-booking-and-visits.md)
+- Related tickets: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0038](DEV0038-phantom-supabase-web3-authentication.md), [DEV0039](DEV0039-prepared-identity-and-wallet-bindings.md), and [DEV0040](DEV0040-protected-access-and-database-context.md) under [COR0002](../organisatory/COR0002-phantom-auth-and-demo-access.md); precedes [DEV0018](DEV0018-membership-booking-and-visits.md)
 
 ## Objective and context
 
@@ -26,7 +26,7 @@ SQL rows distinguish local/seeded examples and off-chain drafts from future veri
 
 ## Assumptions, decisions, and dependencies
 
-Private reads and mutations require verified session/run context from DEV0016; public discovery uses its own restricted server read path under C17. DEV0015 provides the connection and Drizzle table mappings but no catalogue repository. This ticket owns the first public catalogue/profile and private draft/follow/bookmark repository methods plus the services that map their raw rows into `src/domain` or explicit response contracts. Use those server-side services and existing components rather than client Data API writes. Catalogue prices become exact base-unit strings at the server boundary while UI formatting stays familiar. Draft past dates are allowed for planning; real publication will validate future time and resolved policy separately. Seeding examples must never populate funded/payment states. Do not build a draft-import feature unless separately requested.
+Private reads and mutations require the verified session/identity/run context delivered by DEV0038–DEV0040; public discovery uses its own restricted server read path under C17. DEV0015 provides the connection and Drizzle table mappings but no catalogue repository. This ticket owns the first public catalogue/profile and private draft/follow/bookmark repository methods plus the services that map their raw rows into `src/domain` or explicit response contracts. Use those server-side services and existing components rather than client Data API writes. Catalogue prices become exact base-unit strings at the server boundary while UI formatting stays familiar. Draft past dates are allowed for planning; real publication will validate future time and resolved policy separately. Seeding examples must never populate funded/payment states. Do not build a draft-import feature unless separately requested.
 
 ## Implementation plan
 

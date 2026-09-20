@@ -43,6 +43,7 @@ test("source imports respect domain, client, server and feature boundaries", () 
   const preview = path.join(features, "preview");
   const server = path.join(src, "server");
   const database = path.join(server, "db");
+  const solanaClient = path.join(src, "solana", "client");
   const violations: string[] = [];
 
   for (const file of sourceFiles(src)) {
@@ -116,6 +117,12 @@ test("source imports respect domain, client, server and feature boundaries", () 
       if (within(file, server) && within(target, preview)) {
         violations.push(
           `${relativeFile} imports preview-only data via ${specifier}`,
+        );
+      }
+
+      if (within(file, solanaClient) && within(target, server)) {
+        violations.push(
+          `${relativeFile} imports trusted server code via ${specifier}`,
         );
       }
     }
