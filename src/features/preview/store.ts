@@ -6,7 +6,7 @@ import {
   reduceDemo,
   type DemoAction,
   type DemoState,
-} from "./demo";
+} from "./state";
 
 const KEY = "repx-club-preview-v1";
 type StoreSnapshot = { state: DemoState; storageUnavailable: boolean };
@@ -16,6 +16,7 @@ const INITIAL_SNAPSHOT: StoreSnapshot = {
 };
 let snapshot: StoreSnapshot | undefined;
 const listeners = new Set<() => void>();
+
 function getSnapshot() {
   if (!snapshot) {
     try {
@@ -29,7 +30,9 @@ function getSnapshot() {
   }
   return snapshot;
 }
+
 const serverSnapshot = () => INITIAL_SNAPSHOT;
+
 function subscribe(listener: () => void) {
   listeners.add(listener);
   const onStorage = (event: StorageEvent) => {
@@ -44,6 +47,7 @@ function subscribe(listener: () => void) {
     window.removeEventListener("storage", onStorage);
   };
 }
+
 export function dispatch(action: DemoAction) {
   const state = reduceDemo(getSnapshot().state, action);
   let storageUnavailable = false;
@@ -55,6 +59,7 @@ export function dispatch(action: DemoAction) {
   snapshot = { state, storageUnavailable };
   listeners.forEach((listener) => listener());
 }
+
 export function useDemo() {
   const current = useSyncExternalStore(subscribe, getSnapshot, serverSnapshot);
   return { ...current, dispatch };

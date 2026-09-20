@@ -22,15 +22,18 @@ import {
 } from "lucide-react";
 import {
   discoverChallenges,
-  challengeDate,
   type ChallengeSort,
-} from "@/lib/discovery";
-import type { ActivityFilter } from "@/lib/explore";
+  type DraftInput,
+  validateDraft,
+} from "@/domain/challenges";
+import { relatedActivities, type ActivityFilter } from "@/domain/discovery";
 import { ActivityControl } from "@/components/discovery-filters";
 import { CopyLink, RelatedActivities } from "@/components/discovery-extras";
-import { challenges, formatEurc, type ClubChallenge } from "@/lib/fixtures";
-import { type DraftInput, validateDraft } from "@/lib/demo";
-import { useDemo } from "@/lib/store";
+import type { ClubChallenge } from "@/domain/catalogue";
+import { challengeDate, formatEurc } from "@/components/format";
+import { challenges } from "@/features/preview/catalogue";
+import { previewDiscoveryCatalogue } from "@/features/preview/discovery";
+import { useDemo } from "@/features/preview/store";
 import {
   Artwork,
   AvatarStack,
@@ -57,7 +60,7 @@ export function ChallengeList({
   const [query, setQuery] = useState(initialQuery);
   const [activity, setActivity] = useState<ActivityFilter>("all");
   const [sort, setSort] = useState<ChallengeSort>("starting");
-  const { state } = useDemo();
+  const { state, dispatch } = useDemo();
   const visible = discoverChallenges(
     filter === "Saved"
       ? challenges.filter((c) => state.saved.includes(c.id))
@@ -175,7 +178,14 @@ export function ChallengeList({
           </div>
           <div className="challenge-grid">
             {visible.map((challenge) => (
-              <ChallengeCard key={challenge.id} challenge={challenge} />
+              <ChallengeCard
+                key={challenge.id}
+                challenge={challenge}
+                saved={state.saved.includes(challenge.id)}
+                onToggleSaved={() =>
+                  dispatch({ type: "save", id: challenge.id })
+                }
+              />
             ))}
           </div>
           {!visible.length && (
@@ -416,9 +426,13 @@ export function ChallengeDetail({ challenge }: { challenge: ClubChallenge }) {
             </div>
           </details>
           <RelatedActivities
-            activity={challenge.discipline}
-            path={`/challenges/${challenge.id}`}
-            venueId={challenge.venueId}
+            items={relatedActivities(
+              previewDiscoveryCatalogue,
+              challenge.discipline,
+              `/challenges/${challenge.id}`,
+              challenge.venueId,
+            )}
+            venueRelated={Boolean(challenge.venueId)}
           />
         </div>
         <aside className="detail-aside">

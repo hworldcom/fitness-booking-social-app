@@ -12,8 +12,8 @@ import {
   Footprints,
   Flag,
 } from "lucide-react";
-import { classes, people, challenges } from "@/lib/fixtures";
-import { useDemo } from "@/lib/store";
+import { challenges, classes, people } from "@/features/preview/catalogue";
+import { useDemo } from "@/features/preview/store";
 import {
   Avatar,
   ChallengeCard,
@@ -79,7 +79,12 @@ export function Profile({
         <SectionTitle title="Something to try together" href="/challenges" />
         <div className="challenge-grid">
           {challenges.slice(0, 2).map((c) => (
-            <ChallengeCard key={c.id} challenge={c} />
+            <ChallengeCard
+              key={c.id}
+              challenge={c}
+              saved={state.saved.includes(c.id)}
+              onToggleSaved={() => dispatch({ type: "save", id: c.id })}
+            />
           ))}
         </div>
       </>

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ArrowUpRight, Search } from "lucide-react";
-import { searchCatalogue } from "@/lib/discovery";
+import { searchCatalogue } from "@/features/discovery/queries";
+import { previewDiscoveryCatalogue } from "@/features/preview/discovery";
 
 export function SearchScreen({ query }: { query: string }) {
-  const results = searchCatalogue(query);
+  const results = searchCatalogue(previewDiscoveryCatalogue, query);
   return (
     <>
       <div className="page-heading">

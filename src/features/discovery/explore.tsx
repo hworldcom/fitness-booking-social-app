@@ -11,19 +11,11 @@ import {
   Coffee,
   X,
 } from "lucide-react";
-import {
-  classes,
-  studios,
-  formatEurc,
-  type ClubClass,
-  type ClubStudio,
-} from "@/lib/fixtures";
-import {
-  filterClasses,
-  filterStudios,
-  type ActivityFilter,
-  type TimeFilter,
-} from "@/lib/explore";
+import { classes, studios, events } from "@/features/preview/catalogue";
+import type { ClubClass, ClubStudio } from "@/domain/catalogue";
+import { formatEurc } from "@/components/format";
+import { filterClasses, filterStudios } from "@/features/discovery/filters";
+import type { ActivityFilter, TimeFilter } from "@/domain/discovery";
 import { Artwork, Empty, Modal, Pill } from "@/components/ui";
 
 import {
@@ -31,7 +23,6 @@ import {
   ScheduleControls,
 } from "@/components/discovery-filters";
 import { EventList } from "@/features/discovery/event-list";
-import { events } from "@/lib/events";
 
 export type ExploreView = "classes" | "events" | "studios";
 const views: ExploreView[] = ["classes", "events", "studios"];

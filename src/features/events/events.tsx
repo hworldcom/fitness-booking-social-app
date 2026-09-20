@@ -14,15 +14,16 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import { formatEurc } from "@/lib/fixtures";
 import {
-  eventDate,
   eventFromDraft,
   validateEventDraft,
   type ClubEvent,
   type EventDraftInput,
-} from "@/lib/events";
-import { useDemo } from "@/lib/store";
+} from "@/domain/events";
+import { relatedActivities } from "@/domain/discovery";
+import { eventDate, formatEurc } from "@/components/format";
+import { previewDiscoveryCatalogue } from "@/features/preview/discovery";
+import { useDemo } from "@/features/preview/store";
 import { Artwork, Empty, Modal, Pill } from "@/components/ui";
 import { CopyLink, RelatedActivities } from "@/components/discovery-extras";
 
@@ -188,8 +189,11 @@ export function EventDetail({
       </div>
       {!draft && (
         <RelatedActivities
-          activity={event.discipline}
-          path={`/events/${event.id}`}
+          items={relatedActivities(
+            previewDiscoveryCatalogue,
+            event.discipline,
+            `/events/${event.id}`,
+          )}
         />
       )}
       {dialog === "ticket" && (

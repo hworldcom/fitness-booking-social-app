@@ -76,9 +76,9 @@ Domain tests cover validation, local booking transitions, sharing privacy and st
 
 - `src/app/`: thin Next.js App Router adapters, shared layout and visual styles.
 - `src/features/`: capability-owned Feed, Explore/discovery, challenge, event, class and profile screens.
-- `src/components/`: application shell and reusable accessible interface/discovery controls.
-- `src/lib/fixtures.ts`: typed demonstration catalogue; never live inventory or payment proof.
-- `src/lib/demo.ts` and `src/lib/store.ts`: validated local state transitions and browser persistence under `repx-club-preview-v1`; never an authorization or financial ledger.
+- `src/domain/`: framework-independent catalogue/event contracts and deterministic challenge/discovery rules; no browser, network or persistence authority.
+- `src/features/preview/`: typed demonstration catalogue, derived discovery data, validated local state transitions and browser persistence under `repx-club-preview-v1`; never live inventory, authorization, payment proof or a financial ledger.
+- `src/components/`: application shell, presentation formatting and reusable accessible interface/discovery controls.
 - `tests/`: domain checks and Playwright browser flows.
 - `public/`: local branding and artwork. The running-club image was generated for RepX Club on 19 September 2026 using OpenAI image generation and exported as WebP. Its people and setting are illustrative. Other graphics are CSS/SVG with Lucide icons. Manrope is self-hosted through Fontsource; the app does not fetch external fonts or stock imagery.
 

@@ -4,10 +4,9 @@ import {
   INITIAL_STATE,
   parseDemo,
   reduceDemo,
-  validateDraft,
   visibleBookings,
-  type DraftInput,
-} from "../src/lib/demo";
+} from "../src/features/preview/state";
+import { validateDraft, type DraftInput } from "../src/domain/challenges";
 
 const input: DraftInput = {
   title: "Lunch break movement",

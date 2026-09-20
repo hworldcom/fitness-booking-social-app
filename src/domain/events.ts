@@ -1,4 +1,4 @@
-import type { Discipline } from "./fixtures";
+import type { Discipline } from "./catalogue";
 
 export type ClubEvent = {
   id: string;
@@ -15,25 +15,6 @@ export type ClubEvent = {
   price: number;
 };
 
-export const events: ClubEvent[] = [
-  {
-    id: "run-and-coffee",
-    title: "Run & Coffee",
-    host: "Sunday Coffee",
-    location: "Meet outside Sunday Coffee · Kreuzberg, Berlin",
-    description:
-      "An easy-paced 5K with your neighbours, followed by a coffee together. Meet at the café at 09:00; we’ll run as a group and return for a relaxed catch-up. All paces welcome.",
-    included:
-      "One guided social 5K run and one regular coffee afterwards, per ticket. Choose an espresso, americano or filter coffee at the café. Extras are not included.",
-    discipline: "Running",
-    dateISO: "2026-09-27",
-    time: "09:00",
-    duration: 90,
-    capacity: 12,
-    price: 2,
-  },
-];
-
 export type EventDraftInput = {
   title: string;
   host: string;
@@ -47,6 +28,7 @@ export type EventDraftInput = {
   capacity: string;
   price: string;
 };
+
 export type EventDraft = EventDraftInput & { id: string; createdAt: string };
 
 export function validateEventDraft(input: EventDraftInput) {
@@ -127,14 +109,4 @@ export function eventFromDraft(draft: EventDraft): ClubEvent {
     duration: Number(draft.duration),
     capacity: Number(draft.capacity),
   };
-}
-
-export function eventDate(dateISO: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${dateISO}T12:00:00Z`));
 }

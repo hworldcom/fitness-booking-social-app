@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { challenges } from "@/lib/fixtures";
+import { challenges } from "@/features/preview/catalogue";
 import { ChallengeDetail, DraftDetail } from "@/features/challenges/challenges";
 export default async function Page({
   params,

@@ -12,9 +12,9 @@ import {
   EyeOff,
   Footprints,
 } from "lucide-react";
-import { challenges, classes, people } from "@/lib/fixtures";
-import { useDemo } from "@/lib/store";
-import { visibleBookings } from "@/lib/demo";
+import { challenges, classes, people } from "@/features/preview/catalogue";
+import { visibleBookings } from "@/features/preview/state";
+import { useDemo } from "@/features/preview/store";
 import {
   Avatar,
   AvatarStack,
@@ -243,7 +243,14 @@ export function Feed() {
           <SectionTitle title="A little extra motivation" href="/challenges" />
           <div className="two-card-grid">
             {challenges.slice(1).map((challenge) => (
-              <ChallengeCard key={challenge.id} challenge={challenge} />
+              <ChallengeCard
+                key={challenge.id}
+                challenge={challenge}
+                saved={state.saved.includes(challenge.id)}
+                onToggleSaved={() =>
+                  dispatch({ type: "save", id: challenge.id })
+                }
+              />
             ))}
           </div>
         </div>

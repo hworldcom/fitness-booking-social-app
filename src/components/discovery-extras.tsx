@@ -2,8 +2,7 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check, Link2 } from "lucide-react";
-import { relatedActivities } from "@/lib/discovery";
-import type { Discipline } from "@/lib/fixtures";
+import type { DiscoveryItem } from "@/domain/discovery";
 
 export function CopyLink({ path }: { path: string }) {
   const [status, setStatus] = useState<"idle" | "copied" | "manual">("idle");
@@ -49,21 +48,18 @@ export function CopyLink({ path }: { path: string }) {
 }
 
 export function RelatedActivities({
-  activity,
-  path,
-  venueId,
+  items,
+  venueRelated = false,
 }: {
-  activity: Discipline;
-  path: string;
-  venueId?: string;
+  items: readonly DiscoveryItem[];
+  venueRelated?: boolean;
 }) {
-  const related = relatedActivities(activity, path, venueId);
-  if (!related.length) return null;
+  if (!items.length) return null;
   return (
     <section className="detail-section related-activities">
-      <h2>{venueId ? "More at this studio" : "Keep moving together"}</h2>
+      <h2>{venueRelated ? "More at this studio" : "Keep moving together"}</h2>
       <p className="small-copy">Related activities in our demo catalogue.</p>
-      {related.map((item) => (
+      {items.map((item) => (
         <Link className="discovery-result" href={item.href} key={item.href}>
           <span>
             <small>

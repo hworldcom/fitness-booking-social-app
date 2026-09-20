@@ -1,31 +1,6 @@
-export type Discipline = "Running" | "Strength" | "Muay Thai" | "Yoga";
-export type ChallengeMode = "community" | "sponsored";
-export type ClubChallenge = {
-  id: string;
-  title: string;
-  description: string;
-  discipline: Discipline;
-  mode: ChallengeMode;
-  organizer: string;
-  entry: number;
-  prize: number;
-  participants: number;
-  capacity: number;
-  date: string;
-  startDate: string;
-  endDate: string;
-  createdAt: string;
-  venueId?: string;
-  duration: string;
-  artwork: "run" | "strength" | "flow";
-  rules: string;
-  award?: {
-    summary: string;
-    criteria: string;
-    selection: string;
-    prize: string;
-  };
-};
+import type { ClubChallenge, ClubClass, ClubStudio } from "@/domain/catalogue";
+import type { ClubEvent } from "@/domain/events";
+
 export const challenges: ClubChallenge[] = [
   {
     id: "before-coffee",
@@ -101,25 +76,7 @@ export const challenges: ClubChallenge[] = [
       "Complete five movement or yoga sessions and share a short reflection with your group. Participants vote at the end.",
   },
 ];
-export type ClubClass = {
-  id: string;
-  title: string;
-  gym: string;
-  gymId: string;
-  area: string;
-  trainer: string;
-  discipline: Discipline;
-  day: string;
-  date: string;
-  time: string;
-  dateISO: string;
-  duration: number;
-  price: number;
-  spots: number;
-  membership: boolean;
-  description: string;
-  artwork: "fight" | "strength" | "flow";
-};
+
 export const classes: ClubClass[] = [
   {
     id: "muay-thai",
@@ -182,15 +139,6 @@ export const classes: ClubClass[] = [
       "Slow down and find your rhythm. Gentle movement, spacious breathing and a long stretch to send you into the new week feeling grounded.",
   },
 ];
-export type ClubStudio = {
-  id: string;
-  name: string;
-  area: string;
-  activities: Discipline[];
-  coaches: string[];
-  description: string;
-  artwork: ClubClass["artwork"];
-};
 
 export const studios: ClubStudio[] = [
   {
@@ -248,9 +196,22 @@ export const people = [
     color: "blue",
   },
 ];
-export const formatEurc = (value: number) =>
-  new Intl.NumberFormat("en-IE", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 2,
-  }).format(value);
+
+export const events: ClubEvent[] = [
+  {
+    id: "run-and-coffee",
+    title: "Run & Coffee",
+    host: "Sunday Coffee",
+    location: "Meet outside Sunday Coffee · Kreuzberg, Berlin",
+    description:
+      "An easy-paced 5K with your neighbours, followed by a coffee together. Meet at the café at 09:00; we’ll run as a group and return for a relaxed catch-up. All paces welcome.",
+    included:
+      "One guided social 5K run and one regular coffee afterwards, per ticket. Choose an espresso, americano or filter coffee at the café. Extras are not included.",
+    discipline: "Running",
+    dateISO: "2026-09-27",
+    time: "09:00",
+    duration: 90,
+    capacity: 12,
+    price: 2,
+  },
+];

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/manrope";
 import "./globals.css";
-import { Shell } from "@/components/shell";
+import { PreviewShell } from "@/features/preview/preview-shell";
 
 export const metadata: Metadata = {
   title: {
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Shell>{children}</Shell>
+        <PreviewShell>{children}</PreviewShell>
       </body>
     </html>
   );

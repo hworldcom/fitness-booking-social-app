@@ -1,11 +1,11 @@
 # Ticket DEV0031: Preview data and domain boundaries
 
-- Status: Ready
+- Status: Completed
 - Created: 2026-09-20
 - Last updated: 2026-09-20
 - Milestone: Cross-cutting application foundation
-- Coordination: [COR0001 — Project structure](../organisatory/COR0001-project-structure.md)
-- Related records: direct peer development ticket tracked by [Coordination COR0001 — Project structure](../organisatory/COR0001-project-structure.md); follows completed peer [DEV0030 — Frontend screen module boundaries](../../archive/frontend/DEV0030-frontend-screen-module-boundaries.md); prepares clean contracts for [DEV0015 — Database foundation](../backend/DEV0015-supabase-database-foundation.md) and [DEV0017 — Persistent catalogue and drafts](../backend/DEV0017-persistent-catalogue-and-drafts.md)
+- Coordination: [COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md)
+- Related records: direct peer development ticket tracked by [Coordination COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md); follows completed peer [DEV0030 — Frontend screen module boundaries](DEV0030-frontend-screen-module-boundaries.md); prepares clean contracts for [DEV0015 — Database foundation](../../current/backend/DEV0015-supabase-database-foundation.md) and [DEV0017 — Persistent catalogue and drafts](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md)
 
 ## Objective and context
 
@@ -74,12 +74,12 @@ After every importer moves, delete all six former modules under `src/lib`; do no
 
 ## Acceptance criteria
 
-- [ ] AC1: Every former `src/lib` export has the owner and contract recorded in the planned map; all source/test imports use those owners; `src/lib` and compatibility re-exports no longer exist.
-- [ ] AC2: `src/domain` contains only framework-independent contracts and pure deterministic rules. Automated import and restricted-global checks reject framework, component, feature, preview, server, browser and network dependencies from this boundary.
-- [ ] AC3: Seeded records and browser storage live under `src/features/preview` and retain every value and ID, serialized version `1`, the `repx-club-preview-v1` key, corruption recovery, server snapshot, same/cross-tab subscription behavior, memory fallback and reset behavior.
-- [ ] AC4: Discovery filters/search and shared related-item selection receive their collections explicitly and preserve current Unicode query normalization, all-term matching, blank-query behavior, activity/date/time boundaries, sorting, related-result semantics and exclusion of private drafts.
-- [ ] AC5: Shared components import no feature module. Feed, Profile, Challenge, Event and root-layout composition supply preview state/data through the documented props/adapters, with no feature-to-feature import other than the explicit preview adapter exception and no moved DEV0030 screen.
-- [ ] AC6: Existing unit and browser behavior, lint, typecheck, formatting and a production build pass. The implementation record documents every affected file, signature change, boundary rule, command result and material limitation.
+- [x] AC1: Every former `src/lib` export has the owner and contract recorded in the planned map; all source/test imports use those owners; `src/lib` and compatibility re-exports no longer exist.
+- [x] AC2: `src/domain` contains only framework-independent contracts and pure deterministic rules. Automated import and restricted-global checks reject framework, component, feature, preview, server, browser and network dependencies from this boundary.
+- [x] AC3: Seeded records and browser storage live under `src/features/preview` and retain every value and ID, serialized version `1`, the `repx-club-preview-v1` key, corruption recovery, server snapshot, same/cross-tab subscription behavior, memory fallback and reset behavior.
+- [x] AC4: Discovery filters/search and shared related-item selection receive their collections explicitly and preserve current Unicode query normalization, all-term matching, blank-query behavior, activity/date/time boundaries, sorting, related-result semantics and exclusion of private drafts.
+- [x] AC5: Shared components import no feature module. Feed, Profile, Challenge, Event and root-layout composition supply preview state/data through the documented props/adapters, with no feature-to-feature import other than the explicit preview adapter exception and no moved DEV0030 screen.
+- [x] AC6: Existing unit and browser behavior, lint, typecheck, formatting and a production build pass. The implementation record documents every affected file, signature change, boundary rule, command result and material limitation.
 
 ## Validation plan
 
@@ -91,24 +91,45 @@ Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run format:check`, `np
 
 ## Implementation record
 
-Planning created from COR0001's reviewed inventory. [DEV0036](../../archive/organisatory/DEV0036-explicit-architecture-boundaries.md) later clarified that this ticket owns the exact `src/lib` move while `src/domain` becomes a shared authority-free dependency rather than a frontend runtime layer. Completed DEV0030 remains unchanged.
+Planning created from COR0001's reviewed inventory. [DEV0036](../organisatory/DEV0036-explicit-architecture-boundaries.md) clarified that this ticket owns the exact `src/lib` move while `src/domain` becomes a shared authority-free dependency rather than a frontend runtime layer. Completed DEV0030 remains unchanged.
 
-The readiness review on 2026-09-20 inventoried every current `src/lib` export and importer, resolved the preview-reducer/fixture coupling, assigned presentation formatting, made discovery data injection explicit, and specified how shared components stop importing preview or discovery features. It also chose atomic removal of `src/lib` and concrete automated boundary enforcement. No source module, data, storage or runtime contract changed during planning. Replace this section with the delivered file map, contract changes, rationale and evidence when implementation begins.
+Implementation started on 2026-09-20 after DEV0036 was committed as `0ba2fa3`. The ticket moved from Ready to In progress with the planned file/export map, shared-component integration and boundary rules unchanged. The required pre-edit unit baseline passed before the first source move.
+
+### Delivered ownership and behavior
+
+- `src/domain/catalogue.ts` now owns the catalogue record shapes and literal unions. `src/domain/events.ts` owns event/draft contracts, validation and draft mapping. `src/domain/challenges.ts` owns challenge-draft validation and deterministic challenge discovery/sorting. `src/domain/discovery.ts` owns filter/result contracts and pure related-item selection. These modules import only other domain modules and perform no browser, network, persistence or framework work.
+- `src/features/preview/catalogue.ts` owns the three challenges, three classes, three studios, three people and one event in their original order with unchanged identifiers and values. `src/features/preview/discovery.ts` derives the same public search/related catalogue and continues excluding private drafts. `state.ts` owns the complete local reducer/parser contract; `store.ts` remains a client-only React/localStorage adapter; and `preview-shell.tsx` supplies the storage warning state to the shared shell.
+- `src/features/discovery/filters.ts` now owns class/studio/event filtering and `queries.ts` owns normalized public search. Both consume explicit collections. `src/components/format.ts` owns the unchanged currency/challenge/event presentation formatters. Discovery filter labels remain beside their controls.
+- `ChallengeCard`, `Shell` and `RelatedActivities` remain shared components but no longer acquire preview or feature state. Their feature/adapter owners pass saved state and callbacks, storage availability, and selected discovery records. Feed, Profile, Challenge, Event and root-layout composition were updated without moving any DEV0030 screen or changing public routes.
+- `tests/boundaries.test.ts` resolves relative and `@/` imports and rejects domain imports outside `src/domain`, shared-component imports from features/server, and feature imports from server or sibling capabilities other than the explicit Preview adapter. ESLint additionally rejects `window`, `document`, `navigator`, `localStorage`, `sessionStorage` and `fetch` globals in `src/domain`.
+- All six former `src/lib` files were removed after every source and test importer moved. The README and COR0001 now describe the delivered tree instead of the obsolete mixed boundary.
+
+### Contract changes and rationale
+
+`searchCatalogue` now accepts `(catalogue, query)` and `relatedActivities` accepts `(catalogue, activity, excludeHref, venueId?)`; this removes hidden fixture acquisition while retaining result order and matching semantics. `ChallengeCard` accepts `saved` and `onToggleSaved`, `Shell` accepts `storageUnavailable`, and `RelatedActivities` accepts selected `DiscoveryItem` records plus the presentation-only venue heading flag. `PreviewShell` is the root browser-state adapter.
+
+The serialized preview contract did not change: version remains `1`, the key remains `repx-club-preview-v1`, and initial state, legacy event-draft recovery, invalid-state fallback, membership booking guard, same-tab notification, cross-tab subscription, unavailable-storage fallback and reset values are unchanged. No dependency, environment variable, setup step, database shape, migration, wallet/program interface, public route or product behavior changed. Rollback is a source-level revert; there is no data migration.
+
+The implementation followed the planned map without a material change of approach. The only intentionally changed public TypeScript signatures are the explicit data/component inputs above. Later persistence work must map authoritative rows into these domain/view contracts and must not import preview fixtures or treat `DemoState` as a server contract.
 
 ## Validation results
 
-- **Readiness review — passed:** every current `src/lib` export and importer has a planned owner; shared-component integration, explicit discovery inputs, compatibility removal, boundary enforcement, implementation order and applicable checks are decided. DEV0030 is complete and downstream database work does not block starting.
-- **Planning structure — passed:** DEV0031 remains the unique record with this ID, is indexed as Ready at its current/frontend path, and all local Markdown targets from this ticket and the ticket index resolve.
-- **Formatting — passed:** Prettier accepted this ticket and the updated ticket index; `git diff --check` reported no whitespace errors in either file.
-- **Implementation checks — not run:** no `src/lib` file has moved or split, so AC1–AC6 and the planned application checks remain outstanding.
+- **Pre-edit unit baseline — passed:** `npm test` passed all 18 existing tests before the first source move. The suite covered challenge/event validation, local booking transitions, sharing/privacy, corrupted storage recovery, search/filter ordering and date/time boundaries.
+- **Unit and boundary suite — passed:** the permitted `npm test` rerun passed 19/19 checks after implementation. Existing assertions were retained under their new owners, and the added import-boundary test passed. The first sandboxed invocation was denied because `tsx` could not create its IPC socket (`EPERM`); no source failure occurred.
+- **Ownership/stale-import audit — passed:** `rg -n '@/lib/|src/lib' src tests` returned no matches; `src/lib` contains no files; the new domain, discovery, preview and formatter modules match the recorded export map. Seed counts and ID order remain 3 challenges, 3 classes, 3 studios, 3 people and 1 event, and existing state serialization/recovery assertions passed unchanged.
+- **Lint and types — passed:** `npm run lint` completed without errors or warnings, including the restricted `src/domain` globals; `npm run typecheck` generated route types and completed TypeScript checking.
+- **Formatting and diff hygiene — passed:** after formatting the moved modules and tests, `npm run format:check` passed and `git diff --check` reported no whitespace errors.
+- **Production build — passed with environment note:** the standard `npm run build` reached Turbopack but its CSS worker was denied permission to bind an internal local port (`EPERM`). The planned fallback `npm run build -- --webpack` compiled successfully, completed TypeScript and page-data collection, and generated all 14 application routes. The restricted Turbopack command is not reported as passing.
+- **Browser regression — passed:** `npm run test:e2e` passed all 28 Playwright scenarios in installed Chrome across desktop and mobile. It exercised primary/dynamic routes, saving/following, search and filters, related navigation, private challenge/event drafts, membership booking/cancellation/hiding, reset, keyboard dialogs, malformed and unavailable storage, responsive overflow checks and console-error checks.
+- **Record/tree consistency — passed:** README and COR0001 describe the delivered domain/discovery/preview split; the index contains 32 unique records—9 current and 23 archived—and lists DEV0031 once as Completed; all local Markdown targets resolve across 51 Markdown files after self-archive.
 
 ## Risks, limitations, and follow-ups
 
-Splitting mixed modules can create circular imports or unintentionally change serialized data. Follow the mapped dependency direction and compare behavior and fixture content rather than relying on typechecking alone. The shared-component prop changes touch several feature callers even though they must not change layout or behavior; validate each caller and the root shell. Later database tickets must map persisted records into the contracts instead of exposing Drizzle row types or replacing preview data silently.
+The standard Turbopack build remains unverified in this restricted environment because its internal worker cannot bind a local port; the successful webpack production build and complete production-server browser suite provide the runtime evidence. Preview fixtures and browser state remain intentionally non-authoritative. Later database tickets must map persisted records into the domain/view contracts instead of exposing Drizzle row types or replacing preview data silently.
 
 ## Completion and review references
 
-- Completed: Not completed.
-- Commit: Not created.
-- Review: Planning self-review only; no independent implementation review.
+- Completed: 2026-09-20 — pure domain, discovery and browser-only preview ownership is explicit; behavior and storage contracts are preserved.
+- Commit: This commit — `[DEV0031] Separate preview and domain boundaries`.
+- Review: Implementation self-review completed against AC1–AC6; no independent review or pull request.
 - Deployment or release: None.

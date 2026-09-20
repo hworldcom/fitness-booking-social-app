@@ -1,11 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { classes, studios } from "../src/lib/fixtures";
+import { classes, studios } from "../src/features/preview/catalogue";
 import {
   filterClasses,
   filterStudios,
-  type ClassFilters,
-} from "../src/lib/explore";
+} from "../src/features/discovery/filters";
+import type { ClassFilters } from "../src/domain/discovery";
 
 const all: ClassFilters = { activity: "all", date: "", time: "any" };
 test("class filters intersect activity, local date, time and global search", () => {

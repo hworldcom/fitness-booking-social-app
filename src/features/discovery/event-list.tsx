@@ -16,14 +16,11 @@ import {
   ScheduleControls,
 } from "@/components/discovery-filters";
 import { Artwork, Empty, Pill } from "@/components/ui";
-import { events, eventDate } from "@/lib/events";
-import {
-  filterEvents,
-  type ActivityFilter,
-  type TimeFilter,
-} from "@/lib/explore";
-import { formatEurc } from "@/lib/fixtures";
-import { useDemo } from "@/lib/store";
+import { eventDate, formatEurc } from "@/components/format";
+import type { ActivityFilter, TimeFilter } from "@/domain/discovery";
+import { filterEvents } from "@/features/discovery/filters";
+import { events } from "@/features/preview/catalogue";
+import { useDemo } from "@/features/preview/store";
 
 export function EventList({
   query,

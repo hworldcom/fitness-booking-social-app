@@ -12,8 +12,9 @@ import {
   ShieldCheck,
   EyeOff,
 } from "lucide-react";
-import { type ClubClass, formatEurc } from "@/lib/fixtures";
-import { useDemo } from "@/lib/store";
+import type { ClubClass } from "@/domain/catalogue";
+import { formatEurc } from "@/components/format";
+import { useDemo } from "@/features/preview/store";
 import { Artwork, Avatar, Modal, Pill } from "@/components/ui";
 
 export function ClassDetail({ session }: { session: ClubClass }) {

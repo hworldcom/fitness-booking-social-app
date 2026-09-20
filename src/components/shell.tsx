@@ -17,7 +17,6 @@ import {
   CircleHelp,
 } from "lucide-react";
 import { Avatar, Brand, Modal, Pill } from "./ui";
-import { useDemo } from "@/lib/store";
 
 const navigation = [
   { label: "Feed", href: "/", Icon: Activity },
@@ -25,11 +24,16 @@ const navigation = [
   { label: "Challenges", href: "/challenges", Icon: Flag },
   { label: "Profile", href: "/profile", Icon: UserRound },
 ];
-export function Shell({ children }: { children: ReactNode }) {
+export function Shell({
+  children,
+  storageUnavailable,
+}: {
+  children: ReactNode;
+  storageUnavailable: boolean;
+}) {
   const path = usePathname();
   const router = useRouter();
   const [modal, setModal] = useState<"wallet" | "about" | null>(null);
-  const { storageUnavailable } = useDemo();
   function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const value = String(new FormData(event.currentTarget).get("q") || "");

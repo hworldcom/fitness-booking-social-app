@@ -1,12 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { INITIAL_STATE, parseDemo, reduceDemo } from "../src/lib/demo";
 import {
-  events,
-  validateEventDraft,
-  type EventDraftInput,
-} from "../src/lib/events";
-import { filterEvents } from "../src/lib/explore";
+  INITIAL_STATE,
+  parseDemo,
+  reduceDemo,
+} from "../src/features/preview/state";
+import { validateEventDraft, type EventDraftInput } from "../src/domain/events";
+import { events } from "../src/features/preview/catalogue";
+import { filterEvents } from "../src/features/discovery/filters";
 
 const input: EventDraftInput = {
   title: "Run and coffee",

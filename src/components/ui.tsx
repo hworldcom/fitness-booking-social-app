@@ -14,9 +14,8 @@ import {
   Flower2,
   Footprints,
 } from "lucide-react";
-import { type ClubChallenge, formatEurc } from "@/lib/fixtures";
-import { useDemo } from "@/lib/store";
-import { challengeDate } from "@/lib/discovery";
+import type { ClubChallenge } from "@/domain/catalogue";
+import { challengeDate, formatEurc } from "./format";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -139,9 +138,15 @@ export function Artwork({
     </div>
   );
 }
-export function ChallengeCard({ challenge }: { challenge: ClubChallenge }) {
-  const { state, dispatch } = useDemo();
-  const saved = state.saved.includes(challenge.id);
+export function ChallengeCard({
+  challenge,
+  saved,
+  onToggleSaved,
+}: {
+  challenge: ClubChallenge;
+  saved: boolean;
+  onToggleSaved: () => void;
+}) {
   return (
     <article className="challenge-card">
       <div className="challenge-art">
@@ -165,7 +170,7 @@ export function ChallengeCard({ challenge }: { challenge: ClubChallenge }) {
           className={`save-button ${saved ? "selected" : ""}`}
           aria-label={`${saved ? "Unsave" : "Save"} ${challenge.title}`}
           aria-pressed={saved}
-          onClick={() => dispatch({ type: "save", id: challenge.id })}
+          onClick={onToggleSaved}
         >
           <Bookmark size={17} fill={saved ? "currentColor" : "none"} />
         </button>

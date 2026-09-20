@@ -1,22 +1,12 @@
-import type { ClubClass, ClubStudio, Discipline } from "./fixtures";
-import type { ClubEvent } from "./events";
+import type { ClubClass, ClubStudio } from "@/domain/catalogue";
+import type { ClubEvent } from "@/domain/events";
+import type {
+  ActivityFilter,
+  ClassFilters,
+  TimeFilter,
+} from "@/domain/discovery";
 
-export const ACTIVITIES: Discipline[] = [
-  "Muay Thai",
-  "Strength",
-  "Yoga",
-  "Running",
-];
-export type ActivityFilter = "all" | Discipline;
-export type TimeFilter = "any" | "morning" | "afternoon" | "evening";
-export const TIME_OPTIONS: { value: TimeFilter; label: string }[] = [
-  { value: "any", label: "Any time" },
-  { value: "morning", label: "Morning · before 12:00" },
-  { value: "afternoon", label: "Afternoon · 12:00–16:59" },
-  { value: "evening", label: "Evening · from 17:00" },
-];
 type ActivityQuery = { activity: ActivityFilter; query?: string };
-export type ClassFilters = ActivityQuery & { date: string; time: TimeFilter };
 
 function matchesTime(start: string, filter: TimeFilter) {
   switch (filter) {

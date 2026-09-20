@@ -1,11 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { challenges } from "../src/lib/fixtures";
-import {
-  discoverChallenges,
-  searchCatalogue,
-  relatedActivities,
-} from "../src/lib/discovery";
+import { discoverChallenges } from "../src/domain/challenges";
+import { relatedActivities } from "../src/domain/discovery";
+import { searchCatalogue } from "../src/features/discovery/queries";
+import { challenges } from "../src/features/preview/catalogue";
+import { previewDiscoveryCatalogue } from "../src/features/preview/discovery";
 
 test("challenge search intersects mode, activity and normalized words", () => {
   assert.deepEqual(
@@ -66,22 +65,32 @@ test("chronological sort crosses months/years and does not mutate the catalogue"
 
 test("public search covers every type, names with accents and multiword intersections", () => {
   assert.deepEqual(
-    new Set(searchCatalogue("yoga").map((x) => x.kind)),
+    new Set(
+      searchCatalogue(previewDiscoveryCatalogue, "yoga").map((x) => x.kind),
+    ),
     new Set(["Class", "Studio", "Challenge"]),
   );
   assert.deepEqual(
-    searchCatalogue("coffee").map((x) => x.kind),
+    searchCatalogue(previewDiscoveryCatalogue, "coffee").map((x) => x.kind),
     ["Event", "Challenge"],
   );
   assert.deepEqual(
-    searchCatalogue("mayá fabrik").map((x) => x.kind),
+    searchCatalogue(previewDiscoveryCatalogue, "mayá fabrik").map(
+      (x) => x.kind,
+    ),
     ["Class", "Studio"],
   );
-  assert.equal(searchCatalogue("yoga fabrik").length, 0);
-  assert.equal(searchCatalogue("   ").length, 0);
-  assert.equal(searchCatalogue("event-draft-private").length, 0);
+  assert.equal(
+    searchCatalogue(previewDiscoveryCatalogue, "yoga fabrik").length,
+    0,
+  );
+  assert.equal(searchCatalogue(previewDiscoveryCatalogue, "   ").length, 0);
+  assert.equal(
+    searchCatalogue(previewDiscoveryCatalogue, "event-draft-private").length,
+    0,
+  );
   assert.ok(
-    searchCatalogue("Fabrik").every(
+    searchCatalogue(previewDiscoveryCatalogue, "Fabrik").every(
       (x) => x.href.startsWith("/") && !x.href.includes("draft-"),
     ),
   );
@@ -89,17 +98,29 @@ test("public search covers every type, names with accents and multiword intersec
 
 test("related content excludes itself and prioritizes actual venue association", () => {
   assert.deepEqual(
-    relatedActivities("Strength", "/challenges/show-up-club", "fabrik").map(
-      (x) => x.href,
-    ),
+    relatedActivities(
+      previewDiscoveryCatalogue,
+      "Strength",
+      "/challenges/show-up-club",
+      "fabrik",
+    ).map((x) => x.href),
     ["/classes/strength"],
   );
   assert.deepEqual(
-    relatedActivities("Running", "/events/run-and-coffee").map((x) => x.href),
+    relatedActivities(
+      previewDiscoveryCatalogue,
+      "Running",
+      "/events/run-and-coffee",
+    ).map((x) => x.href),
     ["/challenges/before-coffee"],
   );
   assert.deepEqual(
-    relatedActivities("Yoga", "/challenges/find-your-flow", "unknown-venue"),
+    relatedActivities(
+      previewDiscoveryCatalogue,
+      "Yoga",
+      "/challenges/find-your-flow",
+      "unknown-venue",
+    ),
     [],
   );
 });
