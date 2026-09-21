@@ -3,39 +3,32 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Check, KeyRound, LogOut, ShieldCheck, Wallet } from "lucide-react";
 import {
-  useConnect,
-  useConnectedWallet,
-  useDisconnect,
-  useIsWalletReady,
-  useWalletStatus,
-  useWallets,
-} from "@solana/kit-plugin-wallet/react";
+  BadgeCheck,
+  Check,
+  KeyRound,
+  LogOut,
+  Mail,
+  ShieldCheck,
+  UserRound,
+  Wallet,
+} from "lucide-react";
 import { Pill } from "@/components/ui";
+import { isCanonicalSignInLocation, supabasePublicConfig } from "@/auth/config";
 import {
-  isCanonicalSignInLocation,
-  supabasePublicConfig,
-  WEB3_SIGN_IN_STATEMENT,
-} from "@/auth/config";
-import { walletSessionRelationship } from "@/auth/contracts";
-import { authenticationErrorMessage } from "@/auth/presentation";
-import { WalletAccountChangedError } from "@/auth/wallet-adapter";
-import { solanaAddressFromWeb3Identities } from "@/auth/web3-identity";
+  emailOtpErrorMessage,
+  normalizeEmail,
+  normalizeEmailOtp,
+} from "@/auth/email-otp";
+import { normalizeDisplayName } from "@/auth/identity-contracts";
 import { useActor } from "@/auth/client/actor-provider";
 import { browserAuthClient } from "@/auth/client/browser-client";
-import { enrollPreparedIdentity } from "@/auth/client/identity-client";
-import { phantomAuthWallet } from "@/auth/client/phantom-wallet";
+import {
+  completeApplicationProfile,
+  fetchCurrentIdentity,
+} from "@/auth/client/identity-client";
 import { useAuthSession } from "@/auth/client/session-provider";
 import type { ApplicationIdentitySnapshot } from "@/auth/identity-contracts";
-import {
-  PHANTOM_DOWNLOAD_URL,
-  walletClient,
-} from "@/solana/client/wallet-client";
-import {
-  shortenWalletAddress,
-  walletErrorMessage,
-} from "@/solana/client/wallet-presentation";
 
 const subscribeToHydration = () => () => {};
 
@@ -46,6 +39,8 @@ type IdentityResult = Readonly<{
   key: string;
   identity: ApplicationIdentitySnapshot;
 }>;
+
+type ActiveAction = "request-code" | "verify-code" | "profile" | "sign-out";
 
 export function SignInScreen({
   returnTo,
@@ -62,59 +57,51 @@ export function SignInScreen({
     () => true,
     () => false,
   );
-  const wallets = useWallets(walletClient);
-  const connected = useConnectedWallet(walletClient);
-  const walletReady = useIsWalletReady(walletClient);
-  const walletStatus = useWalletStatus(walletClient);
-  const connect = useConnect(walletClient);
-  const disconnect = useDisconnect(walletClient);
-  const [activeAction, setActiveAction] = useState<
-    "sign-in" | "sign-out" | null
-  >(null);
+  const config = supabasePublicConfig();
+  const canonicalLocation =
+    mounted && config
+      ? isCanonicalSignInLocation(config, window.location)
+      : false;
+  const [emailInput, setEmailInput] = useState("");
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [codeInput, setCodeInput] = useState("");
+  const [displayNameInput, setDisplayNameInput] = useState("");
+  const [activeAction, setActiveAction] = useState<ActiveAction | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [identityResult, setIdentityResult] = useState<IdentityResult | null>(
     null,
   );
   const actionLock = useRef(false);
-  const enrollmentKey = useRef<string | null>(null);
+  const identityRequestKey = useRef<string | null>(null);
   const actorRefreshKey = useRef<string | null>(null);
-  const config = supabasePublicConfig();
-  const address = mounted ? (connected?.account.address ?? null) : null;
-  const relationship = walletSessionRelationship(session, address);
   const identityKey =
     session.status === "signed-in"
-      ? `${session.subject}:${session.walletAddress}`
+      ? `${session.subject}:${session.expiresAt ?? "no-expiry"}`
       : null;
   const applicationIdentity: IdentityUiState = identityKey
     ? identityResult?.key === identityKey
       ? identityResult.identity
       : { status: "checking" }
     : { status: "idle" };
-  const connectError = walletErrorMessage(connect.error ?? disconnect.error);
-  const phantom = wallets[0];
-  const canonicalLocation =
-    mounted && config
-      ? isCanonicalSignInLocation(config, window.location)
-      : false;
 
   useEffect(() => {
     if (!identityKey) {
-      enrollmentKey.current = null;
+      identityRequestKey.current = null;
       actorRefreshKey.current = null;
       return;
     }
-    if (enrollmentKey.current === identityKey) return;
-    enrollmentKey.current = identityKey;
+    if (identityRequestKey.current === identityKey) return;
+    identityRequestKey.current = identityKey;
     let active = true;
-    void enrollPreparedIdentity().then((identity) => {
-      if (active && enrollmentKey.current === identityKey) {
+    void fetchCurrentIdentity().then((identity) => {
+      if (active && identityRequestKey.current === identityKey) {
         setIdentityResult({ key: identityKey, identity });
       }
     });
     return () => {
       active = false;
-      if (enrollmentKey.current === identityKey) {
-        enrollmentKey.current = null;
+      if (identityRequestKey.current === identityKey) {
+        identityRequestKey.current = null;
       }
     };
   }, [identityKey]);
@@ -140,71 +127,122 @@ export function SignInScreen({
     };
   }, [applicationIdentity.status, identityKey, refreshActor, returnTo, router]);
 
-  async function retryEnrollment() {
+  async function refreshIdentity() {
     if (!identityKey) return;
-    enrollmentKey.current = identityKey;
-    actorRefreshKey.current = null;
+    identityRequestKey.current = identityKey;
     setIdentityResult(null);
     setIdentityResult({
       key: identityKey,
-      identity: await enrollPreparedIdentity(),
+      identity: await fetchCurrentIdentity(),
     });
   }
 
-  async function signIn() {
-    if (actionLock.current || !address || !config || !canonicalLocation) return;
-
+  async function requestCode(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (actionLock.current || !config || !canonicalLocation) return;
+    const email = normalizeEmail(emailInput);
+    if (!email) {
+      setActionError("Enter a valid email address.");
+      return;
+    }
     const client = browserAuthClient();
     if (!client) return;
 
     actionLock.current = true;
-    setActiveAction("sign-in");
+    setActiveAction("request-code");
     setActionError(null);
-
     try {
-      const result = await client.auth.signInWithWeb3({
-        chain: "solana",
-        statement: WEB3_SIGN_IN_STATEMENT,
-        wallet: phantomAuthWallet(address),
-        options: { url: config.signInUrl },
+      const result = await client.auth.signInWithOtp({
+        email,
+        options: { shouldCreateUser: true },
       });
-
       if (result.error) throw result.error;
-      if (
-        walletClient.wallet.getState().connected?.account.address !== address
-      ) {
-        await client.auth.signOut({ scope: "local" });
-        throw new WalletAccountChangedError();
-      }
+      setPendingEmail(email);
+      setEmailInput(email);
+      setCodeInput("");
+    } catch (error) {
+      setActionError(emailOtpErrorMessage(error, "request"));
+    } finally {
+      actionLock.current = false;
+      setActiveAction(null);
+    }
+  }
 
-      const authenticatedAddress = solanaAddressFromWeb3Identities(
-        result.data.user.identities,
-      );
-      if (authenticatedAddress !== address) {
-        await client.auth.signOut({ scope: "local" });
-        throw new Error(
-          "The verified signature identity does not match the selected account.",
-        );
-      }
+  async function verifyCode(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (actionLock.current || !pendingEmail || !config || !canonicalLocation) {
+      return;
+    }
+    const token = normalizeEmailOtp(codeInput);
+    if (!token) {
+      setActionError("Enter the six-digit code from your email.");
+      return;
+    }
+    const client = browserAuthClient();
+    if (!client) return;
 
+    actionLock.current = true;
+    setActiveAction("verify-code");
+    setActionError(null);
+    try {
+      const result = await client.auth.verifyOtp({
+        email: pendingEmail,
+        token,
+        type: "email",
+      });
+      if (result.error) throw result.error;
+      if (normalizeEmail(result.data.user?.email) !== pendingEmail) {
+        await client.auth.signOut({ scope: "local" });
+        throw new Error("Verified email did not match the requested account.");
+      }
       const verified = await refreshSession();
-      if (
-        verified.status === "signed-in" &&
-        verified.walletAddress !== address
-      ) {
+      if (verified.status !== "signed-in" || verified.email !== pendingEmail) {
         await client.auth.signOut({ scope: "local" });
         await refreshSession();
-        throw new Error(
-          "The verified session does not match the selected account.",
-        );
+        throw new Error("The server could not verify this email session.");
       }
-      if (verified.status !== "signed-in") {
-        throw new Error("The server verification service is unavailable.");
-      }
-
+      setCodeInput("");
       router.refresh();
     } catch (error) {
-      setActionError(authenticationErrorMessage(error));
+      setActionError(emailOtpErrorMessage(error, "verify"));
+    } finally {
+      actionLock.current = false;
+      setActiveAction(null);
+    }
+  }
+
+  async function completeProfile(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (actionLock.current || !identityKey) return;
+    const displayName = normalizeDisplayName(displayNameInput);
+    if (!displayName) {
+      setActionError(
+        "Enter a display name between 2 and 80 characters using at least one letter or number.",
+      );
+      return;
+    }
+
+    actionLock.current = true;
+    setActiveAction("profile");
+    setActionError(null);
+    try {
+      const identity = await completeApplicationProfile(displayName);
+      setIdentityResult({ key: identityKey, identity });
+      if (identity.status !== "enrolled") {
+        setActionError(
+          identity.status === "profile-required"
+            ? "The profile details were not accepted. Review the display name and try again."
+            : "Profile setup is unavailable. Your verified email session remains active; try again shortly.",
+        );
+        return;
+      }
+      setDisplayNameInput("");
+      actorRefreshKey.current = null;
+      const actor = await refreshActor();
+      if (returnTo && actor.status === "authorized") {
+        router.replace(returnTo);
+      }
+      router.refresh();
     } finally {
       actionLock.current = false;
       setActiveAction(null);
@@ -213,21 +251,23 @@ export function SignInScreen({
 
   async function signOut() {
     if (actionLock.current) return;
-
     const client = browserAuthClient();
     if (!client) return;
 
     actionLock.current = true;
     setActiveAction("sign-out");
     setActionError(null);
-
     try {
       const result = await client.auth.signOut({ scope: "local" });
       if (result.error) throw result.error;
       await refreshSession();
+      setPendingEmail(null);
+      setIdentityResult(null);
       router.refresh();
-    } catch (error) {
-      setActionError(authenticationErrorMessage(error));
+    } catch {
+      setActionError(
+        "RepX Club could not sign out. Check the connection and try again.",
+      );
     } finally {
       actionLock.current = false;
       setActiveAction(null);
@@ -239,13 +279,13 @@ export function SignInScreen({
       <div className="auth-heading">
         <div>
           <span className="eyebrow">RepX Club identity</span>
-          <h1>Sign in with your prepared Phantom wallet.</h1>
+          <h1>Sign in with your email.</h1>
           <p>
-            Connecting shares an address. Signing this login message separately
-            proves that you control it and creates your RepX Club session.
+            Request a one-time code, verify your email and create a small
+            profile. A wallet is optional and can be linked separately later.
           </p>
         </div>
-        <Pill tone="lime">Message only · No transaction</Pill>
+        <Pill tone="lime">Email code · No password</Pill>
       </div>
 
       <div className="auth-layout">
@@ -253,18 +293,17 @@ export function SignInScreen({
           <div className="auth-card-title">
             <ShieldCheck size={22} aria-hidden="true" />
             <div>
-              <span>Application session</span>
+              <span>Application account</span>
               <h2>RepX Club sign-in</h2>
             </div>
           </div>
 
           {accessRequired && (
             <div className="auth-notice neutral" role="status">
-              <strong>This area needs a prepared RepX Club profile.</strong>
+              <strong>This area needs a RepX Club account.</strong>
               <p>
-                Sign in or finish prepared-profile verification first. The
-                requested page opens only after the server authorizes the
-                application identity.
+                Sign in and complete your profile first. The requested page
+                opens only after the server authorizes your account.
               </p>
             </div>
           )}
@@ -273,8 +312,7 @@ export function SignInScreen({
             <div className="auth-notice warning" role="status">
               <strong>Local authentication is not configured.</strong>
               <p>
-                Add the three public Supabase values from{" "}
-                <code>.env.example</code>
+                Add the public Supabase values from <code>.env.example</code>
                 and start the local Auth stack. Public discovery remains
                 available.
               </p>
@@ -310,211 +348,181 @@ export function SignInScreen({
             </div>
           )}
 
-          {session.status === "signed-out" && (
-            <div className="auth-notice neutral" role="status">
-              <strong>RepX Club signed out.</strong>
-              <p>
-                A wallet connection by itself does not grant a profile,
-                application access, role or purchase permission.
-              </p>
-            </div>
+          {session.status === "signed-out" && !pendingEmail && (
+            <form className="auth-form" onSubmit={requestCode} noValidate>
+              <label htmlFor="sign-in-email">Email address</label>
+              <input
+                id="sign-in-email"
+                name="email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                maxLength={254}
+                value={emailInput}
+                disabled={!config || activeAction !== null}
+                onChange={(event) => setEmailInput(event.target.value)}
+                placeholder="you@example.com"
+                required
+              />
+              <button
+                type="submit"
+                className="button dark full"
+                disabled={
+                  !config || activeAction !== null || !canonicalLocation
+                }
+              >
+                <Mail size={17} aria-hidden="true" />
+                {activeAction === "request-code"
+                  ? "Sending code…"
+                  : "Email me a sign-in code"}
+              </button>
+            </form>
+          )}
+
+          {session.status === "signed-out" && pendingEmail && (
+            <form className="auth-form" onSubmit={verifyCode} noValidate>
+              <div className="auth-notice neutral" role="status">
+                <strong>Check your email.</strong>
+                <p>
+                  If <strong>{pendingEmail}</strong> can receive RepX Club
+                  email, a six-digit code is on its way. New and returning
+                  accounts follow the same steps.
+                </p>
+              </div>
+              <label htmlFor="sign-in-code">Six-digit code</label>
+              <input
+                id="sign-in-code"
+                name="code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                value={codeInput}
+                disabled={activeAction !== null}
+                onChange={(event) =>
+                  setCodeInput(event.target.value.replace(/\D/g, ""))
+                }
+                placeholder="000000"
+                required
+              />
+              <button
+                type="submit"
+                className="button dark full"
+                disabled={activeAction !== null}
+              >
+                <KeyRound size={17} aria-hidden="true" />
+                {activeAction === "verify-code"
+                  ? "Checking code…"
+                  : "Verify and sign in"}
+              </button>
+              <button
+                type="button"
+                className="text-button"
+                disabled={activeAction !== null}
+                onClick={() => {
+                  setPendingEmail(null);
+                  setCodeInput("");
+                  setActionError(null);
+                }}
+              >
+                Use a different email
+              </button>
+            </form>
           )}
 
           {session.status === "signed-in" &&
-            relationship === "matched" &&
+            (applicationIdentity.status === "idle" ||
+              applicationIdentity.status === "checking") && (
+              <div className="auth-notice neutral" role="status">
+                <strong>Checking your RepX Club profile…</strong>
+                <p>The server is loading the profile for this account.</p>
+              </div>
+            )}
+
+          {session.status === "signed-in" &&
+            applicationIdentity.status === "profile-required" && (
+              <form className="auth-form" onSubmit={completeProfile} noValidate>
+                <div className="auth-notice success" role="status">
+                  <strong>Email verified.</strong>
+                  <p>
+                    Signed in as {session.email}. Choose the name other people
+                    will see in RepX Club.
+                  </p>
+                </div>
+                <label htmlFor="profile-display-name">Display name</label>
+                <input
+                  id="profile-display-name"
+                  name="displayName"
+                  type="text"
+                  autoComplete="name"
+                  minLength={2}
+                  maxLength={80}
+                  value={displayNameInput}
+                  disabled={activeAction !== null}
+                  onChange={(event) => setDisplayNameInput(event.target.value)}
+                  placeholder="Anna Klein"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="button dark full"
+                  disabled={activeAction !== null}
+                >
+                  <UserRound size={17} aria-hidden="true" />
+                  {activeAction === "profile"
+                    ? "Creating profile…"
+                    : "Create my profile"}
+                </button>
+              </form>
+            )}
+
+          {session.status === "signed-in" &&
             applicationIdentity.status === "enrolled" && (
               <div className="auth-notice success" role="status">
                 <strong>
                   Signed in as {applicationIdentity.profile.displayName}.
                 </strong>
                 <p>
-                  The server matched your verified wallet to the prepared
-                  profile. No second Phantom signature was needed.
+                  Your verified email account has ordinary RepX Club access. A
+                  wallet is not required for this application session.
                 </p>
               </div>
             )}
 
           {session.status === "signed-in" &&
-            relationship === "matched" &&
-            (applicationIdentity.status === "idle" ||
-              applicationIdentity.status === "checking") && (
-              <div className="auth-notice neutral" role="status">
-                <strong>Preparing your RepX Club profile…</strong>
-                <p>
-                  The server is matching this verified wallet to its prepared
-                  demo profile. Phantom will not open another prompt.
-                </p>
-              </div>
-            )}
-
-          {session.status === "signed-in" &&
-            relationship === "matched" &&
-            (applicationIdentity.status === "not-prepared" ||
-              applicationIdentity.status === "not-enrolled") && (
-              <div className="auth-notice warning" role="alert">
-                <strong>Prepared profile unavailable.</strong>
-                <p>
-                  This signed-in wallet could not be matched to the prepared
-                  local demo profile. No account association was changed.
-                </p>
-              </div>
-            )}
-
-          {session.status === "signed-in" &&
-            relationship === "matched" &&
             applicationIdentity.status === "unavailable" && (
               <div className="auth-notice warning" role="alert">
-                <strong>Profile enrollment is unavailable.</strong>
+                <strong>Profile access is unavailable.</strong>
                 <p>
-                  The local database or prepared-profile configuration may be
-                  unavailable. Your verified Supabase session remains active.
+                  Your verified email session remains active, but the local
+                  application database could not load the profile.
                 </p>
                 <button
                   type="button"
                   className="text-button"
-                  onClick={() => void retryEnrollment()}
+                  onClick={() => void refreshIdentity()}
                 >
-                  Try profile enrollment again
+                  Try profile access again
                 </button>
               </div>
             )}
 
-          {session.status === "signed-in" &&
-            relationship === "wallet-disconnected" &&
-            applicationIdentity.status === "enrolled" && (
-              <div className="auth-notice warning" role="alert">
-                <strong>
-                  {applicationIdentity.profile.displayName} is signed in;
-                  Phantom is disconnected.
-                </strong>
-                <p>
-                  Your saved account link remains. Reconnect the same wallet
-                  before a later payment or other wallet-signing action.
-                </p>
-              </div>
-            )}
-
-          {session.status === "signed-in" &&
-            relationship === "wallet-disconnected" &&
-            applicationIdentity.status !== "enrolled" && (
-              <div className="auth-notice warning" role="alert">
-                <strong>Session active; Phantom disconnected.</strong>
-                <p>
-                  You are still signed in as{" "}
-                  {shortenWalletAddress(session.walletAddress)}. Reconnect that
-                  wallet or sign out before wallet-bound actions.
-                </p>
-              </div>
-            )}
-
-          {session.status === "signed-in" &&
-            relationship === "wallet-mismatch" && (
-              <div className="auth-notice danger" role="alert">
-                <strong>Connected wallet does not match this session.</strong>
-                <p>
-                  RepX Club is signed in as{" "}
-                  {shortenWalletAddress(session.walletAddress)}, while Phantom
-                  has{" "}
-                  {address ? shortenWalletAddress(address) : "another account"}{" "}
-                  selected. Sign out before authenticating the new account;
-                  identities are never merged automatically.
-                </p>
-              </div>
-            )}
-
-          {!mounted || !walletReady ? (
-            <div className="auth-wallet-row" role="status">
-              <Wallet size={20} aria-hidden="true" />
-              <span>Checking the Phantom connection…</span>
-            </div>
-          ) : address ? (
-            <div className="auth-wallet-details">
-              <span>Connected Phantom account</span>
-              <strong>{shortenWalletAddress(address)}</strong>
-              <code>{address}</code>
-            </div>
-          ) : (
-            <div className="auth-connect">
-              <p>Connect Phantom before asking it to sign the login message.</p>
-              {phantom ? (
-                <button
-                  type="button"
-                  className="button secondary full"
-                  disabled={
-                    connect.isRunning ||
-                    walletStatus === "connecting" ||
-                    activeAction !== null
-                  }
-                  onClick={() => connect.dispatch(phantom)}
-                >
-                  <Wallet size={17} aria-hidden="true" />
-                  {connect.isRunning || walletStatus === "connecting"
-                    ? "Waiting for Phantom…"
-                    : "Connect Phantom"}
-                </button>
-              ) : (
-                <a
-                  className="button secondary full"
-                  href={PHANTOM_DOWNLOAD_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Get Phantom from the official site
-                </a>
-              )}
-            </div>
-          )}
-
-          {connectError && (
-            <p className="wallet-error" role="alert">
-              {connectError}
-            </p>
-          )}
           {config && mounted && !canonicalLocation && (
             <div className="auth-notice danger" role="alert">
               <strong>Use the configured sign-in address.</strong>
               <p>
-                Wallet proof is disabled on this origin. Open {config.signInUrl}
-                exactly so Phantom and Supabase verify the same application URI.
+                Email sign-in is disabled on this origin. Open{" "}
+                {config.signInUrl}
+                exactly and try again.
               </p>
             </div>
           )}
+
           {actionError && (
             <p className="wallet-error" role="alert">
               {actionError}
             </p>
-          )}
-
-          {session.status === "signed-out" && address && config && (
-            <button
-              type="button"
-              className="button dark full"
-              disabled={activeAction !== null || !canonicalLocation}
-              onClick={() => void signIn()}
-            >
-              <KeyRound size={17} aria-hidden="true" />
-              {activeAction === "sign-in"
-                ? "Waiting for message approval…"
-                : "Review and sign login message"}
-            </button>
-          )}
-
-          {address && (
-            <button
-              type="button"
-              className="button secondary full"
-              disabled={
-                disconnect.isRunning ||
-                walletStatus === "disconnecting" ||
-                activeAction !== null
-              }
-              onClick={() => disconnect.dispatch()}
-            >
-              <Wallet size={17} aria-hidden="true" />
-              {disconnect.isRunning || walletStatus === "disconnecting"
-                ? "Disconnecting Phantom…"
-                : "Disconnect Phantom"}
-            </button>
           )}
 
           {session.status === "signed-in" && (
@@ -532,29 +540,30 @@ export function SignInScreen({
           )}
 
           <p className="wallet-safety">
-            RepX Club never asks for your recovery phrase or private key.
+            RepX Club never asks for your email password, wallet recovery phrase
+            or private key.
           </p>
         </div>
 
-        <aside className="auth-explainer" aria-label="How wallet sign-in works">
-          <h2>Three separate steps</h2>
+        <aside className="auth-explainer" aria-label="How email sign-in works">
+          <h2>Three small steps</h2>
           <ol>
             <li>
               <span>
-                <Wallet size={17} aria-hidden="true" />
+                <Mail size={17} aria-hidden="true" />
               </span>
               <div>
-                <strong>Connect</strong>
-                <p>Phantom shares the selected public address.</p>
+                <strong>Request</strong>
+                <p>Enter your email and receive a short-lived code.</p>
               </div>
             </li>
             <li>
               <span>
-                <KeyRound size={17} aria-hidden="true" />
+                <BadgeCheck size={17} aria-hidden="true" />
               </span>
               <div>
-                <strong>Authenticate</strong>
-                <p>You approve a readable, fee-free login message.</p>
+                <strong>Verify</strong>
+                <p>Use the six-digit code to create or restore your session.</p>
               </div>
             </li>
             <li>
@@ -562,21 +571,25 @@ export function SignInScreen({
                 <Check size={17} aria-hidden="true" />
               </span>
               <div>
-                <strong>Use RepX Club</strong>
-                <p>
-                  Supabase holds the application session. Purchases still need a
-                  separate, explicit transaction approval later.
-                </p>
+                <strong>Complete your profile</strong>
+                <p>First-time accounts choose a display name once.</p>
               </div>
             </li>
           </ol>
           <div className="notice">
-            <strong>The signed statement</strong>
-            <p>{WEB3_SIGN_IN_STATEMENT}</p>
+            <strong>Wallets stay separate</strong>
+            <p>
+              Connect or link Phantom later only for wallet-backed actions. A
+              connected wallet never signs you into this account automatically.
+            </p>
           </div>
           <Link href="/explore" className="text-link">
             Continue browsing without signing in
           </Link>
+          <p className="auth-wallet-note">
+            <Wallet size={14} aria-hidden="true" /> Public browsing needs no
+            account or wallet.
+          </p>
         </aside>
       </div>
     </section>

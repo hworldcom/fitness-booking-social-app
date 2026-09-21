@@ -4,7 +4,7 @@ This directory owns RepX Club's checked-in Supabase PostgreSQL history. The SQL 
 
 ## Local workflow
 
-Prerequisites are Node.js 20.9 or newer, the locked npm dependencies and a running Docker-compatible container runtime. RepX Club's database uses port `55322` so it can coexist with another project using Supabase's default `5432x` range. The DEV0015 `db:start` command remains a lean PostgreSQL-only workflow. DEV0038 adds `auth:start`, which also starts Auth and its API gateway while continuing to exclude unrelated local services.
+Prerequisites are Node.js 24.21.x, the locked npm dependencies and a running Docker-compatible container runtime. RepX Club's database uses port `55322` so it can coexist with another project using Supabase's default `5432x` range. The DEV0015 `db:start` command remains a lean PostgreSQL-only workflow. The `auth:start` profile also starts Auth, its API gateway and a local captured mailbox while continuing to exclude unrelated services.
 
 ```sh
 npm ci
@@ -20,9 +20,9 @@ npm run db:lint
 
 The local integration test uses Supabase's disposable `postgres` credential on `127.0.0.1:55322`; it is not an application credential. The frontend preview does not read `DATABASE_URL`, initialize a database client or require this stack.
 
-`npm run db:runtime` provisions the loopback-only `repx_runtime_login` used by the Next.js application and grants it only the non-bypass `app_runtime` group role. Its fixed `postgres` password is acceptable only for this disposable database bound to the local Supabase port; hosted environments must use a generated secret and the environment-specific login described below. For local DEV0039 enrollment, set `DATABASE_URL=postgresql://repx_runtime_login:postgres@127.0.0.1:55322/postgres` and provide the ignored server-only `PREPARED_PERSONAL_IDENTITIES_JSON` mapping described in `.env.example`.
+`npm run db:runtime` idempotently provisions the loopback-only `repx_runtime_login` used by the Next.js application and grants it only the non-bypass `app_runtime` group role. Its fixed `postgres` password is acceptable only for this disposable database bound to the local Supabase port; hosted environments must use a generated secret and the environment-specific login described below. For local application enrollment, set `DATABASE_URL=postgresql://repx_runtime_login:postgres@127.0.0.1:55322/postgres`. Open email registration no longer uses a prepared-person or wallet roster.
 
-## Local Web3 Auth profile
+## Local email Auth profile
 
 Stop a running database-only profile before switching to the Auth profile, then inspect its public values:
 
@@ -33,9 +33,13 @@ npm run auth:status
 npm run db:runtime
 ```
 
-The status command prints only `API_URL` and `ANON_KEY`; copy them into the corresponding public variables documented in `.env.example`. It deliberately omits `SERVICE_ROLE_KEY`. The signing page is exactly `http://localhost:3100/sign-in`. Supabase permits plain HTTP for the literal `localhost` development hostname but rejects `http://127.0.0.1` Web3 message URIs. Solana Web3 Auth is enabled with 30 attempts per five minutes. The local-only workflow does not enable CAPTCHA; public hosting requires a separately reviewed rate-limit/CAPTCHA policy.
+The status command prints only `API_URL` and the public `PUBLISHABLE_KEY` or legacy `ANON_KEY`; copy them into the corresponding public variables documented in `.env.example`. It deliberately omits `SECRET_KEY` and `SERVICE_ROLE_KEY`. Build or restart the app after changing its environment, then open exactly `http://localhost:3100/sign-in`. Enter an email, open Mailpit at `http://127.0.0.1:55324`, read the six-digit code and complete a display name on first login. The flow never needs a wallet connection or signature.
 
-The normal `db:start` path still excludes Auth. `auth:start` retains the same database and migrations while adding only the services needed for Web3 authentication. Missing configuration or a stopped Auth service must never prevent public preview browsing. `npm run db:stop` stops either profile; `npm run db:reset` remains destructive to all disposable local database and Auth records.
+The local profile permits 30 captured messages per hour and applies Supabase's verification-attempt limits. It intentionally has no CAPTCHA on loopback. A hosted rollout must configure reviewed origins, the checked-in OTP template, abuse controls and a custom SMTP provider; Supabase's default sender is not a production delivery plan.
+
+The normal `db:start` path still excludes Auth. `auth:start` retains the same database and migrations while adding only the services needed for email authentication and capture. Missing configuration or a stopped Auth service must never prevent public preview browsing. `npm run db:stop` stops either profile; `npm run db:reset` remains destructive to all disposable local database, Auth users and application profiles. The old local wallet-first account is intentionally not migrated because no hosted users exist.
+
+With the Auth stack, runtime role and configured production app already running on port `3100`, run `npm run test:auth` to rehearse two new accounts, an invalid-code retry, isolated profile creation, sign-out and returning-account login. The script reads one-time codes from Mailpit but does not print or persist them.
 
 ## Roles and runtime connection
 

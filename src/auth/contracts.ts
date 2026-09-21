@@ -5,16 +5,9 @@ export type AuthSessionSnapshot =
   | Readonly<{
       status: "signed-in";
       subject: string;
-      walletAddress: string;
+      email: string;
       expiresAt: number | null;
     }>;
-
-export type WalletSessionRelationship =
-  | "signed-out"
-  | "matched"
-  | "wallet-disconnected"
-  | "wallet-mismatch"
-  | "session-unavailable";
 
 export const DISABLED_AUTH_SESSION: AuthSessionSnapshot = Object.freeze({
   status: "disabled",
@@ -27,20 +20,6 @@ export const SIGNED_OUT_AUTH_SESSION: AuthSessionSnapshot = Object.freeze({
 export const UNAVAILABLE_AUTH_SESSION: AuthSessionSnapshot = Object.freeze({
   status: "unavailable",
 });
-
-export function walletSessionRelationship(
-  session: AuthSessionSnapshot,
-  connectedAddress: string | null,
-): WalletSessionRelationship {
-  if (session.status === "disabled" || session.status === "unavailable") {
-    return "session-unavailable";
-  }
-  if (session.status === "signed-out") return "signed-out";
-  if (!connectedAddress) return "wallet-disconnected";
-  return connectedAddress === session.walletAddress
-    ? "matched"
-    : "wallet-mismatch";
-}
 
 export function isAuthSessionSnapshot(
   value: unknown,
@@ -61,7 +40,10 @@ export function isAuthSessionSnapshot(
   return (
     session.status === "signed-in" &&
     typeof session.subject === "string" &&
-    typeof session.walletAddress === "string" &&
+    typeof session.email === "string" &&
+    session.email.length > 3 &&
+    session.email.length <= 254 &&
+    session.email.includes("@") &&
     (typeof session.expiresAt === "number" || session.expiresAt === null)
   );
 }

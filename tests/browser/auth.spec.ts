@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("sign-in explains the wallet/session boundary without blocking public browsing", async ({
+test("sign-in explains the email/account boundary without blocking public browsing", async ({
   page,
 }, testInfo) => {
   let identityRequests = 0;
@@ -12,27 +12,25 @@ test("sign-in explains the wallet/session boundary without blocking public brows
 
   await expect(
     page.getByRole("heading", {
-      name: "Sign in with your prepared Phantom wallet.",
+      name: "Sign in with your email.",
     }),
   ).toBeVisible();
-  await expect(page.getByText("Message only · No transaction")).toBeVisible();
-  await expect(page.getByText("Three separate steps")).toBeVisible();
+  await expect(page.getByText("Email code · No password")).toBeVisible();
+  await expect(page.getByText("Three small steps")).toBeVisible();
   await expect(
-    page.getByText(
-      "Sign in to RepX Club. This proves control of your wallet and does not authorize a transaction.",
-    ),
+    page.getByText(/Connect or link Phantom later only/),
   ).toBeVisible();
-  await expect(
-    page
-      .getByText("Local authentication is not configured.")
-      .or(page.getByText("RepX Club signed out.")),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Get Phantom from the official site" }),
-  ).toHaveAttribute("href", "https://phantom.com/download");
+  const emailInput = page.getByLabel("Email address");
+  if ((await emailInput.count()) === 0) {
+    await expect(
+      page.getByText("Local authentication is not configured."),
+    ).toBeVisible();
+  } else {
+    await expect(emailInput).toBeVisible();
+  }
 
   await page.screenshot({
-    path: testInfo.outputPath("phantom-sign-in.png"),
+    path: testInfo.outputPath("email-sign-in.png"),
     fullPage: true,
   });
 

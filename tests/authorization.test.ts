@@ -13,14 +13,6 @@ import { parseApplicationAccessMode } from "@/server/authorization/config";
 const databaseEnvironment = {
   databaseUrl:
     "postgresql://repx_runtime_login:postgres@127.0.0.1:55322/postgres",
-  preparedPersonalIdentitiesJson: JSON.stringify([
-    {
-      walletAddress: "7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M",
-      profileSlug: "anna-klein",
-      demoRunSlug: "local-foundation-2030",
-      cluster: "solana:devnet",
-    },
-  ]),
   supabaseUrl: "http://127.0.0.1:55321",
   supabasePublishableKey: "public-key",
   siteUrl: "http://localhost:3100",
@@ -39,7 +31,7 @@ test("access mode distinguishes absent, complete and partial configuration", () 
   assert.equal(
     parseApplicationAccessMode({
       ...databaseEnvironment,
-      preparedPersonalIdentitiesJson: "[]",
+      supabasePublishableKey: "",
     }),
     "unavailable",
   );
@@ -69,7 +61,7 @@ test("actor responses accept only the bounded public shape", () => {
         name: "Local foundation run",
       },
       role: "member",
-      walletAddress: databaseEnvironment.preparedPersonalIdentitiesJson,
+      email: "private@example.com",
     }),
     false,
   );
@@ -98,7 +90,7 @@ test("private actor state is bound to the exact verified session generation", ()
   const session: AuthSessionSnapshot = {
     status: "signed-in",
     subject: "93000000-0000-4000-8000-000000000001",
-    walletAddress: "7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M",
+    email: "anna@example.com",
     expiresAt: 1_790_000_000,
   };
   const actor: ActorSnapshot = {

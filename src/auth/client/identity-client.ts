@@ -8,12 +8,17 @@ import {
 
 async function identityRequest(
   method: "GET" | "POST",
+  displayName?: string,
 ): Promise<ApplicationIdentitySnapshot> {
   try {
     const response = await fetch("/api/auth/identity", {
       method,
       cache: "no-store",
-      headers: { accept: "application/json" },
+      headers: {
+        accept: "application/json",
+        ...(method === "POST" ? { "content-type": "application/json" } : {}),
+      },
+      body: method === "POST" ? JSON.stringify({ displayName }) : undefined,
     });
     const value: unknown = await response.json();
     return isApplicationIdentitySnapshot(value)
@@ -24,8 +29,8 @@ async function identityRequest(
   }
 }
 
-export function enrollPreparedIdentity() {
-  return identityRequest("POST");
+export function completeApplicationProfile(displayName: string) {
+  return identityRequest("POST", displayName);
 }
 
 export function fetchCurrentIdentity() {

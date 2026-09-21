@@ -1,6 +1,6 @@
 import test, { after } from "node:test";
 import assert from "node:assert/strict";
-import { asc } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { classSessions, profiles } from "@/server/db/schema";
@@ -28,6 +28,7 @@ test("Drizzle mappings read the deterministic foundation fixtures", async () => 
   const seededProfiles = await db
     .select({ slug: profiles.slug, authUserId: profiles.authUserId })
     .from(profiles)
+    .where(eq(profiles.recordSource, "fixture"))
     .orderBy(asc(profiles.slug));
   assert.equal(seededProfiles.length, 6);
   assert.ok(seededProfiles.every((profile) => profile.authUserId === null));

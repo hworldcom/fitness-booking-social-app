@@ -1,8 +1,5 @@
 export const SIGN_IN_PATH = "/sign-in";
 
-export const WEB3_SIGN_IN_STATEMENT =
-  "Sign in to RepX Club. This proves control of your wallet and does not authorize a transaction.";
-
 export type SupabasePublicConfig = Readonly<{
   url: string;
   publishableKey: string;

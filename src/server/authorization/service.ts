@@ -60,9 +60,6 @@ async function withVerifiedSession<T>(
     profileId: identity.profile.id,
     runId: identity.demoRun.id,
     runRole: identity.role,
-    walletBindingId: identity.wallet.bindingId,
-    walletAddress: identity.wallet.address,
-    walletCluster: identity.wallet.cluster,
   });
 
   try {

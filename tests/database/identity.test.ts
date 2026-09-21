@@ -9,16 +9,15 @@ import {
   withActorDatabaseContext,
 } from "@/server/db/authorization/repository";
 import {
-  currentPreparedPersonalIdentity,
-  enrollPreparedPersonalIdentity,
-  PreparedIdentityConflictError,
+  ApplicationIdentityConflictError,
+  currentApplicationProfile,
+  enrollApplicationProfile,
 } from "@/server/db/identity/repository";
 import {
   closeDatabaseConnection,
   databaseConnection,
 } from "@/server/db/client";
 import { profiles } from "@/server/db/schema";
-import type { PreparedPersonalIdentity } from "@/server/identity/config";
 
 const adminConnectionString = process.env.DATABASE_TEST_URL;
 if (!adminConnectionString) {
@@ -33,32 +32,14 @@ runtimeUrl.password = "postgres";
 process.env.DATABASE_URL = runtimeUrl.toString();
 
 const authUserId = "92000000-0000-4000-8000-000000000001";
-const conflictingAuthUserId = "92000000-0000-4000-8000-000000000002";
-const secondAuthUserId = "92000000-0000-4000-8000-000000000003";
-const profileId = "92000000-0000-4000-8000-000000000010";
-const secondProfileId = "92000000-0000-4000-8000-000000000011";
+const secondAuthUserId = "92000000-0000-4000-8000-000000000002";
+const conflictingAuthUserId = "92000000-0000-4000-8000-000000000003";
+const fixtureProfileId = "92000000-0000-4000-8000-000000000010";
 const runId = "20000000-0000-4000-8000-000000000001";
-const walletAddress = "7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M";
-const conflictingWalletAddress = "9xQeWvG816bUx9EPfDdSpq5Bg6DXyAzQfQ54qVZ4T2QJ";
-const secondWalletAddress = "8opHzTAnfzRpPEx21XtnrVTX28YQuCpAjcn1PczScKh";
-
-const identity: PreparedPersonalIdentity = {
-  walletAddress,
-  profileSlug: "driver-identity-person",
-  demoRunSlug: "local-foundation-2030",
-  cluster: "solana:devnet",
-};
-
-const secondIdentity: PreparedPersonalIdentity = {
-  walletAddress: secondWalletAddress,
-  profileSlug: "driver-identity-second-person",
-  demoRunSlug: "local-foundation-2030",
-  cluster: "solana:devnet",
-};
 
 type IdentityFunctionRow = {
   identity_profile_id: string;
-  identity_wallet_binding_id: string;
+  identity_profile_slug: string;
 };
 
 const admin = postgres(adminConnectionString, {
@@ -80,27 +61,37 @@ const runtimeB = postgres(runtimeUrl.toString(), {
 async function removeFixture() {
   await admin`
     delete from app.wallet_bindings
-    where profile_id in (${profileId}::uuid, ${secondProfileId}::uuid)
-      or bound_by_auth_user_id in (
-        ${authUserId}::uuid,
-        ${conflictingAuthUserId}::uuid,
-        ${secondAuthUserId}::uuid
-      )
+    where bound_by_auth_user_id in (
+      ${authUserId}::uuid,
+      ${secondAuthUserId}::uuid,
+      ${conflictingAuthUserId}::uuid
+    )
   `;
   await admin`
     delete from app.demo_run_memberships
-    where profile_id in (${profileId}::uuid, ${secondProfileId}::uuid)
+    where profile_id in (
+      select id from app.profiles
+      where auth_user_id in (
+        ${authUserId}::uuid,
+        ${secondAuthUserId}::uuid,
+        ${conflictingAuthUserId}::uuid
+      ) or id = ${fixtureProfileId}::uuid
+    )
   `;
   await admin`
     delete from app.profiles
-    where id in (${profileId}::uuid, ${secondProfileId}::uuid)
+    where auth_user_id in (
+      ${authUserId}::uuid,
+      ${secondAuthUserId}::uuid,
+      ${conflictingAuthUserId}::uuid
+    ) or id = ${fixtureProfileId}::uuid
   `;
   await admin`
     delete from auth.users
     where id in (
       ${authUserId}::uuid,
-      ${conflictingAuthUserId}::uuid,
-      ${secondAuthUserId}::uuid
+      ${secondAuthUserId}::uuid,
+      ${conflictingAuthUserId}::uuid
     )
   `;
 }
@@ -111,52 +102,25 @@ before(async () => {
     insert into auth.users (id, is_sso_user, is_anonymous)
     values
       (${authUserId}::uuid, false, false),
-      (${conflictingAuthUserId}::uuid, false, false),
-      (${secondAuthUserId}::uuid, false, false)
+      (${secondAuthUserId}::uuid, false, false),
+      (${conflictingAuthUserId}::uuid, false, false)
   `;
   await admin`
     insert into app.profiles (
-      id, slug, display_name, initials, bio, avatar_color, record_source
+      id, auth_user_id, slug, display_name, initials, bio, avatar_color,
+      record_source, claimed_at
     )
-    values
-      (
-        ${profileId}::uuid,
-        ${identity.profileSlug},
-        'Driver Identity Person',
-        'DI',
-        'Disposable repository integration fixture',
-        'blue',
-        'fixture'
-      ),
-      (
-        ${secondProfileId}::uuid,
-        ${secondIdentity.profileSlug},
-        'Driver Identity Second Person',
-        'DS',
-        'Second disposable authorization fixture',
-        'purple',
-        'fixture'
-      )
-  `;
-  await admin`
-    insert into app.demo_run_memberships (
-      run_id, profile_id, role, status, joined_at
+    values (
+      ${fixtureProfileId}::uuid,
+      ${conflictingAuthUserId}::uuid,
+      'old-prepared-fixture',
+      'Old Prepared Fixture',
+      'OP',
+      '',
+      'blue',
+      'fixture',
+      statement_timestamp()
     )
-    values
-      (
-        ${runId}::uuid,
-        ${profileId}::uuid,
-        'member',
-        'active',
-        statement_timestamp()
-      ),
-      (
-        ${runId}::uuid,
-        ${secondProfileId}::uuid,
-        'member',
-        'active',
-        statement_timestamp()
-      )
   `;
 });
 
@@ -168,93 +132,104 @@ after(async () => {
   await admin.end();
 });
 
-test("the login role has no direct wallet-binding table privilege", async () => {
+test("the runtime login cannot write identity tables directly", async () => {
   await assert.rejects(
-    runtimeA`select count(*) from app.wallet_bindings`,
-    /permission denied for table wallet_bindings/,
+    runtimeA`insert into app.profiles (slug) values ('forbidden')`,
+    /permission denied for table profiles/,
+  );
+  await assert.rejects(
+    runtimeA`insert into app.demo_run_memberships (run_id) values (${runId}::uuid)`,
+    /permission denied for table demo_run_memberships/,
   );
 });
 
-test("simultaneous enrollment and repository retries converge on one binding", async () => {
+test("simultaneous enrollment and retries converge on one ordinary profile", async () => {
   const [first, second] = await Promise.all([
     runtimeA<IdentityFunctionRow[]>`
-      select identity_profile_id, identity_wallet_binding_id
-      from app.enroll_prepared_personal_identity(
+      select identity_profile_id, identity_profile_slug
+      from app.enroll_application_identity(
         ${authUserId}::uuid,
-        ${identity.demoRunSlug}::text,
-        ${identity.profileSlug}::text,
-        ${identity.cluster}::text,
-        ${identity.walletAddress}::text
+        'Anna Integration'
       )
     `,
     runtimeB<IdentityFunctionRow[]>`
-      select identity_profile_id, identity_wallet_binding_id
-      from app.enroll_prepared_personal_identity(
+      select identity_profile_id, identity_profile_slug
+      from app.enroll_application_identity(
         ${authUserId}::uuid,
-        ${identity.demoRunSlug}::text,
-        ${identity.profileSlug}::text,
-        ${identity.cluster}::text,
-        ${identity.walletAddress}::text
+        'Anna Integration'
       )
     `,
   ]);
 
   assert.equal(first.length, 1);
   assert.equal(second.length, 1);
-  assert.equal(first[0]?.identity_profile_id, profileId);
-  assert.equal(
-    first[0]?.identity_wallet_binding_id,
-    second[0]?.identity_wallet_binding_id,
+  assert.equal(first[0]?.identity_profile_id, second[0]?.identity_profile_id);
+  assert.match(
+    first[0]?.identity_profile_slug ?? "",
+    /^anna-integration-920000000000$/,
   );
 
-  const retried = await enrollPreparedPersonalIdentity(authUserId, identity);
-  const current = await currentPreparedPersonalIdentity(authUserId, identity);
-  assert.equal(retried?.walletBindingId, first[0]?.identity_wallet_binding_id);
+  const retried = await enrollApplicationProfile(
+    authUserId,
+    "A different retry name",
+  );
+  const current = await currentApplicationProfile(authUserId);
+  assert.equal(retried?.displayName, "Anna Integration");
   assert.deepEqual(current, retried);
 
-  const bindings = await admin<{ count: string }[]>`
-    select count(*)::text as count
-    from app.wallet_bindings
-    where profile_id = ${profileId}::uuid
-  `;
-  assert.equal(bindings[0]?.count, "1");
-});
-
-test("a different Auth subject cannot claim or partially rewrite the actor", async () => {
-  await assert.rejects(
-    enrollPreparedPersonalIdentity(conflictingAuthUserId, {
-      ...identity,
-      walletAddress: conflictingWalletAddress,
-    }),
-    PreparedIdentityConflictError,
-  );
-
   const state = await admin<
-    Array<{ auth_user_id: string; binding_count: string }>
+    Array<{
+      profile_count: string;
+      participation_count: string;
+      wallet_count: string;
+      roles: string[];
+    }>
   >`
     select
-      profile.auth_user_id::text as auth_user_id,
-      count(binding.id)::text as binding_count
+      count(distinct profile.id)::text as profile_count,
+      count(distinct membership.profile_id)::text as participation_count,
+      count(distinct binding.id)::text as wallet_count,
+      array_agg(distinct membership.role) as roles
     from app.profiles as profile
-    left join app.wallet_bindings as binding on binding.profile_id = profile.id
-    where profile.id = ${profileId}::uuid
-    group by profile.auth_user_id
+    join app.demo_run_memberships as membership
+      on membership.profile_id = profile.id
+    left join app.wallet_bindings as binding
+      on binding.profile_id = profile.id
+    where profile.auth_user_id = ${authUserId}::uuid
   `;
-  assert.equal(state.length, 1);
   assert.deepEqual(
     { ...state[0] },
     {
-      auth_user_id: authUserId,
-      binding_count: "1",
+      profile_count: "1",
+      participation_count: "1",
+      wallet_count: "0",
+      roles: ["member"],
     },
   );
 });
 
+test("invalid input and an old prepared fixture fail without partial state", async () => {
+  await assert.rejects(
+    enrollApplicationProfile(secondAuthUserId, "A"),
+    ApplicationIdentityConflictError,
+  );
+  assert.equal(await currentApplicationProfile(secondAuthUserId), null);
+
+  await assert.rejects(
+    enrollApplicationProfile(conflictingAuthUserId, "Replacement Name"),
+    ApplicationIdentityConflictError,
+  );
+  const rows = await admin<{ membership_count: string }[]>`
+    select count(*)::text as membership_count
+    from app.demo_run_memberships
+    where profile_id = ${fixtureProfileId}::uuid
+  `;
+  assert.equal(rows[0]?.membership_count, "0");
+});
+
 function authorizedActor(
   authUser: string,
-  record: NonNullable<
-    Awaited<ReturnType<typeof enrollPreparedPersonalIdentity>>
-  >,
+  record: NonNullable<Awaited<ReturnType<typeof enrollApplicationProfile>>>,
 ): AuthorizedActor {
   assert.equal(record.role, "member");
   return Object.freeze({
@@ -262,9 +237,6 @@ function authorizedActor(
     profileId: record.profileId,
     runId: record.runId,
     runRole: "member",
-    walletBindingId: record.walletBindingId,
-    walletAddress: record.walletAddress,
-    walletCluster: record.cluster,
   });
 }
 
@@ -275,15 +247,13 @@ async function assertPooledContextCleared() {
       profile_id: string | null;
       run_id: string | null;
       run_role: string | null;
-      wallet_binding_id: string | null;
     }>
   >`
     select
       nullif(current_setting('app.current_auth_user_id', true), '') as auth_user_id,
       nullif(current_setting('app.current_profile_id', true), '') as profile_id,
       nullif(current_setting('app.current_run_id', true), '') as run_id,
-      nullif(current_setting('app.current_run_role', true), '') as run_role,
-      nullif(current_setting('app.current_wallet_binding_id', true), '') as wallet_binding_id
+      nullif(current_setting('app.current_run_role', true), '') as run_role
   `;
   assert.deepEqual(
     { ...rows[0] },
@@ -292,19 +262,18 @@ async function assertPooledContextCleared() {
       profile_id: null,
       run_id: null,
       run_role: null,
-      wallet_binding_id: null,
     },
   );
 }
 
-test("transaction-local actor context isolates alternating users and failures", async () => {
-  const firstRecord = await enrollPreparedPersonalIdentity(
+test("wallet-independent actor context isolates alternating accounts", async () => {
+  const firstRecord = await enrollApplicationProfile(
     authUserId,
-    identity,
+    "Anna Integration",
   );
-  const secondRecord = await enrollPreparedPersonalIdentity(
+  const secondRecord = await enrollApplicationProfile(
     secondAuthUserId,
-    secondIdentity,
+    "Daniel Integration",
   );
   assert.ok(firstRecord);
   assert.ok(secondRecord);
@@ -320,14 +289,12 @@ test("transaction-local actor context isolates alternating users and failures", 
         profile_id: string;
         run_id: string;
         run_role: string;
-        wallet_binding_id: string;
       }>(sql`
         select
           current_setting('app.current_auth_user_id') as auth_user_id,
           current_setting('app.current_profile_id') as profile_id,
           current_setting('app.current_run_id') as run_id,
-          current_setting('app.current_run_role') as run_role,
-          current_setting('app.current_wallet_binding_id') as wallet_binding_id
+          current_setting('app.current_run_role') as run_role
       `);
       assert.deepEqual(
         { ...settings[0] },
@@ -336,67 +303,32 @@ test("transaction-local actor context isolates alternating users and failures", 
           profile_id: firstActor.profileId,
           run_id: firstActor.runId,
           run_role: firstActor.runRole,
-          wallet_binding_id: firstActor.walletBindingId,
         },
       );
 
       const hiddenProfiles = await transaction
         .select({ id: profiles.id })
         .from(profiles)
-        .where(eq(profiles.id, secondProfileId));
+        .where(eq(profiles.id, secondRecord.profileId));
       assert.deepEqual(hiddenProfiles, []);
       return currentActorProjection(transaction, firstActor);
     },
   );
-  assert.equal(firstProjection.profileSlug, identity.profileSlug);
+  assert.equal(firstProjection.profileSlug, firstRecord.profileSlug);
   await assertPooledContextCleared();
 
   const secondProjection = await withActorDatabaseContext(
     secondActor,
     (transaction) => currentActorProjection(transaction, secondActor),
   );
-  assert.equal(secondProjection.profileSlug, secondIdentity.profileSlug);
+  assert.equal(secondProjection.profileSlug, secondRecord.profileSlug);
   await assertPooledContextCleared();
-
-  await assert.rejects(
-    withActorDatabaseContext(firstActor, async (transaction) => {
-      transaction.rollback();
-    }),
-    /rollback/i,
-  );
-  await assertPooledContextCleared();
-
-  await assert.rejects(
-    withActorDatabaseContext(firstActor, async () => {
-      throw new Error("forced actor callback failure");
-    }),
-    /forced actor callback failure/,
-  );
-  await assertPooledContextCleared();
-
-  const projectionAfterFailures = await withActorDatabaseContext(
-    secondActor,
-    (transaction) => currentActorProjection(transaction, secondActor),
-  );
-  assert.equal(projectionAfterFailures.profileSlug, secondIdentity.profileSlug);
 
   await assert.rejects(
     withActorDatabaseContext(
-      { ...firstActor, walletBindingId: secondActor.walletBindingId },
+      { ...firstActor, authUserId: secondActor.authUserId },
       async () => undefined,
     ),
     ActorContextRejectedError,
   );
-
-  await admin`
-    update app.demo_run_memberships
-    set status = 'revoked', revoked_at = statement_timestamp()
-    where run_id = ${runId}::uuid
-      and profile_id = ${secondProfileId}::uuid
-  `;
-  await assert.rejects(
-    withActorDatabaseContext(secondActor, async () => undefined),
-    ActorContextRejectedError,
-  );
-  await assertPooledContextCleared();
 });

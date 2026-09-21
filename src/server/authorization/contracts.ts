@@ -7,7 +7,4 @@ export type AuthorizedActor = Readonly<{
   profileId: string;
   runId: string;
   runRole: ActorRole;
-  walletBindingId: string;
-  walletAddress: string;
-  walletCluster: "solana:devnet";
 }>;

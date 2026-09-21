@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { LogIn, UserCheck } from "lucide-react";
-import { shortenWalletAddress } from "@/solana/client/wallet-presentation";
 import { useAuthSession } from "./session-provider";
 
 export function AuthStatusLink() {
   const { session } = useAuthSession();
   const signedIn = session.status === "signed-in";
   const label = signedIn
-    ? `Signed in ${shortenWalletAddress(session.walletAddress)}`
+    ? "Account"
     : session.status === "unavailable"
       ? "Check sign-in"
       : "Sign in";
@@ -19,11 +18,7 @@ export function AuthStatusLink() {
     <Link
       href="/sign-in"
       className={`auth-status-link ${signedIn ? "signed-in" : ""}`}
-      aria-label={
-        signedIn
-          ? `RepX Club signed in with wallet ${session.walletAddress}`
-          : label
-      }
+      aria-label={signedIn ? `RepX Club signed in as ${session.email}` : label}
     >
       <Icon size={16} aria-hidden="true" />
       <span>{label}</span>

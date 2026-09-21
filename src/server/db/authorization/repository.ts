@@ -38,12 +38,7 @@ export async function withActorDatabaseContext<T>(
         set_config('app.current_auth_user_id', ${actor.authUserId}, true),
         set_config('app.current_profile_id', ${actor.profileId}, true),
         set_config('app.current_run_id', ${actor.runId}, true),
-        set_config('app.current_run_role', ${actor.runRole}, true),
-        set_config(
-          'app.current_wallet_binding_id',
-          ${actor.walletBindingId},
-          true
-        )
+        set_config('app.current_run_role', ${actor.runRole}, true)
     `);
 
     const validation = await transaction.execute<{ is_valid: boolean }>(sql`

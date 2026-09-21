@@ -7,15 +7,23 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file: string) => readFileSync(path.join(root, file), "utf8");
 
-test("local Supabase enables bounded Solana Web3 Auth on the canonical route", () => {
+test("local Supabase enables six-digit email OTP on the canonical route", () => {
   const config = read("supabase/config.toml");
+  const template = read("supabase/templates/email-otp.html");
   assert.match(config, /site_url = "http:\/\/localhost:3100"/);
   assert.match(
     config,
     /additional_redirect_urls = \["http:\/\/localhost:3100\/sign-in"\]/,
   );
-  assert.match(config, /web3 = 30/);
-  assert.match(config, /\[auth\.web3\.solana\]\nenabled = true/);
+  assert.match(config, /otp_length = 6/);
+  assert.match(config, /email_sent = 30/);
+  assert.match(config, /\[auth\.email\.template\.magic_link\]/);
+  assert.match(
+    config,
+    /content_path = "\.\/supabase\/templates\/email-otp\.html"/,
+  );
+  assert.match(template, /\{\{ \.Token \}\}/);
+  assert.match(config, /\[auth\.web3\.solana\]\nenabled = false/);
   assert.doesNotMatch(config, /\[auth\.captcha\]\nenabled = true/);
 });
 
@@ -28,7 +36,11 @@ test("database-only and Auth-enabled local startup remain separate", () => {
   assert.match(packageJson.scripts["db:start"], /gotrue/);
   assert.doesNotMatch(packageJson.scripts["auth:start"], /gotrue/);
   assert.doesNotMatch(packageJson.scripts["auth:start"], /kong/);
-  assert.match(packageJson.scripts["auth:status"], /API_URL\|ANON_KEY/);
+  assert.doesNotMatch(packageJson.scripts["auth:start"], /mailpit/);
+  assert.match(
+    packageJson.scripts["auth:status"],
+    /API_URL\|PUBLISHABLE_KEY\|ANON_KEY/,
+  );
   assert.doesNotMatch(packageJson.scripts["auth:status"], /SERVICE_ROLE/);
   assert.equal(
     packageJson.scripts["db:runtime"],
@@ -38,17 +50,14 @@ test("database-only and Auth-enabled local startup remain separate", () => {
   assert.equal(packageJson.dependencies["@supabase/ssr"], "0.12.7");
 });
 
-test("prepared identity configuration and authority remain server-only", () => {
+test("profile enrollment accepts only a bounded display name", () => {
   const exampleEnvironment = read(".env.example");
   const route = read("src/app/api/auth/identity/route.ts");
-  const roster = read("src/server/identity/env.ts");
 
-  assert.match(exampleEnvironment, /PREPARED_PERSONAL_IDENTITIES_JSON=/);
-  assert.doesNotMatch(exampleEnvironment, /NEXT_PUBLIC_PREPARED/);
-  assert.match(roster, /^import "server-only";/);
+  assert.doesNotMatch(exampleEnvironment, /PREPARED_PERSONAL_IDENTITIES_JSON/);
   assert.match(route, /verifiedAuthSession\(\)/);
-  assert.match(route, /request\.text\(\)/);
-  assert.doesNotMatch(route, /request\.json\(\)/);
+  assert.match(route, /normalizeDisplayName/);
+  assert.match(route, /Object\.keys\(value\)\.length === 1/);
 });
 
 test("server Auth verifies claims and never promotes editable metadata", () => {
@@ -61,4 +70,6 @@ test("server Auth verifies claims and never promotes editable metadata", () => {
   assert.doesNotMatch(session, /getSession\(/);
   assert.doesNotMatch(proxy, /getSession\(/);
   assert.doesNotMatch(session, /user_metadata|app_metadata/);
+  assert.match(session, /email_confirmed_at/);
+  assert.match(session, /identity\.provider === "email"/);
 });

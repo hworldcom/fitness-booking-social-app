@@ -124,7 +124,15 @@ select ok(
   'service_role cannot use the app schema directly'
 );
 
-select is((select count(*)::integer from app.profiles), 6, 'six profiles are seeded');
+select is(
+  (
+    select count(*)::integer
+    from app.profiles
+    where record_source = 'fixture'
+  ),
+  6,
+  'six fixture profiles are seeded'
+);
 select is((select count(*)::integer from app.class_sessions), 3, 'three classes are seeded');
 select ok(
   to_regclass('app.membership_entitlements') is null
@@ -139,7 +147,11 @@ select ok(
 );
 
 select ok(
-  not exists (select 1 from app.profiles where auth_user_id is not null),
+  not exists (
+    select 1
+    from app.profiles
+    where record_source = 'fixture' and auth_user_id is not null
+  ),
   'fixture profiles remain unclaimed'
 );
 

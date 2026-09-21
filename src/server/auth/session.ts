@@ -7,7 +7,7 @@ import {
   UNAVAILABLE_AUTH_SESSION,
   type AuthSessionSnapshot,
 } from "@/auth/contracts";
-import { solanaAddressFromWeb3Identities } from "@/auth/web3-identity";
+import { normalizeEmail } from "@/auth/email-otp";
 import { serverAuthClient } from "./client";
 
 function isMissingSession(error: AuthError) {
@@ -44,16 +44,19 @@ export async function verifiedAuthSession(): Promise<AuthSessionSnapshot> {
       return UNAVAILABLE_AUTH_SESSION;
     }
 
-    const walletAddress = solanaAddressFromWeb3Identities(
-      userResult.data.user.identities,
-    );
-    if (!walletAddress) return UNAVAILABLE_AUTH_SESSION;
+    const user = userResult.data.user;
+    const email = normalizeEmail(user.email);
+    const hasVerifiedEmailIdentity =
+      typeof user.email_confirmed_at === "string" &&
+      user.identities?.some((identity) => identity.provider === "email") ===
+        true;
+    if (!email || !hasVerifiedEmailIdentity) return UNAVAILABLE_AUTH_SESSION;
 
     const expiry = claims.exp;
     return Object.freeze({
       status: "signed-in",
       subject,
-      walletAddress,
+      email,
       expiresAt: typeof expiry === "number" ? expiry : null,
     });
   } catch {

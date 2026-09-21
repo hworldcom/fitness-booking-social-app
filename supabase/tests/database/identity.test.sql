@@ -3,108 +3,61 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = extensions, public, pg_catalog;
 
-select plan(20);
+select plan(23);
 
-select has_table('app', 'wallet_bindings', 'wallet bindings table exists');
-
-select columns_are(
+select has_function(
   'app',
-  'wallet_bindings',
-  array[
-    'id',
-    'run_id',
-    'cluster',
-    'wallet_address',
-    'owner_type',
-    'profile_id',
-    'organization_id',
-    'bound_by_auth_user_id',
-    'provenance',
-    'status',
-    'verified_at',
-    'revoked_at',
-    'created_at',
-    'updated_at'
-  ],
-  'wallet bindings expose the locked fourteen-column contract'
+  'enroll_application_identity',
+  array['uuid', 'text'],
+  'application profile enrollment function exists'
 );
 
 select has_function(
+  'app',
+  'current_application_identity',
+  array['uuid'],
+  'current application identity function exists'
+);
+
+select hasnt_function(
   'app',
   'enroll_prepared_personal_identity',
   array['uuid', 'text', 'text', 'text', 'text'],
-  'prepared personal enrollment function exists'
+  'prepared wallet enrollment function was removed'
 );
 
-select has_function(
+select hasnt_function(
   'app',
   'current_prepared_personal_identity',
   array['uuid', 'text', 'text', 'text', 'text'],
-  'current prepared identity function exists'
-);
-
-select ok(
-  (
-    select relrowsecurity and relforcerowsecurity
-    from pg_class
-    where oid = 'app.wallet_bindings'::regclass
-  ),
-  'wallet bindings enable and force row-level security'
-);
-
-select is(
-  (
-    select role_record.rolname
-    from pg_class table_record
-    join pg_roles role_record on role_record.oid = table_record.relowner
-    where table_record.oid = 'app.wallet_bindings'::regclass
-  ),
-  'app_owner',
-  'app_owner owns wallet bindings'
+  'prepared wallet identity lookup was removed'
 );
 
 select ok(
   has_function_privilege(
     'app_runtime',
-    'app.enroll_prepared_personal_identity(uuid,text,text,text,text)',
+    'app.enroll_application_identity(uuid,text)',
     'execute'
   ),
-  'app_runtime may execute prepared enrollment'
+  'app_runtime may execute bounded profile enrollment'
 );
 
 select ok(
   has_function_privilege(
     'app_runtime',
-    'app.current_prepared_personal_identity(uuid,text,text,text,text)',
+    'app.current_application_identity(uuid)',
     'execute'
   ),
-  'app_runtime may read only the prepared current identity function'
+  'app_runtime may read the current application identity'
 );
 
 select ok(
   not has_function_privilege(
     'anon',
-    'app.enroll_prepared_personal_identity(uuid,text,text,text,text)',
+    'app.enroll_application_identity(uuid,text)',
     'execute'
   ),
-  'anon cannot execute prepared enrollment'
-);
-
-select is(
-  (
-    select count(*)::integer
-    from pg_indexes
-    where schemaname = 'app'
-      and indexname in (
-        'wallet_bindings_active_wallet_owner_idx',
-        'wallet_bindings_active_personal_profile_idx',
-        'wallet_bindings_active_organization_idx',
-        'wallet_bindings_active_personal_auth_user_idx',
-        'wallet_bindings_auth_user_status_run_idx'
-      )
-  ),
-  5,
-  'all wallet ownership and lookup indexes exist'
+  'anon cannot execute application profile enrollment'
 );
 
 select is(
@@ -112,10 +65,20 @@ select is(
     select count(*)::integer
     from pg_policies
     where schemaname = 'app'
-      and policyname like '%identity_enrollment%'
+      and policyname like '%application_identity%'
   ),
-  6,
-  'only the six narrow enrollment policies exist'
+  5,
+  'only five narrow application-identity policies exist'
+);
+
+select ok(
+  not has_table_privilege('app_runtime', 'app.profiles', 'insert')
+    and not has_table_privilege(
+      'app_runtime',
+      'app.demo_run_memberships',
+      'insert'
+    ),
+  'app_runtime cannot write identity tables directly'
 );
 
 insert into auth.users (id, is_sso_user, is_anonymous)
@@ -125,50 +88,30 @@ values
   ('91000000-0000-4000-8000-000000000003', false, false);
 
 insert into app.profiles (
-  id, slug, display_name, initials, bio, avatar_color, record_source
+  id,
+  auth_user_id,
+  slug,
+  display_name,
+  initials,
+  bio,
+  avatar_color,
+  record_source,
+  claimed_at
 )
-values
-  (
-    '91000000-0000-4000-8000-000000000010',
-    'identity-test-person',
-    'Identity Test Person',
-    'IT',
-    'Disposable identity fixture',
-    'blue',
-    'fixture'
-  ),
-  (
-    '91000000-0000-4000-8000-000000000011',
-    'identity-inactive-person',
-    'Identity Inactive Person',
-    'II',
-    'Disposable inactive identity fixture',
-    'blue',
-    'fixture'
-  );
-
-insert into app.demo_run_memberships (
-  run_id, profile_id, role, status, joined_at, revoked_at
-)
-values
-  (
-    '20000000-0000-4000-8000-000000000001',
-    '91000000-0000-4000-8000-000000000010',
-    'member',
-    'active',
-    statement_timestamp(),
-    null
-  ),
-  (
-    '20000000-0000-4000-8000-000000000001',
-    '91000000-0000-4000-8000-000000000011',
-    'member',
-    'revoked',
-    statement_timestamp(),
-    statement_timestamp()
-  );
+values (
+  '91000000-0000-4000-8000-000000000010',
+  '91000000-0000-4000-8000-000000000003',
+  'old-prepared-identity',
+  'Old Prepared Identity',
+  'OP',
+  '',
+  'blue',
+  'fixture',
+  statement_timestamp()
+);
 
 set local role app_runtime;
+
 select set_config(
   'app.test_direct_binding_select',
   has_table_privilege(
@@ -183,42 +126,44 @@ select set_config(
   'app.test_enrolled_name',
   (
     select identity_display_name
-    from app.enroll_prepared_personal_identity(
+    from app.enroll_application_identity(
       '91000000-0000-4000-8000-000000000001',
-      'local-foundation-2030',
-      'identity-test-person',
-      'solana:devnet',
-      '7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M'
+      '  Email   Person  '
     )
   ),
   true
 );
 
 select set_config(
-  'app.test_first_binding_id',
+  'app.test_enrolled_profile_id',
   (
-    select identity_wallet_binding_id::text
-    from app.enroll_prepared_personal_identity(
+    select identity_profile_id::text
+    from app.enroll_application_identity(
       '91000000-0000-4000-8000-000000000001',
-      'local-foundation-2030',
-      'identity-test-person',
-      'solana:devnet',
-      '7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M'
+      'Ignored Retry Name'
     )
   ),
   true
 );
 
 select set_config(
-  'app.test_current_binding_id',
+  'app.test_current_profile_id',
   (
-    select identity_wallet_binding_id::text
-    from app.current_prepared_personal_identity(
+    select identity_profile_id::text
+    from app.current_application_identity(
+      '91000000-0000-4000-8000-000000000001'
+    )
+  ),
+  true
+);
+
+select set_config(
+  'app.test_retry_name',
+  (
+    select identity_display_name
+    from app.enroll_application_identity(
       '91000000-0000-4000-8000-000000000001',
-      'local-foundation-2030',
-      'identity-test-person',
-      'solana:devnet',
-      '7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M'
+      'Ignored Retry Name'
     )
   ),
   true
@@ -226,112 +171,137 @@ select set_config(
 
 reset role;
 
-select throws_ok(
-  $$
-    select *
-    from app.enroll_prepared_personal_identity(
-      '91000000-0000-4000-8000-000000000003',
-      'local-foundation-2030',
-      'identity-inactive-person',
-      'solana:devnet',
-      '11111111111111111111111111111111'
-    )
-  $$::text,
-  'P0001'::character(5),
-  'prepared identity enrollment is unavailable'::text,
-  'an inactive dataset participant cannot enroll'::text
-);
-
-select ok(
-  (
-    select auth_user_id is null
-    from app.profiles
-    where slug = 'identity-inactive-person'
-  )
-  and not exists (
-    select 1
-    from app.wallet_bindings
-    where profile_id = '91000000-0000-4000-8000-000000000011'
-  ),
-  'failed inactive enrollment leaves no partial profile claim or binding'
-);
-
-select throws_ok(
-  $$
-    select *
-    from app.enroll_prepared_personal_identity(
-      '91000000-0000-4000-8000-000000000002',
-      'local-foundation-2030',
-      'identity-test-person',
-      'solana:devnet',
-      '9xQeWvG816bUx9EPfDdSpq5Bg6DXyAzQfQ54qVZ4T2QJ'
-    )
-  $$::text,
-  'P0001'::character(5),
-  'prepared identity enrollment conflicts with existing state'::text,
-  'another Auth subject cannot claim the prepared profile'::text
-);
-
 select is(
   current_setting('app.test_direct_binding_select')::boolean,
   false,
-  'app_runtime has no direct wallet-binding read privilege'
+  'app_runtime still has no direct wallet-binding read privilege'
 );
 
 select is(
   current_setting('app.test_enrolled_name'),
-  'Identity Test Person',
-  'the narrow function enrolls the prepared fixture'
+  'Email Person',
+  'enrollment normalizes the verified account display name'
 );
 
-select is(
-  (select count(*)::integer from app.wallet_bindings),
-  1,
-  'idempotent enrollment creates one binding'
+select matches(
+  (
+    select slug
+    from app.profiles
+    where auth_user_id = '91000000-0000-4000-8000-000000000001'
+  ),
+  '^email-person-910000000000$',
+  'the server generates a stable collision-resistant profile slug'
 );
 
 select is(
   (
-    select auth_user_id::text
+    select count(*)::integer
     from app.profiles
-    where slug = 'identity-test-person'
+    where auth_user_id = '91000000-0000-4000-8000-000000000001'
   ),
-  '91000000-0000-4000-8000-000000000001',
-  'enrollment claims the profile for the verified Auth subject'
+  1,
+  'enrollment creates exactly one user profile'
 );
 
 select is(
-  current_setting('app.test_first_binding_id'),
-  current_setting('app.test_current_binding_id'),
-  'current identity returns the same durable binding'
+  (
+    select count(*)::integer
+    from app.demo_run_memberships as membership
+    join app.profiles as profile on profile.id = membership.profile_id
+    where profile.auth_user_id = '91000000-0000-4000-8000-000000000001'
+  ),
+  1,
+  'enrollment creates exactly one dataset-participation row'
+);
+
+select is(
+  (
+    select count(*)::integer
+    from app.wallet_bindings as binding
+    join app.profiles as profile on profile.id = binding.profile_id
+    where profile.auth_user_id = '91000000-0000-4000-8000-000000000001'
+  ),
+  0,
+  'email enrollment creates no wallet binding'
+);
+
+select is(
+  (
+    select membership.role
+    from app.demo_run_memberships as membership
+    join app.profiles as profile on profile.id = membership.profile_id
+    where profile.auth_user_id = '91000000-0000-4000-8000-000000000001'
+  ),
+  'member',
+  'signup grants only the ordinary member role'
+);
+
+select is(
+  (
+    select record_source
+    from app.profiles
+    where auth_user_id = '91000000-0000-4000-8000-000000000001'
+  ),
+  'user',
+  'open signup creates a user-sourced profile'
+);
+
+select is(
+  current_setting('app.test_enrolled_profile_id'),
+  current_setting('app.test_current_profile_id'),
+  'current identity returns the same durable profile'
+);
+
+select is(
+  current_setting('app.test_retry_name'),
+  'Email Person',
+  'a retry cannot rename or duplicate the existing profile'
 );
 
 select throws_ok(
   $$
-    insert into app.wallet_bindings (
-      run_id,
-      cluster,
-      wallet_address,
-      owner_type,
-      profile_id,
-      organization_id,
-      bound_by_auth_user_id,
-      provenance
-    )
-    values (
-      '20000000-0000-4000-8000-000000000001',
-      'solana:devnet',
-      '11111111111111111111111111111111',
-      'personal',
-      '91000000-0000-4000-8000-000000000010',
-      '30000000-0000-4000-8000-000000000001',
-      '91000000-0000-4000-8000-000000000001',
-      'prepared'
+    select *
+    from app.enroll_application_identity(
+      '91000000-0000-4000-8000-000000000002',
+      'A'
     )
   $$::text,
-  '23514'::character(5),
-  null::text,
-  'one binding cannot target a profile and organization together'::text
+  'P0001'::character(5),
+  'application profile details are invalid'::text,
+  'invalid display names are rejected'
+);
+
+select is(
+  (
+    select count(*)::integer
+    from app.profiles
+    where auth_user_id = '91000000-0000-4000-8000-000000000002'
+  ),
+  0,
+  'invalid enrollment leaves no partial profile'
+);
+
+select throws_ok(
+  $$
+    select *
+    from app.enroll_application_identity(
+      '91000000-0000-4000-8000-000000000003',
+      'Replacement Name'
+    )
+  $$::text,
+  'P0001'::character(5),
+  'application identity conflicts with existing state'::text,
+  'an old fixture claim cannot become an open user profile'
+);
+
+select is(
+  (
+    select count(*)::integer
+    from app.demo_run_memberships
+    where profile_id = '91000000-0000-4000-8000-000000000010'
+  ),
+  0,
+  'conflicting fixture enrollment creates no partial participation'
 );
 
 select * from finish();

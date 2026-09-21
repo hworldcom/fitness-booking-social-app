@@ -1,12 +1,10 @@
 import { parseSupabasePublicConfig } from "@/auth/config";
 import { parseDatabaseUrl } from "@/server/db/config";
-import { parsePreparedPersonalIdentities } from "@/server/identity/config";
 
 export type ApplicationAccessMode = "preview" | "database" | "unavailable";
 
 export type ApplicationAccessEnvironment = Readonly<{
   databaseUrl?: string;
-  preparedPersonalIdentitiesJson?: string;
   supabaseUrl?: string;
   supabasePublishableKey?: string;
   siteUrl?: string;
@@ -21,7 +19,6 @@ export function parseApplicationAccessMode(
 ): ApplicationAccessMode {
   const values = [
     environment.databaseUrl,
-    environment.preparedPersonalIdentitiesJson,
     environment.supabaseUrl,
     environment.supabasePublishableKey,
     environment.siteUrl,
@@ -32,7 +29,6 @@ export function parseApplicationAccessMode(
 
   try {
     parseDatabaseUrl(environment.databaseUrl);
-    parsePreparedPersonalIdentities(environment.preparedPersonalIdentitiesJson);
     if (
       !parseSupabasePublicConfig(
         environment.supabaseUrl,

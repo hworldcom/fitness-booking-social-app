@@ -4,21 +4,16 @@ import type {
   ApplicationIdentitySnapshot,
   EnrolledApplicationIdentity,
 } from "@/auth/identity-contracts";
+import { normalizeDisplayName } from "@/auth/identity-contracts";
 import type { AuthSessionSnapshot } from "@/auth/contracts";
 import {
-  currentPreparedPersonalIdentity,
-  enrollPreparedPersonalIdentity,
-  PreparedIdentityConflictError,
-  type PreparedIdentityRecord,
+  currentApplicationProfile,
+  enrollApplicationProfile,
+  type ApplicationIdentityRecord,
 } from "@/server/db/identity/repository";
-import {
-  preparedIdentityForWallet,
-  PreparedIdentityConfigurationError,
-} from "./config";
-import { preparedPersonalIdentities } from "./env";
 
 function enrolledSnapshot(
-  identity: PreparedIdentityRecord,
+  identity: ApplicationIdentityRecord,
 ): EnrolledApplicationIdentity {
   return Object.freeze({
     status: "enrolled",
@@ -33,51 +28,31 @@ function enrolledSnapshot(
       name: identity.runName,
     }),
     role: identity.role,
-    wallet: Object.freeze({
-      bindingId: identity.walletBindingId,
-      address: identity.walletAddress,
-      cluster: identity.cluster,
-    }),
   });
-}
-
-function preparedIdentityFromSession(session: AuthSessionSnapshot) {
-  if (session.status !== "signed-in") return null;
-  const identities = preparedPersonalIdentities();
-  return preparedIdentityForWallet(identities, session.walletAddress) ?? null;
-}
-
-function failedIdentity(error: unknown): ApplicationIdentitySnapshot {
-  if (error instanceof PreparedIdentityConflictError) {
-    return Object.freeze({ status: "not-prepared" });
-  }
-  if (error instanceof PreparedIdentityConfigurationError) {
-    return Object.freeze({ status: "unavailable" });
-  }
-  return Object.freeze({ status: "unavailable" });
 }
 
 export async function enrollApplicationIdentity(
   session: AuthSessionSnapshot,
+  displayNameValue: unknown,
 ): Promise<ApplicationIdentitySnapshot> {
   if (session.status !== "signed-in") {
     return Object.freeze({
       status: session.status === "signed-out" ? "signed-out" : "unavailable",
     });
   }
+  const displayName = normalizeDisplayName(displayNameValue);
+  if (!displayName) return Object.freeze({ status: "profile-required" });
 
   try {
-    const prepared = preparedIdentityFromSession(session);
-    if (!prepared) return Object.freeze({ status: "not-prepared" });
-    const identity = await enrollPreparedPersonalIdentity(
+    const identity = await enrollApplicationProfile(
       session.subject,
-      prepared,
+      displayName,
     );
     return identity
       ? enrolledSnapshot(identity)
-      : Object.freeze({ status: "not-prepared" });
-  } catch (error) {
-    return failedIdentity(error);
+      : Object.freeze({ status: "profile-required" });
+  } catch {
+    return Object.freeze({ status: "unavailable" });
   }
 }
 
@@ -91,16 +66,11 @@ export async function currentApplicationIdentity(
   }
 
   try {
-    const prepared = preparedIdentityFromSession(session);
-    if (!prepared) return Object.freeze({ status: "not-prepared" });
-    const identity = await currentPreparedPersonalIdentity(
-      session.subject,
-      prepared,
-    );
+    const identity = await currentApplicationProfile(session.subject);
     return identity
       ? enrolledSnapshot(identity)
-      : Object.freeze({ status: "not-enrolled" });
-  } catch (error) {
-    return failedIdentity(error);
+      : Object.freeze({ status: "profile-required" });
+  } catch {
+    return Object.freeze({ status: "unavailable" });
   }
 }

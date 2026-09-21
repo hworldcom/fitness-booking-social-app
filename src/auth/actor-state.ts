@@ -12,7 +12,7 @@ export type ActorState = Readonly<{
 
 export function actorSessionKey(session: AuthSessionSnapshot) {
   return session.status === "signed-in"
-    ? `${session.subject}:${session.walletAddress}:${session.expiresAt ?? "no-expiry"}`
+    ? `${session.subject}:${session.expiresAt ?? "no-expiry"}`
     : session.status;
 }
 

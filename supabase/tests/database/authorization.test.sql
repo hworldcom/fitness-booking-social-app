@@ -105,43 +105,15 @@ select ok(
 insert into auth.users (id, is_sso_user, is_anonymous)
 values ('93000000-0000-4000-8000-000000000001', false, false);
 
-insert into app.profiles (
-  id, slug, display_name, initials, bio, avatar_color, record_source
-)
-values (
-  '93000000-0000-4000-8000-000000000010',
-  'authorization-test-person',
-  'Authorization Test Person',
-  'AT',
-  'Disposable authorization fixture',
-  'blue',
-  'fixture'
-);
-
-insert into app.demo_run_memberships (
-  run_id, profile_id, role, status, joined_at, revoked_at
-)
-values (
-  '20000000-0000-4000-8000-000000000001',
-  '93000000-0000-4000-8000-000000000010',
-  'member',
-  'active',
-  statement_timestamp(),
-  null
-);
-
 set local role app_runtime;
 
 select set_config(
-  'app.test_actor_binding_id',
+  'app.test_actor_profile_id',
   (
-    select identity_wallet_binding_id::text
-    from app.enroll_prepared_personal_identity(
+    select identity_profile_id::text
+    from app.enroll_application_identity(
       '93000000-0000-4000-8000-000000000001',
-      'local-foundation-2030',
-      'authorization-test-person',
-      'solana:devnet',
-      '7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M'
+      'Authorization Test Person'
     )
   ),
   true
@@ -156,7 +128,7 @@ select set_config(
 select set_config('app.current_auth_user_id', 'not-a-uuid', true);
 select set_config(
   'app.current_profile_id',
-  '93000000-0000-4000-8000-000000000010',
+  current_setting('app.test_actor_profile_id'),
   true
 );
 select set_config(
@@ -166,15 +138,9 @@ select set_config(
 );
 select set_config('app.current_run_role', 'member', true);
 select set_config(
-  'app.current_wallet_binding_id',
-  current_setting('app.test_actor_binding_id'),
-  true
-);
-
-select set_config(
   'app.test_malformed_context_valid',
   app.authorized_actor_context_valid(
-    '93000000-0000-4000-8000-000000000010',
+    current_setting('app.test_actor_profile_id')::uuid,
     '20000000-0000-4000-8000-000000000001',
     'member'
   )::text,
@@ -190,7 +156,7 @@ select set_config(
 select set_config(
   'app.test_complete_context_valid',
   app.authorized_actor_context_valid(
-    '93000000-0000-4000-8000-000000000010',
+    current_setting('app.test_actor_profile_id')::uuid,
     '20000000-0000-4000-8000-000000000001',
     'member'
   )::text,
@@ -266,20 +232,20 @@ select is(
 select is(
   current_setting('app.test_other_profile_count')::integer,
   0,
-  'another prepared profile stays hidden'
+  'another fixture profile stays hidden'
 );
 
 update app.demo_run_memberships
 set status = 'revoked', revoked_at = statement_timestamp()
 where run_id = '20000000-0000-4000-8000-000000000001'
-  and profile_id = '93000000-0000-4000-8000-000000000010';
+  and profile_id = current_setting('app.test_actor_profile_id')::uuid;
 
 set local role app_runtime;
 
 select set_config(
   'app.test_revoked_context_valid',
   app.authorized_actor_context_valid(
-    '93000000-0000-4000-8000-000000000010',
+    current_setting('app.test_actor_profile_id')::uuid,
     '20000000-0000-4000-8000-000000000001',
     'member'
   )::text,

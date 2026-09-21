@@ -128,7 +128,7 @@ Recommended sequence:
 2. Preserve completed DEV0031 as the domain/discovery/preview baseline before persistence work replaces preview adapters.
 3. Preserve completed DEV0027 as the browser wallet/Solana client baseline.
 4. Preserve completed DEV0015 and DEV0025 with separate file ownership and evidence: DEV0015 created the real database artifacts/access modules; DEV0025 supplied and validated the server boundary rules around them.
-5. DEV0038 → DEV0039 → DEV0040 completed under COR0002 after DEV0015 and DEV0027. On 2026-09-21 the user prioritized independent DEV0046 next, before resuming DEV0041 or progressing through DEV0017, DEV0018 and DEV0023 in dependency order.
+5. DEV0038 → DEV0039 → DEV0040 completed under COR0002 after DEV0015 and DEV0027. DEV0046 then completed account-first email Auth under COR0003 on 2026-09-21; DEV0047 is the next Ready identity ticket before DEV0041 or the later product-data sequence.
 6. Create the server-Solana verification and Anchor/program-client tickets before adding `src/server/solana`, `programs` or generated program bindings; later verified projections enable DEV0024.
 7. Complete COR0001 only after every direct structural ticket is completed or explicitly replaced/cancelled and the final tree, import, client-bundle and integration review passes.
 

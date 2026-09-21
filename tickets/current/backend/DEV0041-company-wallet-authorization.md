@@ -5,7 +5,7 @@
 - Last updated: 2026-09-21
 - Milestone: M0 identity / M2 company authority prerequisite
 - Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0040 — Protected access and database context](../../archive/backend/DEV0040-protected-access-and-database-context.md), plus [DEV0046 — Email OTP registration and application profiles](DEV0046-email-otp-registration-and-application-profiles.md) and [DEV0047 — Personal wallet linking and replacement](DEV0047-personal-wallet-linking-and-replacement.md); implements C14 from [DEV0007 — EURC-only wallet contract](../../archive/blockchain/DEV0007-eurc-only-wallet-contract.md); later financial tickets consume its authority result
+- Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md), [DEV0040 — Protected access and database context](../../archive/backend/DEV0040-protected-access-and-database-context.md) and [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md), plus [DEV0047 — Personal wallet linking and replacement](DEV0047-personal-wallet-linking-and-replacement.md); implements C14 from [DEV0007 — EURC-only wallet contract](../../archive/blockchain/DEV0007-eurc-only-wallet-contract.md); later financial tickets consume its authority result
 
 ## Objective and context
 

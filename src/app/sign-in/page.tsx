@@ -6,7 +6,7 @@ import { SignInScreen } from "@/features/auth/sign-in";
 export const metadata: Metadata = {
   title: "Sign in",
   description:
-    "Connect Phantom and approve a message signature to sign in to RepX Club.",
+    "Request a one-time email code to create or restore your RepX Club account.",
 };
 
 export default async function SignInPage({
