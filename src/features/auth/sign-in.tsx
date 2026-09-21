@@ -315,7 +315,7 @@ export function SignInScreen({
               <strong>RepX Club signed out.</strong>
               <p>
                 A wallet connection by itself does not grant a profile,
-                membership, role or purchase permission.
+                application access, role or purchase permission.
               </p>
             </div>
           )}

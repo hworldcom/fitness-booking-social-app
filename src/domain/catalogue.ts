@@ -43,7 +43,6 @@ export type ClubClass = {
   duration: number;
   price: number;
   spots: number;
-  membership: boolean;
   description: string;
   artwork: "fight" | "strength" | "flow";
 };

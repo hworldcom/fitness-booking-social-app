@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import {
-  boolean,
   check,
   date,
   foreignKey,
@@ -455,7 +454,6 @@ export const classSessions = app.table(
       scale: 0,
       mode: "string",
     }).notNull(),
-    membershipEligible: boolean("membership_eligible").notNull(),
     status: text("status").notNull(),
     recordSource: text("record_source").notNull(),
     ...auditColumns,
@@ -516,67 +514,6 @@ export const classSessions = app.table(
       table.runId,
       table.discipline,
       table.startsAt,
-    ),
-  ],
-);
-
-export const membershipEntitlements = app.table(
-  "membership_entitlements",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    runId: uuid("run_id").notNull(),
-    profileId: uuid("profile_id").notNull(),
-    venueId: uuid("venue_id").notNull(),
-    label: text("label").notNull(),
-    startsAt: timestamp("starts_at", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    endsAt: timestamp("ends_at", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    status: text("status").notNull(),
-    recordSource: text("record_source").notNull(),
-    ...auditColumns,
-  },
-  (table) => [
-    foreignKey({
-      name: "membership_entitlements_run_profile_fkey",
-      columns: [table.runId, table.profileId],
-      foreignColumns: [demoRunMemberships.runId, demoRunMemberships.profileId],
-    }).onDelete("restrict"),
-    foreignKey({
-      name: "membership_entitlements_run_venue_fkey",
-      columns: [table.runId, table.venueId],
-      foreignColumns: [venues.runId, venues.id],
-    }).onDelete("restrict"),
-    unique("membership_entitlements_run_id_id_key").on(table.runId, table.id),
-    unique("membership_entitlements_fixture_key").on(
-      table.runId,
-      table.profileId,
-      table.venueId,
-      table.startsAt,
-    ),
-    check(
-      "membership_entitlements_time_order_check",
-      sql`${table.endsAt} > ${table.startsAt}`,
-    ),
-    check(
-      "membership_entitlements_status_check",
-      sql`${table.status} in ('active', 'revoked', 'expired')`,
-    ),
-    check(
-      "membership_entitlements_record_source_check",
-      sql`${table.recordSource} in ('fixture', 'user')`,
-    ),
-    index("membership_entitlements_lookup_idx").on(
-      table.runId,
-      table.profileId,
-      table.venueId,
-      table.status,
-      table.startsAt,
-      table.endsAt,
     ),
   ],
 );

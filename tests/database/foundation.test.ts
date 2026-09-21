@@ -3,11 +3,7 @@ import assert from "node:assert/strict";
 import { asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import {
-  classSessions,
-  membershipEntitlements,
-  profiles,
-} from "@/server/db/schema";
+import { classSessions, profiles } from "@/server/db/schema";
 import { createDatabaseConnection } from "@/server/db/client";
 
 const connectionString = process.env.DATABASE_TEST_URL;
@@ -49,13 +45,6 @@ test("Drizzle mappings read the deterministic foundation fixtures", async () => 
     ["12000000", "18000000", "15000000"],
   );
   assert.ok(seededClasses.every((session) => session.currencyCode === "EURC"));
-
-  const memberships = await db
-    .select({ label: membershipEntitlements.label })
-    .from(membershipEntitlements);
-  assert.deepEqual(memberships, [
-    { label: "Anna's seeded Kru Tiger membership" },
-  ]);
 });
 
 test("forced RLS hides private rows from the runtime role", async () => {
@@ -91,13 +80,13 @@ test("database checks reject an out-of-range class price", async () => {
         insert into app.class_sessions (
           id, run_id, venue_id, trainer_profile_id, slug, title, description,
           discipline, timezone, currency_code, starts_at, ends_at, capacity,
-          price_base_units, membership_eligible, status, record_source
+          price_base_units, status, record_source
         )
         select
           gen_random_uuid(), run_id, venue_id, trainer_profile_id,
           'invalid-negative-price', title, description, discipline, timezone,
           currency_code, starts_at, ends_at, capacity, -1,
-          membership_eligible, status, record_source
+          status, record_source
         from app.class_sessions
         limit 1
       `);

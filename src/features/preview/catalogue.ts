@@ -93,7 +93,6 @@ export const classes: ClubClass[] = [
     duration: 60,
     price: 12,
     spots: 4,
-    membership: true,
     artwork: "fight",
     description:
       "Find your footing, build your confidence. A welcoming session covering stance, movement and pad work. All levels welcome; bring water and a towel.",
@@ -113,7 +112,6 @@ export const classes: ClubClass[] = [
     duration: 50,
     price: 18,
     spots: 6,
-    membership: false,
     artwork: "strength",
     description:
       "A small-group strength session built around good technique and mutual encouragement. Squats, carries and a little more confidence than you came in with.",
@@ -133,7 +131,6 @@ export const classes: ClubClass[] = [
     duration: 75,
     price: 15,
     spots: 8,
-    membership: false,
     artwork: "flow",
     description:
       "Slow down and find your rhythm. Gentle movement, spacious breathing and a long stretch to send you into the new week feeling grounded.",

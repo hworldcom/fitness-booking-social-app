@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M4 social interaction slice
 - Coordination: None — independent development ticket
-- Related tickets: Planning [DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md); depends on completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md), [DEV0017](DEV0017-persistent-catalogue-and-drafts.md), and [DEV0018](DEV0018-membership-booking-and-visits.md); challenge sources follow in [DEV0024](../blockchain/DEV0024-verified-challenge-activity.md)
+- Related tickets: Planning [DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md); depends on completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md), [DEV0017](DEV0017-persistent-catalogue-and-drafts.md), and [DEV0018](DEV0018-class-pass-reservations-and-confirmed-visits.md); challenge sources follow in [DEV0024](../blockchain/DEV0024-verified-challenge-activity.md)
 
 ## Objective and context
 
@@ -18,7 +18,7 @@ Replace the fixture-based For you/Following feed with shared chronological activ
 
 ## Expected behavior and edge cases
 
-Implement section 9's feed membership, ordering, source visibility and reaction rules. Following contains followed authors only; the owner's posts remain in Community/profile. No accessible followed activity gives a useful empty state. Profile/feed pagination cannot reveal hidden or cross-run rows. A cancellation changes its existing item without promoting it or clearing other people's valid reactions.
+Implement section 9's feed composition, ordering, source visibility and reaction rules. Following contains followed authors only; the owner's posts remain in Community/profile. No accessible followed activity gives a useful empty state. Profile/feed pagination cannot reveal hidden or cross-run rows. A cancellation changes its existing item without promoting it or clearing other people's valid reactions.
 
 Cheer/remove changes only the signed-in actor's reaction. Rapid taps, retried requests and two concurrent people cannot duplicate a reaction or lose another person's Cheer. A failed response shows uncertainty/error and revalidates rather than displaying unconfirmed success. Hidden/deleted/restricted parent items deny reaction reads/writes, including counts; losing access and signing out clear personal cached content. Shared class/event/challenge catalogue links stay public where permitted and never grant a booking or challenge entry.
 

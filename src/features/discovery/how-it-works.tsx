@@ -52,8 +52,8 @@ export function HowItWorksScreen() {
           </span>
           <h2>Show up for each other</h2>
           <p>
-            A shared class booking lets your friends know your plan. Gym staff
-            confirms attendance separately. Challenge rewards follow the
+            A confirmed class pass can let your friends know your plan. Venue
+            staff confirms attendance separately. Challenge rewards follow the
             published voting or judging rules.
           </p>
         </section>
@@ -66,9 +66,9 @@ export function HowItWorksScreen() {
             <Dumbbell size={23} />
             <h3>Classes</h3>
             <p>
-              Find a studio and a dated session. Use eligible membership access
-              or buy a class pass. A booking is your plan; staff confirmation
-              records your visit.
+              Find a studio and a dated session, then buy a class pass. A pass
+              grants class access; staff confirmation separately records your
+              visit.
             </p>
             <Link href="/explore" className="text-link">
               Find a class <ArrowRight size={15} />

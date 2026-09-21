@@ -200,8 +200,8 @@ export function Shell({
               <div className="notice">
                 <strong>Everything here is demonstration data.</strong>
                 <p>
-                  Try creating a challenge draft or previewing a membership
-                  booking. Your changes stay in this browser. Venues, visits,
+                  Try creating a challenge draft or previewing a class-pass
+                  checkout. Your changes stay in this browser. Venues, visits,
                   pools and people are fixtures, not live partnerships or real
                   funds.
                 </p>

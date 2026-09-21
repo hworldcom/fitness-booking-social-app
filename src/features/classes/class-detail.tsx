@@ -7,21 +7,15 @@ import {
   MapPin,
   Clock3,
   CalendarDays,
-  Check,
   Users,
   ShieldCheck,
-  EyeOff,
 } from "lucide-react";
 import type { ClubClass } from "@/domain/catalogue";
 import { formatEurc } from "@/components/format";
-import { useDemo } from "@/features/preview/store";
 import { Artwork, Avatar, Modal, Pill } from "@/components/ui";
 
 export function ClassDetail({ session }: { session: ClubClass }) {
-  const { state, dispatch } = useDemo();
-  const [dialog, setDialog] = useState<"book" | "pay" | "cancel" | null>(null);
-  const [share, setShare] = useState(true);
-  const booking = state.bookings.find((b) => b.classId === session.id);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   return (
     <>
       <Link href="/explore" className="back-link">
@@ -91,8 +85,8 @@ export function ClassDetail({ session }: { session: ClubClass }) {
               <div>
                 <strong>Attendance means being there.</strong>
                 <p>
-                  Booking doesn’t add a visit to your profile. Gym staff must
-                  confirm attendance in the implemented check-in flow.
+                  Buying a pass doesn’t add a visit to your profile. Venue staff
+                  must confirm attendance in the future check-in flow.
                 </p>
               </div>
             </div>
@@ -101,25 +95,11 @@ export function ClassDetail({ session }: { session: ClubClass }) {
         <aside className="detail-aside">
           <section className="rail-card entry-card">
             <span className="eyebrow">YOUR NEXT SESSION</span>
-            <h2>
-              {session.membership
-                ? "You’re part of the club."
-                : "Make some time for you."}
-            </h2>
-            {session.membership ? (
-              <div className="membership-cover">
-                <Check size={19} />
-                <div>
-                  <strong>Covered by your membership</strong>
-                  <small>Anna’s seeded Kru Tiger membership</small>
-                </div>
-              </div>
-            ) : (
-              <div className="class-detail-price">
-                <strong>{formatEurc(session.price)}</strong>
-                <span>test EURC / one class</span>
-              </div>
-            )}
+            <h2>Make some time for you.</h2>
+            <div className="class-detail-price">
+              <strong>{formatEurc(session.price)}</strong>
+              <span>test EURC / one class</span>
+            </div>
             <div className="line-item">
               <span>Session</span>
               <strong>
@@ -130,99 +110,31 @@ export function ClassDetail({ session }: { session: ClubClass }) {
               <span>Venue</span>
               <strong>{session.gym}</strong>
             </div>
-            {booking ? (
-              <>
-                <div
-                  className={`notice ${booking.status === "booked" ? "success" : ""}`}
-                  role="status"
-                >
-                  <strong>
-                    {booking.status === "booked"
-                      ? "Demo booking confirmed"
-                      : "Demo booking cancelled"}
-                  </strong>
-                  <p>
-                    {booking.status === "booked"
-                      ? "Saved in this browser. No real reservation or confirmed visit."
-                      : "The existing activity reflects the cancellation. No money moved."}
-                  </p>
-                </div>
-                {booking.status === "booked" && (
-                  <button
-                    className="button secondary full"
-                    onClick={() => setDialog("cancel")}
-                  >
-                    Cancel demo booking
-                  </button>
-                )}
-                {booking.shared && !booking.hidden && (
-                  <button
-                    className="text-link full"
-                    onClick={() =>
-                      dispatch({ type: "hide", classId: session.id })
-                    }
-                  >
-                    <EyeOff size={15} />
-                    Hide activity from the demo feed
-                  </button>
-                )}
-                <Link href="/" className="button dark full">
-                  Back to your club <ArrowRight size={17} />
-                </Link>
-              </>
-            ) : (
-              <>
-                <label className="share-control">
-                  <input
-                    type="checkbox"
-                    checked={share}
-                    onChange={(e) => setShare(e.target.checked)}
-                  />
-                  <span>
-                    Share this class in my public activity
-                    <small>Preview sharing in this browser’s feed.</small>
-                  </span>
-                </label>
-                <button
-                  className="button lime full"
-                  onClick={() => setDialog(session.membership ? "book" : "pay")}
-                >
-                  {session.membership
-                    ? "Try a demo booking"
-                    : "Preview checkout"}
-                  <ArrowRight size={17} />
-                </button>
-                <p className="fixture-note centered">
-                  {session.membership
-                    ? "Local simulation · No payment needed"
-                    : "No payment or reservation will be submitted"}
-                </p>
-              </>
-            )}
-            {!session.membership && (
-              <div className="policy-note">
-                <strong>Before paying</strong>
-                <p>
-                  Purchases within 24 hours of class and no-shows are
-                  non-refundable. The broader cancellation cutoff and
-                  gym-cancellation exceptions are proposed rules, pending
-                  confirmation.
-                </p>
-              </div>
-            )}
+            <button
+              className="button lime full"
+              onClick={() => setCheckoutOpen(true)}
+            >
+              Preview checkout <ArrowRight size={17} />
+            </button>
+            <p className="fixture-note centered">
+              No payment or reservation will be submitted
+            </p>
+            <div className="policy-note">
+              <strong>Before paying</strong>
+              <p>
+                Purchases within 24 hours of class and no-shows are
+                non-refundable. The broader cancellation cutoff and
+                venue-cancellation exceptions are proposed rules, pending
+                confirmation.
+              </p>
+            </div>
           </section>
         </aside>
       </div>
-      {dialog && (
+      {checkoutOpen && (
         <Modal
-          title={
-            dialog === "book"
-              ? "Make room for a good session."
-              : dialog === "cancel"
-                ? "Change of plans?"
-                : "A little time for yourself."
-          }
-          onClose={() => setDialog(null)}
+          title="A little time for yourself."
+          onClose={() => setCheckoutOpen(false)}
         >
           <p className="dialog-copy">
             {session.title}
@@ -231,96 +143,34 @@ export function ClassDetail({ session }: { session: ClubClass }) {
               {session.gym} · {session.date} · {session.time}
             </span>
           </p>
-          {dialog === "book" ? (
-            <>
-              <div className="checkout-summary">
-                <div className="line-item">
-                  <span>Your membership</span>
-                  <strong>Included · No payment</strong>
-                </div>
-                <div className="line-item">
-                  <span>Feed activity</span>
-                  <strong>{share ? "Shared demo activity" : "Private"}</strong>
-                </div>
-              </div>
-              <div className="notice">
-                <strong>This is a local simulation.</strong>
-                <p>
-                  It creates a demo booking in this browser. No real gym spot is
-                  reserved, no wallet is used and no visit is recorded.
-                </p>
-              </div>
-              <button
-                className="button lime full"
-                onClick={() => {
-                  dispatch({
-                    type: "book",
-                    classId: session.id,
-                    shared: share,
-                    now: new Date().toISOString(),
-                  });
-                  setDialog(null);
-                }}
-              >
-                Confirm demo booking <Check size={18} />
-              </button>
-            </>
-          ) : dialog === "cancel" ? (
-            <>
-              <p className="dialog-copy">
-                Cancel this local membership booking? Its existing feed activity
-                will show the cancellation.
-              </p>
-              <div className="button-row">
-                <button
-                  className="button secondary"
-                  onClick={() => setDialog(null)}
-                >
-                  Keep booking
-                </button>
-                <button
-                  className="button dark"
-                  onClick={() => {
-                    dispatch({ type: "cancel", classId: session.id });
-                    setDialog(null);
-                  }}
-                >
-                  Cancel demo booking
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="checkout-summary">
-                <div className="line-item">
-                  <span>One class pass</span>
-                  <strong>{formatEurc(session.price)} test EURC</strong>
-                </div>
-                <div className="line-item">
-                  <span>Recipient</span>
-                  <strong>{session.gym} business wallet</strong>
-                </div>
-                <div className="line-item">
-                  <span>Network costs</span>
-                  <strong>Test SOL · quoted before signing</strong>
-                </div>
-              </div>
-              <div className="notice">
-                <strong>Checkout isn’t connected yet.</strong>
-                <p>
-                  No payment, pass or feed activity is created. The real flow
-                  will ask for your Phantom signature and verify the transfer
-                  before confirming the booking.
-                </p>
-              </div>
-              <button
-                className="button dark full"
-                onClick={() => setDialog(null)}
-              >
-                Back to the session <ArrowRight size={17} />
-              </button>
-            </>
-          )}
+          <div className="checkout-summary">
+            <div className="line-item">
+              <span>One class pass</span>
+              <strong>{formatEurc(session.price)} test EURC</strong>
+            </div>
+            <div className="line-item">
+              <span>Recipient</span>
+              <strong>{session.gym} business wallet</strong>
+            </div>
+            <div className="line-item">
+              <span>Network costs</span>
+              <strong>Test SOL · quoted before signing</strong>
+            </div>
+          </div>
+          <div className="notice">
+            <strong>Checkout isn’t connected yet.</strong>
+            <p>
+              No payment, pass or feed activity is created. The real flow will
+              ask for your wallet signature and verify the transfer before
+              confirming access.
+            </p>
+          </div>
+          <button
+            className="button dark full"
+            onClick={() => setCheckoutOpen(false)}
+          >
+            Back to the session <ArrowRight size={17} />
+          </button>
         </Modal>
       )}
     </>

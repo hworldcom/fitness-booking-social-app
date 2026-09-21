@@ -9,17 +9,10 @@ import {
   CalendarDays,
   Users,
   Flag,
-  EyeOff,
   Footprints,
   Coffee,
 } from "lucide-react";
-import {
-  challenges,
-  classes,
-  people,
-  studios,
-} from "@/features/preview/catalogue";
-import { visibleBookings } from "@/features/preview/state";
+import { challenges, people, studios } from "@/features/preview/catalogue";
 import { useDemo } from "@/features/preview/store";
 import {
   Avatar,
@@ -38,7 +31,6 @@ export function Feed() {
   const { state, dispatch, requestPrivateAccess } = useDemo();
   const showDaniel = filter === "For you" || state.following.includes("daniel");
   const showMax = filter === "For you" || state.following.includes("max");
-  const own = visibleBookings(state);
   return (
     <>
       <section className="club-hero" aria-labelledby="club-welcome">
@@ -100,60 +92,6 @@ export function Feed() {
             </div>
           </div>
           <div className="activity-list">
-            {own.map((booking) => {
-              const session = classes.find((c) => c.id === booking.classId)!;
-              return (
-                <article className="activity-card" key={booking.classId}>
-                  <div className="activity-person">
-                    <Avatar />
-                    <div>
-                      <p>
-                        <strong>You</strong>{" "}
-                        {booking.status === "cancelled"
-                          ? "cancelled a class booking"
-                          : "joined a class"}
-                      </p>
-                      <small>Local simulation · shared in this browser</small>
-                    </div>
-                    <button
-                      className="icon-button"
-                      aria-label={`Hide ${session.title} activity`}
-                      onClick={() =>
-                        dispatch({ type: "hide", classId: session.id })
-                      }
-                    >
-                      <EyeOff size={17} />
-                    </button>
-                  </div>
-                  <div className="activity-session">
-                    <span className="date-block">
-                      <small>{session.day}</small>
-                      <strong>{session.date.split(" ")[0]}</strong>
-                    </span>
-                    <div>
-                      <h3>{session.title}</h3>
-                      <p>
-                        {session.gym} · {session.time}
-                      </p>
-                    </div>
-                    <Pill
-                      tone={booking.status === "cancelled" ? "neutral" : "lime"}
-                    >
-                      {booking.status === "cancelled"
-                        ? "Cancelled"
-                        : "Demo booking"}
-                    </Pill>
-                  </div>
-                  <p className="activity-caption">
-                    A booking is a plan to attend. Only gym confirmation records
-                    a visit.
-                  </p>
-                  <Link className="text-link" href={`/classes/${session.id}`}>
-                    View session <ArrowUpRight size={16} />
-                  </Link>
-                </article>
-              );
-            })}
             {showDaniel && (
               <article className="activity-card">
                 <div className="activity-person">
@@ -243,7 +181,7 @@ export function Feed() {
                 </Link>
               </article>
             )}
-            {!showDaniel && !showMax && own.length === 0 && (
+            {!showDaniel && !showMax && (
               <Empty
                 title="Your people, your feed."
                 description="Follow a few club members to see their next moves here."

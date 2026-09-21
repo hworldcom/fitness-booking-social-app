@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M4 challenge social sources
 - Coordination: None — independent development ticket
-- Related tickets: Planning [DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md); shared data [DEV0017](../backend/DEV0017-persistent-catalogue-and-drafts.md), delivery infrastructure [DEV0018](../backend/DEV0018-membership-booking-and-visits.md), feed/reactions [DEV0023](../backend/DEV0023-shared-social-feed-and-cheers.md); requires future M2 challenge projection/reconciliation tickets
+- Related tickets: Planning [DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md); shared data [DEV0017](../backend/DEV0017-persistent-catalogue-and-drafts.md), delivery infrastructure [DEV0018](../backend/DEV0018-class-pass-reservations-and-confirmed-visits.md), feed/reactions [DEV0023](../backend/DEV0023-shared-social-feed-and-cheers.md); requires future M2 challenge projection/reconciliation tickets
 
 ## Objective and context
 
@@ -20,7 +20,7 @@ Connect verified challenge publication, entry and outcomes to the shared social 
 
 A saved draft, wallet prompt, pending transaction or failed entry emits no published/joined activity. Only verified source transitions produce the corresponding item. Creator publication, participant entry, recorded decision/equal fallback and paid claims have distinct evidence and labels; an announced award is never described as received before transfer verification. Cheer counts never influence voting, eligibility, merit, allocations or payout.
 
-Sharing must be an explicit visible choice tied to the relevant actor/challenge operation, persisted before asynchronous publication. Owner opt-out/hide and current challenge visibility are checked on every delivery/read/retry. Public discovery does not reveal an invite-only roster, votes or membership. Replayed or out-of-order evidence cannot duplicate items, restore hidden content or change a paid/selected label incorrectly. A link remains subject to current entry and detail permissions.
+Sharing must be an explicit visible choice tied to the relevant actor/challenge operation, persisted before asynchronous publication. Owner opt-out/hide and current challenge visibility are checked on every delivery/read/retry. Public discovery does not reveal an invite-only roster, votes or participation records. Replayed or out-of-order evidence cannot duplicate items, restore hidden content or change a paid/selected label incorrectly. A link remains subject to current entry and detail permissions.
 
 ## Assumptions, decisions, and dependencies
 

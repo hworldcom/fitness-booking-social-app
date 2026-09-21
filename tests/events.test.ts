@@ -56,7 +56,7 @@ test("event drafts require a benefit, valid schedule, capacity and positive boun
   );
 });
 
-test("event drafts persist without creating bookings or challenge entries, deduplicate and delete", () => {
+test("event drafts persist without creating challenge entries, deduplicate and delete", () => {
   const draft = {
     ...input,
     id: "event-draft-example",
@@ -77,7 +77,6 @@ test("event drafts persist without creating bookings or challenge entries, dedup
   assert.equal(again.eventDrafts.length, 1);
   assert.equal(again.eventDrafts[0].title, "Updated run & coffee");
   assert.deepEqual(parseDemo(JSON.stringify(again)), again);
-  assert.deepEqual(saved.bookings, []);
   assert.deepEqual(saved.drafts, []);
   assert.equal(
     reduceDemo(saved, { type: "delete-event-draft", id: draft.id }).eventDrafts
@@ -87,23 +86,18 @@ test("event drafts persist without creating bookings or challenge entries, dedup
   assert.deepEqual(reduceDemo(saved, { type: "reset" }), INITIAL_STATE);
 });
 
-test("old local stores migrate and malformed event drafts never erase existing bookings", () => {
-  const booked = reduceDemo(INITIAL_STATE, {
-    type: "book",
-    classId: "muay-thai",
-    shared: false,
-    now: "2026-09-19T12:00:00Z",
-  });
-  const old = { ...booked, eventDrafts: undefined };
-  assert.deepEqual(parseDemo(JSON.stringify(old)), booked);
+test("old local stores migrate and malformed event drafts preserve other choices", () => {
+  const followed = reduceDemo(INITIAL_STATE, { type: "follow", id: "lea" });
+  const old = { ...followed, eventDrafts: undefined };
+  assert.deepEqual(parseDemo(JSON.stringify(old)), followed);
   for (const eventDrafts of [
     null,
     {},
     [null],
     [{ ...input, id: "event-draft-test", createdAt: "now", included: 12 }],
   ]) {
-    const parsed = parseDemo(JSON.stringify({ ...booked, eventDrafts }));
-    assert.deepEqual(parsed.bookings, booked.bookings);
+    const parsed = parseDemo(JSON.stringify({ ...followed, eventDrafts }));
+    assert.deepEqual(parsed.following, followed.following);
     assert.deepEqual(parsed.eventDrafts, []);
   }
 });

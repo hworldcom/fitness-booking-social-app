@@ -22,12 +22,11 @@ select is(
         'venues',
         'venue_staff',
         'trainer_affiliations',
-        'class_sessions',
-        'membership_entitlements'
+        'class_sessions'
       )
   ),
-  10,
-  'app schema has exactly ten foundation tables'
+  9,
+  'app schema has exactly nine foundation tables'
 );
 
 select ok(
@@ -68,11 +67,10 @@ select is(
         'venues',
         'venue_staff',
         'trainer_affiliations',
-        'class_sessions',
-        'membership_entitlements'
+        'class_sessions'
       )
   ),
-  10,
+  9,
   'app_owner owns every foundation table'
 );
 
@@ -128,10 +126,16 @@ select ok(
 
 select is((select count(*)::integer from app.profiles), 6, 'six profiles are seeded');
 select is((select count(*)::integer from app.class_sessions), 3, 'three classes are seeded');
-select is(
-  (select count(*)::integer from app.membership_entitlements),
-  1,
-  'one membership entitlement is seeded'
+select ok(
+  to_regclass('app.membership_entitlements') is null
+    and not exists (
+      select 1
+      from information_schema.columns
+      where table_schema = 'app'
+        and table_name = 'class_sessions'
+        and column_name = 'membership_eligible'
+    ),
+  'gym membership access is absent from the current schema'
 );
 
 select ok(
@@ -166,8 +170,7 @@ select is(
         ('venues', 16),
         ('venue_staff', 8),
         ('trainer_affiliations', 8),
-        ('class_sessions', 19),
-        ('membership_entitlements', 11)
+        ('class_sessions', 18)
     ),
     actual as (
       select table_name, count(*)::integer as column_count
@@ -203,12 +206,11 @@ select is(
         'venues',
         'venue_staff',
         'trainer_affiliations',
-        'class_sessions',
-        'membership_entitlements'
+        'class_sessions'
       )
   ),
-  15,
-  'all fifteen foundation foreign keys exist'
+  13,
+  'all thirteen foundation foreign keys exist'
 );
 
 select is(
@@ -229,11 +231,10 @@ select is(
         'venues',
         'venue_staff',
         'trainer_affiliations',
-        'class_sessions',
-        'membership_entitlements'
+        'class_sessions'
       )
   ),
-  10,
+  9,
   'every foundation table maintains updated_at'
 );
 
@@ -253,8 +254,7 @@ select is(
         ('trainer_affiliations_activity_tags_idx'),
         ('class_sessions_run_starts_at_idx'),
         ('class_sessions_run_venue_starts_at_idx'),
-        ('class_sessions_run_discipline_starts_at_idx'),
-        ('membership_entitlements_lookup_idx')
+        ('class_sessions_run_discipline_starts_at_idx')
     )
     select count(*)::integer
     from expected
@@ -273,13 +273,13 @@ begin
     insert into app.class_sessions (
       id, run_id, venue_id, trainer_profile_id, slug, title, description,
       discipline, timezone, currency_code, starts_at, ends_at, capacity,
-      price_base_units, membership_eligible, status, record_source
+      price_base_units, status, record_source
     )
     select
       gen_random_uuid(), run_id, venue_id, trainer_profile_id,
       'invalid-sql-test-price', title, description, discipline, timezone,
       currency_code, starts_at, ends_at, capacity, -1,
-      membership_eligible, status, record_source
+      status, record_source
     from app.class_sessions
     limit 1;
     raise exception 'negative class price was accepted';
@@ -295,13 +295,13 @@ begin
     insert into app.class_sessions (
       id, run_id, venue_id, trainer_profile_id, slug, title, description,
       discipline, timezone, currency_code, starts_at, ends_at, capacity,
-      price_base_units, membership_eligible, status, record_source
+      price_base_units, status, record_source
     )
     select
       gen_random_uuid(), run_id, venue_id, trainer_profile_id,
       'invalid-sql-test-time', title, description, discipline, timezone,
       currency_code, starts_at, starts_at, capacity, price_base_units,
-      membership_eligible, status, record_source
+      status, record_source
     from app.class_sessions
     limit 1;
     raise exception 'invalid class interval was accepted';

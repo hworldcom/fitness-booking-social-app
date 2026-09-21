@@ -1829,24 +1829,6 @@ h1 {
   letter-spacing: -1px;
   margin: 14px 0 22px;
 }
-.membership-cover {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: #626c56;
-  padding: 15px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 20px;
-}
-.membership-cover strong {
-  display: block;
-  font-size: 11px;
-}
-.membership-cover small {
-  font-size: 10px;
-  color: #626c56;
-}
 .share-control {
   display: flex;
   gap: 8px;

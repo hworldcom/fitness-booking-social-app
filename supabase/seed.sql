@@ -180,42 +180,13 @@ insert into app.class_sessions (
   ends_at,
   capacity,
   price_base_units,
-  membership_eligible,
   status,
   record_source,
   created_at,
   updated_at
 )
 values
-  ('50000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000005', 'muay-thai', 'Muay Thai fundamentals', 'A welcoming session covering stance, movement and pad work.', 'Muay Thai', 'Europe/Berlin', 'EURC', '2030-09-24T16:00:00Z', '2030-09-24T17:00:00Z', 4, 12000000, true, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z'),
-  ('50000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000006', 'strength', 'Strength, together', 'A small-group strength session built around good technique.', 'Strength', 'Europe/Berlin', 'EURC', '2030-09-25T15:30:00Z', '2030-09-25T16:20:00Z', 6, 18000000, false, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z'),
-  ('50000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000003', 'sunday-flow', 'Sunday reset flow', 'Gentle movement, spacious breathing and a long stretch.', 'Yoga', 'Europe/Berlin', 'EURC', '2030-09-29T08:00:00Z', '2030-09-29T09:15:00Z', 8, 15000000, false, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z')
-on conflict do nothing;
-
-insert into app.membership_entitlements (
-  id,
-  run_id,
-  profile_id,
-  venue_id,
-  label,
-  starts_at,
-  ends_at,
-  status,
-  record_source,
-  created_at,
-  updated_at
-)
-values (
-  '60000000-0000-4000-8000-000000000001',
-  '20000000-0000-4000-8000-000000000001',
-  '10000000-0000-4000-8000-000000000001',
-  '40000000-0000-4000-8000-000000000001',
-  'Anna''s seeded Kru Tiger membership',
-  '2030-09-22T22:00:00Z',
-  '2030-10-22T22:00:00Z',
-  'active',
-  'fixture',
-  '2026-09-20T00:00:00Z',
-  '2026-09-20T00:00:00Z'
-)
+  ('50000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000005', 'muay-thai', 'Muay Thai fundamentals', 'A welcoming session covering stance, movement and pad work.', 'Muay Thai', 'Europe/Berlin', 'EURC', '2030-09-24T16:00:00Z', '2030-09-24T17:00:00Z', 4, 12000000, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z'),
+  ('50000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000006', 'strength', 'Strength, together', 'A small-group strength session built around good technique.', 'Strength', 'Europe/Berlin', 'EURC', '2030-09-25T15:30:00Z', '2030-09-25T16:20:00Z', 6, 18000000, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z'),
+  ('50000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000003', 'sunday-flow', 'Sunday reset flow', 'Gentle movement, spacious breathing and a long stretch.', 'Yoga', 'Europe/Berlin', 'EURC', '2030-09-29T08:00:00Z', '2030-09-29T09:15:00Z', 8, 15000000, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z')
 on conflict do nothing;

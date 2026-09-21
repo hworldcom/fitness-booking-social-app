@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import {
-  ArrowUpRight,
   MapPin,
   Check,
   RotateCcw,
@@ -12,7 +11,7 @@ import {
   Footprints,
   Flag,
 } from "lucide-react";
-import { challenges, classes, people } from "@/features/preview/catalogue";
+import { challenges, people } from "@/features/preview/catalogue";
 import { useDemo } from "@/features/preview/store";
 import {
   Avatar,
@@ -139,11 +138,9 @@ export function Profile({
               <small>Your local choices</small>
             </div>
             <div>
-              <strong>
-                {state.bookings.filter((b) => b.status === "booked").length}
-              </strong>
+              <strong>0</strong>
               <span>Upcoming sessions</span>
-              <small>Local simulations</small>
+              <small>No pass purchased</small>
             </div>
           </div>
           <div className="chips profile-tabs" aria-label="Profile section">
@@ -177,34 +174,6 @@ export function Profile({
                   </button>
                 </div>
               ))}
-            </div>
-          ) : state.bookings.length ? (
-            <div className="draft-list">
-              {state.bookings.map((b) => {
-                const c = classes.find((c) => c.id === b.classId)!;
-                return (
-                  <Link
-                    key={b.classId}
-                    className="draft-row"
-                    href={`/classes/${c.id}`}
-                  >
-                    <span className="date-block">
-                      <small>{c.day}</small>
-                      <strong>{c.date.split(" ")[0]}</strong>
-                    </span>
-                    <div>
-                      <h3>{c.title}</h3>
-                      <p>
-                        {c.gym} · {c.time}
-                      </p>
-                    </div>
-                    <Pill tone={b.status === "booked" ? "lime" : "neutral"}>
-                      {b.status === "booked" ? "Demo booking" : "Cancelled"}
-                    </Pill>
-                    <ArrowUpRight size={18} />
-                  </Link>
-                );
-              })}
             </div>
           ) : (
             <Empty
@@ -251,8 +220,8 @@ export function Profile({
           onClose={() => setReset(false)}
         >
           <p className="dialog-copy">
-            This clears local drafts, demo bookings, saved challenges and
-            follows. No real accounts, funds or blockchain records are affected.
+            This clears local drafts, saved challenges and follows. No real
+            accounts, funds or blockchain records are affected.
           </p>
           <div className="button-row">
             <button

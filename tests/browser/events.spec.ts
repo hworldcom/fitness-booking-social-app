@@ -177,7 +177,7 @@ test("event drafts validate, persist privately, reload and delete", async ({
   );
   expect(state.eventDrafts).toEqual([]);
   expect(state.drafts).toEqual([]);
-  expect(state.bookings).toEqual([]);
+  expect(state.bookings).toBeUndefined();
   await page.goto(url);
   await expect(
     page.getByRole("heading", { name: "This event draft isn’t here." }),

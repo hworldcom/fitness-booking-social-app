@@ -4,7 +4,6 @@ import {
   INITIAL_STATE,
   parseDemo,
   reduceDemo,
-  visibleBookings,
 } from "../src/features/preview/state";
 import { validateDraft, type DraftInput } from "../src/domain/challenges";
 
@@ -54,67 +53,23 @@ test("invalid drafts cannot enter persisted state; valid drafts can be removed",
   );
 });
 
-test("only the seeded membership can produce a local booking, with duplicate protection", () => {
-  for (const classId of ["strength", "sunday-flow", "missing"]) {
-    assert.equal(
-      reduceDemo(INITIAL_STATE, { type: "book", classId, shared: true, now }),
-      INITIAL_STATE,
-    );
-  }
-  const once = reduceDemo(INITIAL_STATE, {
-    type: "book",
-    classId: "muay-thai",
-    shared: true,
-    now,
+test("obsolete local membership bookings are discarded without losing other choices", () => {
+  const legacy = {
+    ...reduceDemo(INITIAL_STATE, { type: "follow", id: "lea" }),
+    bookings: [
+      {
+        classId: "muay-thai",
+        status: "booked",
+        shared: true,
+        hidden: false,
+        createdAt: now,
+      },
+    ],
+  };
+  assert.deepEqual(parseDemo(JSON.stringify(legacy)), {
+    ...INITIAL_STATE,
+    following: ["daniel", "lea"],
   });
-  assert.equal(once.bookings.length, 1);
-  assert.equal(
-    reduceDemo(once, { type: "book", classId: "muay-thai", shared: true, now }),
-    once,
-  );
-  assert.equal(visibleBookings(once).length, 1);
-  assert.deepEqual(INITIAL_STATE.bookings, []);
-});
-
-test("cancellation updates one shared activity; hiding persists across cancellation", () => {
-  const booked = reduceDemo(INITIAL_STATE, {
-    type: "book",
-    classId: "muay-thai",
-    shared: true,
-    now,
-  });
-  const cancelled = reduceDemo(booked, {
-    type: "cancel",
-    classId: "muay-thai",
-  });
-  assert.equal(visibleBookings(cancelled).length, 1);
-  assert.equal(visibleBookings(cancelled)[0].status, "cancelled");
-  assert.equal(cancelled.bookings[0].createdAt, now);
-  const hidden = reduceDemo(booked, { type: "hide", classId: "muay-thai" });
-  assert.equal(
-    visibleBookings(
-      reduceDemo(hidden, { type: "cancel", classId: "muay-thai" }),
-    ).length,
-    0,
-  );
-});
-
-test("privacy opt-out never adds feed activity, including after reload or cancellation", () => {
-  const booked = reduceDemo(INITIAL_STATE, {
-    type: "book",
-    classId: "muay-thai",
-    shared: false,
-    now,
-  });
-  const reloaded = parseDemo(JSON.stringify(booked));
-  assert.equal(reloaded.bookings.length, 1);
-  assert.equal(visibleBookings(reloaded).length, 0);
-  assert.equal(
-    visibleBookings(
-      reduceDemo(reloaded, { type: "cancel", classId: "muay-thai" }),
-    ).length,
-    0,
-  );
 });
 
 test("corrupt, incompatible and invalid persisted state recover without crashing", () => {
@@ -129,24 +84,6 @@ test("corrupt, incompatible and invalid persisted state recover without crashing
   ]) {
     assert.equal(parseDemo(raw), INITIAL_STATE);
   }
-  const paidBooking = {
-    classId: "strength",
-    status: "booked",
-    shared: true,
-    hidden: false,
-    createdAt: now,
-  };
-  assert.equal(
-    parseDemo(JSON.stringify({ ...INITIAL_STATE, bookings: [paidBooking] })),
-    INITIAL_STATE,
-  );
-  const booking = { ...paidBooking, classId: "muay-thai" };
-  assert.equal(
-    parseDemo(
-      JSON.stringify({ ...INITIAL_STATE, bookings: [booking, booking] }),
-    ),
-    INITIAL_STATE,
-  );
 });
 
 test("reset clears local choices without mutating the original snapshot", () => {

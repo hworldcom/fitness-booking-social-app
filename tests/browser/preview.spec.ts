@@ -188,7 +188,7 @@ test("Explore separates class dates/times from studio activity and links to clas
   await dialog.getByRole("link", { name: /Muay Thai fundamentals/ }).click();
   await expect(page).toHaveURL(/\/classes\/muay-thai$/);
   await expect(
-    page.getByRole("button", { name: "Try a demo booking" }),
+    page.getByRole("button", { name: "Preview checkout" }),
   ).toBeVisible();
 });
 
@@ -235,59 +235,13 @@ test("draft validation, sponsor mode, reload and delete work without funding", a
   ).toBeVisible();
 });
 
-test("membership booking creates one activity; cancellation updates it and hide removes it", async ({
+test("class-pass and challenge previews never create reservations or funded state", async ({
   page,
 }) => {
   await page.goto("/classes/muay-thai");
-  await page.getByRole("button", { name: "Try a demo booking" }).click();
-  await page.getByRole("button", { name: "Confirm demo booking" }).click();
-  await expect(
-    page.getByText("Demo booking confirmed", { exact: true }),
-  ).toBeVisible();
-  await page.reload();
-  await expect(
-    page.getByRole("button", { name: "Try a demo booking" }),
-  ).toHaveCount(0);
-  await page.getByRole("link", { name: "Back to your club" }).click();
-  let activity = page
-    .locator(".activity-card")
-    .filter({ hasText: "Local simulation" });
-  await expect(activity).toHaveCount(1);
-  await expect(activity).toContainText("You joined a class");
-  await activity.getByRole("link", { name: "View session" }).click();
-  await page
-    .getByRole("button", { name: "Cancel demo booking", exact: true })
-    .click();
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "Cancel demo booking", exact: true })
-    .click();
-  await page.getByRole("link", { name: "Back to your club" }).click();
-  activity = page
-    .locator(".activity-card")
-    .filter({ hasText: "Local simulation" });
-  await expect(activity).toHaveCount(1);
-  await expect(activity).toContainText("You cancelled a class booking");
-  await activity
-    .getByRole("button", { name: "Hide Muay Thai fundamentals activity" })
-    .click();
-  await expect(activity).toHaveCount(0);
-  await page.reload();
-  await expect(activity).toHaveCount(0);
-});
-
-test("privacy opt-out, paid preview and entry preview never create public or funded state", async ({
-  page,
-}) => {
-  await page.goto("/classes/muay-thai");
-  await page.getByRole("checkbox").uncheck();
-  await page.getByRole("button", { name: "Try a demo booking" }).click();
-  await page.getByRole("button", { name: "Confirm demo booking" }).click();
-  await page.getByRole("link", { name: "Back to your club" }).click();
-  await expect(
-    page.locator(".activity-card").filter({ hasText: "Local simulation" }),
-  ).toHaveCount(0);
-  await page.goto("/classes/strength");
+  const before = await page.evaluate(() =>
+    localStorage.getItem("repx-club-preview-v1"),
+  );
   await page.getByRole("button", { name: "Preview checkout" }).click();
   await expect(page.getByRole("dialog")).toContainText(
     "Checkout isn’t connected yet.",
@@ -298,12 +252,22 @@ test("privacy opt-out, paid preview and entry preview never create public or fun
   await expect(page.getByRole("dialog")).toContainText(
     "You haven’t registered or paid.",
   );
-  const state = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("repx-club-preview-v1") || "{}"),
-  );
-  expect(state.bookings).toHaveLength(1);
-  expect(state.bookings[0].shared).toBe(false);
-  expect(state.drafts).toHaveLength(0);
+  expect(
+    await page.evaluate(() => localStorage.getItem("repx-club-preview-v1")),
+  ).toEqual(before);
+});
+
+test("every class uses the same class-pass checkout preview", async ({
+  page,
+}) => {
+  for (const classId of ["muay-thai", "strength", "sunday-flow"]) {
+    await page.goto(`/classes/${classId}`);
+    await expect(
+      page.getByRole("button", { name: "Preview checkout" }),
+    ).toBeVisible();
+    await expect(page.getByText("test EURC / one class")).toBeVisible();
+    await expect(page.getByText(/membership/i)).toHaveCount(0);
+  }
 });
 
 test("keyboard dialog focus and blocked/corrupt storage recover gracefully", async ({
