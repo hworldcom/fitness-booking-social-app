@@ -22,7 +22,7 @@ The coordinated result implements the specification's [authentication and data a
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Phantom-to-Supabase authentication     | [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md)   | Adapt DEV0027's selected Wallet Standard account to Supabase Web3 Auth; add local Auth configuration, verified session refresh/sign-out, honest connected-versus-signed-in UI, provider abuse limits and real desktop sign-in evidence.  | Completed after passing the automated suite and real approval/reload/sign-out/failure-state rehearsal. |
 | Prepared identity and personal binding | [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md) | Add shared `wallet_bindings`, server-only wallet-to-Anna configuration, atomic idempotent enrollment from the verified Supabase subject and durable personal-binding behavior across wallet disconnect/reconnect.                        | Completed after automated checks and the real enrollment/disconnect/reconnect rehearsal passed.        |
-| Protected access and database context  | [DEV0040 — Protected access and database context](../backend/DEV0040-protected-access-and-database-context.md)            | Add reusable server authorization, transaction-local subject/run context, first private row-level security policies, route/action guards, safe return destinations and private-cache/session invalidation.                               | DEV0039 is complete; DEV0040 is next and enables DEV0017.                                              |
+| Protected access and database context  | [DEV0040 — Protected access and database context](../backend/DEV0040-protected-access-and-database-context.md)            | Add reusable server authorization, transaction-local subject/dataset context, first private row-level security policies, route/action guards, safe return destinations and private-cache/session invalidation.                           | Ready after locking its implementation contracts; DEV0040 is next and enables DEV0017.                 |
 | Separate company-wallet authority      | [DEV0041 — Company wallet authorization](../backend/DEV0041-company-wallet-authorization.md)                              | Use the shared exclusive wallet-binding contract, add one-time `auth_challenges`, and require a fresh company-wallet proof that combines authenticated admin membership with the correct distinct business wallet without a transaction. | DEV0039 is complete; waits for DEV0040's verified admin/run context.                                   |
 
 Every former DEV0016 implementation concern has one owner. Cross-ticket integration validation remains in this coordination record; fixes found during integration return to the ticket that owns the affected behavior or receive a new peer DEV ticket if they are genuinely new scope.
@@ -63,6 +63,8 @@ DEV0039 moved to In progress on 2026-09-21 after locking its `wallet_bindings` m
 
 DEV0039 completed on 2026-09-21. The shared binding migration, server-derived Anna enrollment, restricted repository/API boundary, durable disconnect UI and local runtime-login setup passed automated validation. The user then confirmed one Supabase login prompt followed by Anna enrollment without a second Phantom prompt, reload persistence, disconnect with the Anna session preserved and successful same-wallet reconnect. A read-only check found exactly one active Anna binding for one Auth subject. DEV0040 is unblocked.
 
+DEV0040 moved to Ready on 2026-09-21 after locking its verified-actor shape, five transaction-local database settings, live validation predicate, three-table read-only policy matrix, `/api/auth/actor` response, public/private route matrix, safe-return rules, cache/invalidation behavior and exact preview-versus-database mode decision. Its review also clarified that dataset participation is not a gym membership, Proxy refresh is not authorization, configured failures never fall back to fixtures and a Supabase session must complete actor revalidation before returning to a protected page.
+
 ## Validation results
 
 - **Conversion eligibility — passed:** retired DEV0016 contained planning only; no implementation file, validation evidence or commit used that ID.
@@ -87,7 +89,7 @@ Extension-first onboarding adds a setup step and does not support ordinary mobil
 ## Completion and review references
 
 - Completed: Not completed.
-- Direct development tickets: DEV0038–DEV0039 Completed; DEV0040–DEV0041 Draft.
+- Direct development tickets: DEV0038–DEV0039 Completed; DEV0040 Ready; DEV0041 Draft.
 - Commit: Not applicable — coordination-record IDs are not used in commit subjects.
 - Review: Pre-implementation scope and ownership self-review completed; no independent review.
 - Deployment or release: None.
