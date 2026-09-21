@@ -239,7 +239,7 @@ test("Auth failures map to bounded copy without echoing provider text", () => {
   );
 });
 
-test("canonical sign-in checking rejects query strings and other origins", () => {
+test("canonical sign-in checking permits return queries on the exact route", () => {
   const config = parseSupabasePublicConfig(
     "http://127.0.0.1:55321",
     "public-key",
@@ -258,6 +258,15 @@ test("canonical sign-in checking rejects query strings and other origins", () =>
   assert.equal(
     isCanonicalSignInLocation(config, {
       origin: "http://localhost:3100",
+      pathname: "/sign-in",
+      search: "?returnTo=/profile",
+      hash: "",
+    }),
+    true,
+  );
+  assert.equal(
+    isCanonicalSignInLocation(config, {
+      origin: "https://example.com",
       pathname: "/sign-in",
       search: "?returnTo=/profile",
       hash: "",

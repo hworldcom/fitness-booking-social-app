@@ -1,6 +1,6 @@
 # Ticket DEV0040: Protected access and database context
 
-- Status: Ready
+- Status: In progress
 - Created: 2026-09-20
 - Last updated: 2026-09-21
 - Milestone: M0 identity and protected access
@@ -154,39 +154,69 @@ Exercise configuration-free preview mode and configured anonymous direct navigat
 
 ## Implementation record
 
-Pending implementation. This ticket was created when the unimplemented DEV0016 plan was converted to COR0002. It owns shared protected-access enforcement, not feature persistence.
+Implementation started on 2026-09-21 after the locked contract review. The code and automated validation are complete; the ticket remains in progress until the configured, authenticated Phantom browser rehearsal below is confirmed. This ticket was created when the unimplemented DEV0016 plan was converted to COR0002. It owns shared protected-access enforcement, not feature persistence.
 
 ### Changes and rationale
 
-Not implemented.
+- Added a forward-only migration that removes direct runtime access to wallet bindings, grants only the three locked identity/dataset reads and makes every policy depend on a hardened live actor predicate. The predicate validates all five transaction settings against the claimed profile, active dataset participation and active personal binding without returning identity data.
+- Added a server-only authorization service and Drizzle transaction wrapper. They distinguish configuration-free preview mode from complete database/Auth mode and fail closed on partial or invalid configuration. An authorized callback receives a transaction scoped to the exact verified actor; the base pooled client is not passed to protected repositories.
+- Added the bounded `/api/auth/actor` projection, server page guard, exact protected route matrix and validated internal `returnTo` behavior. Public discovery routes remain available to configured guests, while private pages and local draft URLs redirect to sign-in or render an explicit unavailable state.
+- Added browser actor state keyed to the verified Auth subject, wallet identity and token expiry. Sign-out, subject changes, expiry changes and failed actor refreshes hide private browser state immediately. Phantom disconnect or mismatch does not alter that durable session key. Browser-local preview data remains stored separately, is masked from unauthorized configured users and is still available in explicit configuration-free preview mode.
+- Updated sign-in completion to refresh the actor after prepared enrollment and follow a safe return destination only after authorization succeeds. It never records or replays the action that originally led to sign-in.
+- Added SQL, driver, unit, boundary and desktop/mobile browser coverage for privileges, policies, live revocation, pooled-connection isolation, response parsing, mode separation, redirect safety, private-state invalidation and configured guest behavior.
 
 ### Affected files
 
-| File or component | Change and purpose                                                                                |
-| ----------------- | ------------------------------------------------------------------------------------------------- |
-| Pending           | Record exact migration, auth-context, framework-adapter, UI and test files during implementation. |
+| File or component                                                                                                                                                                                                                                                                                                                                                                                                           | Change and purpose                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`supabase/migrations/20260921000200_protect_actor_context.sql`](../../../supabase/migrations/20260921000200_protect_actor_context.sql)                                                                                                                                                                                                                                                                                     | Adds the live actor predicate, validation-only owner policies, exact runtime read policies/grants and direct wallet-binding revocation.                                           |
+| [`src/server/authorization/`](../../../src/server/authorization/) and [`src/server/db/authorization/repository.ts`](../../../src/server/db/authorization/repository.ts)                                                                                                                                                                                                                                                     | Define the internal actor, access-mode parsing, verified resolution, page guard and transaction-local database context.                                                           |
+| [`src/auth/actor-contracts.ts`](../../../src/auth/actor-contracts.ts), [`src/auth/actor-state.ts`](../../../src/auth/actor-state.ts), [`src/auth/return-to.ts`](../../../src/auth/return-to.ts) and [`src/auth/client/`](../../../src/auth/client/)                                                                                                                                                                         | Define and validate the public projection, bind client state to one session generation, validate return targets and refresh the current actor without exposing UUIDs or wallets.  |
+| [`src/app/api/auth/actor/route.ts`](../../../src/app/api/auth/actor/route.ts), [`src/app/layout.tsx`](../../../src/app/layout.tsx), protected pages under [`src/app/`](../../../src/app/) and [`src/features/auth/protected-access.tsx`](../../../src/features/auth/protected-access.tsx)                                                                                                                                   | Expose the no-store current-actor read, initialize session and actor consistently, enforce private page entry and render the retryable unavailable state.                         |
+| [`src/features/auth/sign-in.tsx`](../../../src/features/auth/sign-in.tsx), [`src/features/preview/store.ts`](../../../src/features/preview/store.ts), [`src/features/challenges/challenges.tsx`](../../../src/features/challenges/challenges.tsx) and [`src/features/feed/feed.tsx`](../../../src/features/feed/feed.tsx)                                                                                                   | Follow safe return targets after actor authorization, gate local demo mutations/private filters and mask local private state from unauthorized configured users.                  |
+| [`supabase/tests/database/authorization.test.sql`](../../../supabase/tests/database/authorization.test.sql), [`tests/database/identity.test.ts`](../../../tests/database/identity.test.ts), [`tests/authorization.test.ts`](../../../tests/authorization.test.ts), [`tests/browser/authorization.spec.ts`](../../../tests/browser/authorization.spec.ts) and existing boundary/auth tests under [`tests/`](../../../tests/) | Prove the policy matrix, context cleanup, alternating actors, forged/revoked denial, exact browser contracts, safe redirects and desktop/mobile guest behavior in both app modes. |
 
 ### Decisions and deviations
 
-The implementation defaults are locked above. Record any necessary deviation before making the corresponding implementation edit; do not silently broaden the first policy/route matrix.
+No locked product or security contract changed during implementation. Two implementation details were tightened during review:
+
+- The root layout now obtains the initial session and actor from one verified session result rather than issuing two independent Auth checks, so one browser can never receive an actor projection paired with a different refreshed subject.
+- Unauthorized configured users retain the separate `repx-club-preview-v1` storage value, but its private contents are masked and protected interactions redirect to sign-in without mutation. Authorized users and explicit preview mode retain the existing visibly local demo interactions until their owning persistence tickets replace them.
 
 ### Contracts, configuration, and operations
 
-Locked contracts are the exact `AuthorizedActor`, five transaction-local settings, live validation predicate, three-table read-only policy matrix, `/api/auth/actor` response boundary, route/action matrix, safe-return parser, mode separation and invalidation rules above. Record the final migration name, concrete modules and rollback/recovery evidence during implementation.
+The final contracts remain the exact `AuthorizedActor`, five transaction-local settings, live validation predicate, three-table read-only policy matrix, `/api/auth/actor` response boundary, route/action matrix, safe-return parser, mode separation and invalidation rules above. No environment variable or dependency was added. All five existing variables must be absent for preview or valid for database/Auth mode; partial configuration is unavailable.
+
+The applied migration is `20260921000200_protect_actor_context.sql`. It is forward-only. A disposable local rollback/recovery uses `npm run db:reset` followed by `npm run db:runtime`; the second command is required because reset recreates the non-login runtime role and its local password must be provisioned again. A hosted correction requires a new migration.
 
 ## Validation results
 
-Pending implementation validation. DEV0039 is complete, and the 2026-09-21 pre-implementation review locked the authorization, policy, route, mode, cache and invalidation contracts.
+Automated implementation validation passed on 2026-09-21. One live configured authenticated browser rehearsal remains because the available browser-control process could not start; prior DEV0038/DEV0039 evidence already covers Phantom message cancellation, sign-out with Phantom still connected, wallet disconnect and account mismatch, but the newly combined actor endpoint/private-page flow still needs confirmation.
 
 - **Scope and ownership review — passed:** the ticket stops at shared authorization infrastructure and one current-actor read slice. DEV0017, DEV0018, DEV0023 and DEV0041 retain their feature repositories, mutations and narrower permission checks.
 - **Existing-contract review — passed:** the locked actor derives from DEV0038's verified session and DEV0039's durable binding/current-identity result. It preserves wallet disconnect without sign-out and does not change either completed endpoint contract.
 - **Framework review — passed:** reviewed the installed Next.js 16.3.5 documentation and current `src/proxy.ts`, server-component and route-handler boundaries. Proxy remains cookie refresh only; authorization and uncached personalized reads stay in the Node.js server boundary.
 - **Specification and route review — passed:** public discovery, same-dataset profiles, private draft paths, no automatic post-login mutation and explicit preview/database separation agree with the MVP specification. The second review added exact handling for partial configuration and required actor authorization—not merely a Supabase session—before following `returnTo`.
-- **Documentation checks — passed:** Prettier accepted this ticket and COR0002, `git diff --check` passed, and 89 local links across this ticket, COR0002 and the ticket index resolved. Application/database tests are not applicable until implementation begins.
+- **Fresh migration — passed:** `npm run db:reset` applied all three migrations and seed data successfully. `npm run db:runtime` then reprovisioned the loopback-only runtime login as required after a reset.
+- **SQL policies — passed:** `npm run db:test` passed 63 assertions across three files, including the exact read-only grants, missing/malformed context, own-row visibility, foreign-profile denial and immediate participation revocation. An initial test-harness attempt called pgTAP assertions while assuming `app_runtime`; results are now captured under that role and asserted only after resetting the role.
+- **Schema lint — passed:** `npm run db:lint` reported no errors in `app`, `extensions` or `public`.
+- **Driver integration — passed:** `npm run test:db` passed 9 tests. Two prepared actors alternated through the same one-connection Drizzle pool; the five settings were empty after successful commit, explicit rollback and a thrown callback; a forged binding and live membership revocation were denied. The first post-reset run correctly failed authentication until `npm run db:runtime` restored the disposable runtime password.
+- **Unit and boundary suite — passed:** `npm test` passed 44 tests, including exact actor parsing, complete/partial/absent mode selection, encoded redirect rejection and subject/wallet/expiry-bound actor invalidation. The sandbox initially blocked the test runner's local IPC socket; the identical command passed outside that restriction.
+- **Static checks — passed:** `npm run lint`, `npm run typecheck`, `npm run format:check` and `git diff --check` passed.
+- **Configured production build — passed:** `npm run build -- --webpack` compiled with `.env.local`; every application route that consumes the authorization root was emitted as request-time dynamic output.
+- **Configured guest browser checks — passed:** `npm run test:e2e -- tests/browser/authorization.spec.ts` passed 4 desktop/mobile tests. The exact public routes remained directly reachable; all locked private pages and UUID draft paths redirected to sign-in with the original safe path; save and My Drafts attempts changed no local state.
+- **Configuration-free preview build/regression — passed:** building and running Playwright with all five access variables explicitly empty preserved preview mode. The full suite reported 40 passed and 4 configured-only checks skipped across desktop and mobile; draft, booking, follow, saved-item, keyboard, error and responsive behavior remained intact.
+- **Authenticated browser rehearsal — not run:** confirm `/api/auth/actor` returns the bounded authorized projection after sign-in/enrollment, the protected page opens, sign-out hides it, and disconnecting Phantom alone preserves the session and non-wallet actor access. No second real transaction or message signature beyond normal sign-in is expected.
 
-| Criterion | Evidence | Result  |
-| --------- | -------- | ------- |
-| AC1–AC7   | Not run  | Not run |
+| Criterion | Evidence                                                                                                                             | Result                  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| AC1       | SQL live-validation/revocation assertions, driver forged-binding/revocation checks and current-actor projection                      | Passed                  |
+| AC2       | One-connection alternating-actor driver test across commit, rollback and thrown-error reuse                                          | Passed                  |
+| AC3       | SQL privilege/policy assertions, direct wallet denial and schema lint                                                                | Passed                  |
+| AC4       | Configured desktop/mobile public-route, private-route, draft-path, return-target and no-mutation browser checks                      | Passed                  |
+| AC5       | Unit invalidation coverage and existing DEV0038/DEV0039 manual wallet/session evidence; new combined authenticated rehearsal above   | Pending final rehearsal |
+| AC6       | Exact no-store API implementation, configured dynamic build, configured failure tests and full configuration-free preview regression | Passed                  |
+| AC7       | All automated commands above pass; the authenticated browser rehearsal is the only outstanding required evidence                     | Pending final rehearsal |
 
 ## Risks, limitations, and follow-ups
 
@@ -194,9 +224,11 @@ PostgreSQL connection pooling makes session-level settings unsafe; use transacti
 
 This ticket does not create repositories for every protected feature. DEV0017/DEV0018/DEV0023 must use the delivered context while owning their specific authorization and data tests.
 
+Remaining action: run the four authenticated browser observations listed above using the prepared Phantom wallet. If they pass, mark AC5/AC7 complete, archive DEV0040 and update COR0002. If any fails, retain this ticket in progress and record the exact state/route before changing implementation.
+
 ## Completion and review references
 
 - Completed: Not completed.
-- Commit: Not created.
+- Commit: Pending implementation commit.
 - Review: Pre-implementation scope and contract review completed; no independent review.
 - Deployment or release: None.

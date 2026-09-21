@@ -22,7 +22,7 @@ The coordinated result implements the specification's [authentication and data a
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Phantom-to-Supabase authentication     | [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md)   | Adapt DEV0027's selected Wallet Standard account to Supabase Web3 Auth; add local Auth configuration, verified session refresh/sign-out, honest connected-versus-signed-in UI, provider abuse limits and real desktop sign-in evidence.  | Completed after passing the automated suite and real approval/reload/sign-out/failure-state rehearsal. |
 | Prepared identity and personal binding | [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md) | Add shared `wallet_bindings`, server-only wallet-to-Anna configuration, atomic idempotent enrollment from the verified Supabase subject and durable personal-binding behavior across wallet disconnect/reconnect.                        | Completed after automated checks and the real enrollment/disconnect/reconnect rehearsal passed.        |
-| Protected access and database context  | [DEV0040 — Protected access and database context](../backend/DEV0040-protected-access-and-database-context.md)            | Add reusable server authorization, transaction-local subject/dataset context, first private row-level security policies, route/action guards, safe return destinations and private-cache/session invalidation.                           | Ready after locking its implementation contracts; DEV0040 is next and enables DEV0017.                 |
+| Protected access and database context  | [DEV0040 — Protected access and database context](../backend/DEV0040-protected-access-and-database-context.md)            | Add reusable server authorization, transaction-local subject/dataset context, first private row-level security policies, route/action guards, safe return destinations and private-cache/session invalidation.                           | In progress against the locked contracts; completion enables DEV0017.                                  |
 | Separate company-wallet authority      | [DEV0041 — Company wallet authorization](../backend/DEV0041-company-wallet-authorization.md)                              | Use the shared exclusive wallet-binding contract, add one-time `auth_challenges`, and require a fresh company-wallet proof that combines authenticated admin membership with the correct distinct business wallet without a transaction. | DEV0039 is complete; waits for DEV0040's verified admin/run context.                                   |
 
 Every former DEV0016 implementation concern has one owner. Cross-ticket integration validation remains in this coordination record; fixes found during integration return to the ticket that owns the affected behavior or receive a new peer DEV ticket if they are genuinely new scope.
@@ -65,6 +65,10 @@ DEV0039 completed on 2026-09-21. The shared binding migration, server-derived An
 
 DEV0040 moved to Ready on 2026-09-21 after locking its verified-actor shape, five transaction-local database settings, live validation predicate, three-table read-only policy matrix, `/api/auth/actor` response, public/private route matrix, safe-return rules, cache/invalidation behavior and exact preview-versus-database mode decision. Its review also clarified that dataset participation is not a gym membership, Proxy refresh is not authorization, configured failures never fall back to fixtures and a Supabase session must complete actor revalidation before returning to a protected page.
 
+DEV0040 implementation started on 2026-09-21 against those locked contracts.
+
+DEV0040's migration, server actor/context boundary, current-actor API, route guards, safe return handling and browser invalidation are implemented. Fresh migration replay, 63 SQL assertions, schema lint, 9 driver tests, 44 unit/boundary tests, configured build/guest checks and the full configuration-free desktop/mobile regression pass. The owning ticket remains In progress only for a configured authenticated rehearsal of the new actor endpoint and protected-page return flow; no code or database blocker remains.
+
 ## Validation results
 
 - **Conversion eligibility — passed:** retired DEV0016 contained planning only; no implementation file, validation evidence or commit used that ID.
@@ -79,6 +83,8 @@ DEV0040 moved to Ready on 2026-09-21 after locking its verified-actor shape, fiv
 - **Formatting/diff checks — passed for affected current documentation:** Prettier accepted README, the MVP specification and all ticket records; `git diff --check` passed. A broader `**/*.md` check also includes untouched historical `docs/archive/2026-09-18/implementation-plan.md`, which has a pre-existing formatting mismatch and was not rewritten by this planning change.
 - **Implementation checks — not applicable:** this coordination conversion changes planning records only. Each direct DEV ticket owns its application and database validation.
 - **DEV0038 integration evidence — passed:** the completed ticket records 36/36 focused tests, lint, typecheck, formatting, configuration-free and configured browser/build checks, healthy local Auth services and a real Phantom approval/reload/cancellation/account-switch/sign-out rehearsal.
+- **DEV0040 automated implementation evidence — passed:** fresh migrations and seed, 63 pgTAP assertions, schema lint, 9 one-connection driver tests, 44 unit/boundary tests, lint, typecheck, formatting, configured production build, 4 configured guest desktop/mobile checks and 40 configuration-free desktop/mobile regressions passed. Its owning record contains the exact commands, failure corrections and criterion mapping.
+- **DEV0040 authenticated integration evidence — pending:** the prepared wallet must confirm the bounded authorized actor response, protected-page entry and sign-out/disconnect behavior before DEV0040 is completed and archived.
 
 ## Risks, limitations, and follow-ups
 
@@ -89,7 +95,7 @@ Extension-first onboarding adds a setup step and does not support ordinary mobil
 ## Completion and review references
 
 - Completed: Not completed.
-- Direct development tickets: DEV0038–DEV0039 Completed; DEV0040 Ready; DEV0041 Draft.
+- Direct development tickets: DEV0038–DEV0039 Completed; DEV0040 In progress; DEV0041 Draft.
 - Commit: Not applicable — coordination-record IDs are not used in commit subjects.
 - Review: Pre-implementation scope and ownership self-review completed; no independent review.
 - Deployment or release: None.

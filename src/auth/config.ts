@@ -61,5 +61,5 @@ export function isCanonicalSignInLocation(
   location: Pick<Location, "origin" | "pathname" | "search" | "hash">,
 ) {
   const currentUrl = `${location.origin}${location.pathname}`;
-  return currentUrl === config.signInUrl && !location.search && !location.hash;
+  return currentUrl === config.signInUrl && !location.hash;
 }

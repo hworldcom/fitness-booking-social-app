@@ -60,7 +60,7 @@ export function ChallengeList({
   const [query, setQuery] = useState(initialQuery);
   const [activity, setActivity] = useState<ActivityFilter>("all");
   const [sort, setSort] = useState<ChallengeSort>("starting");
-  const { state, dispatch } = useDemo();
+  const { state, dispatch, requestPrivateAccess } = useDemo();
   const visible = discoverChallenges(
     filter === "Saved"
       ? challenges.filter((c) => state.saved.includes(c.id))
@@ -118,7 +118,15 @@ export function ChallengeList({
               className={`chip ${filter === f ? "active" : ""}`}
               aria-pressed={filter === f}
               key={f}
-              onClick={() => setFilter(f)}
+              onClick={() => {
+                if (
+                  (f === "Saved" || f === "My drafts") &&
+                  !requestPrivateAccess()
+                ) {
+                  return;
+                }
+                setFilter(f);
+              }}
             >
               {f}
               {f === "My drafts" && state.drafts.length > 0 && (

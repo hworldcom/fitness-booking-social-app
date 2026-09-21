@@ -35,7 +35,7 @@ import { ShoeDoodle, StarDoodle } from "@/components/club-doodles";
 
 export function Feed() {
   const [filter, setFilter] = useState("For you");
-  const { state, dispatch } = useDemo();
+  const { state, dispatch, requestPrivateAccess } = useDemo();
   const showDaniel = filter === "For you" || state.following.includes("daniel");
   const showMax = filter === "For you" || state.following.includes("max");
   const own = visibleBookings(state);
@@ -89,7 +89,10 @@ export function Feed() {
                   key={f}
                   aria-pressed={filter === f}
                   className={filter === f ? "selected" : ""}
-                  onClick={() => setFilter(f)}
+                  onClick={() => {
+                    if (f === "Following" && !requestPrivateAccess()) return;
+                    setFilter(f);
+                  }}
                 >
                   {f}
                 </button>

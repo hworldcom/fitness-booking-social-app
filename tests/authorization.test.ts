@@ -1,0 +1,141 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import {
+  PREVIEW_ACTOR,
+  isActorSnapshot,
+  type ActorSnapshot,
+} from "@/auth/actor-contracts";
+import { actorSessionKey, visibleActorForSession } from "@/auth/actor-state";
+import type { AuthSessionSnapshot } from "@/auth/contracts";
+import { safeReturnTo, signInHref } from "@/auth/return-to";
+import { parseApplicationAccessMode } from "@/server/authorization/config";
+
+const databaseEnvironment = {
+  databaseUrl:
+    "postgresql://repx_runtime_login:postgres@127.0.0.1:55322/postgres",
+  preparedPersonalIdentitiesJson: JSON.stringify([
+    {
+      walletAddress: "7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M",
+      profileSlug: "anna-klein",
+      demoRunSlug: "local-foundation-2030",
+      cluster: "solana:devnet",
+    },
+  ]),
+  supabaseUrl: "http://127.0.0.1:55321",
+  supabasePublishableKey: "public-key",
+  siteUrl: "http://localhost:3100",
+} as const;
+
+test("access mode distinguishes absent, complete and partial configuration", () => {
+  assert.equal(parseApplicationAccessMode({}), "preview");
+  assert.equal(parseApplicationAccessMode(databaseEnvironment), "database");
+  assert.equal(
+    parseApplicationAccessMode({
+      ...databaseEnvironment,
+      databaseUrl: undefined,
+    }),
+    "unavailable",
+  );
+  assert.equal(
+    parseApplicationAccessMode({
+      ...databaseEnvironment,
+      preparedPersonalIdentitiesJson: "[]",
+    }),
+    "unavailable",
+  );
+});
+
+test("actor responses accept only the bounded public shape", () => {
+  assert.equal(isActorSnapshot({ status: "preview" }), true);
+  assert.equal(isActorSnapshot({ status: "signed-out" }), true);
+  assert.equal(
+    isActorSnapshot({
+      status: "authorized",
+      profile: { slug: "anna-klein", displayName: "Anna Klein" },
+      demoRun: {
+        slug: "local-foundation-2030",
+        name: "Local foundation run",
+      },
+      role: "member",
+    }),
+    true,
+  );
+  assert.equal(
+    isActorSnapshot({
+      status: "authorized",
+      profile: { slug: "anna-klein", displayName: "Anna Klein" },
+      demoRun: {
+        slug: "local-foundation-2030",
+        name: "Local foundation run",
+      },
+      role: "member",
+      walletAddress: databaseEnvironment.preparedPersonalIdentitiesJson,
+    }),
+    false,
+  );
+  assert.equal(isActorSnapshot({ status: "authorized" }), false);
+});
+
+test("return destinations preserve safe internal state and reject redirects", () => {
+  const origin = "http://localhost:3100";
+  assert.equal(
+    safeReturnTo("/challenges?mode=community#rules", origin),
+    "/challenges?mode=community#rules",
+  );
+  assert.equal(safeReturnTo("https://example.com/steal", origin), "/");
+  assert.equal(safeReturnTo("//example.com/steal", origin), "/");
+  assert.equal(safeReturnTo("/\\example.com", origin), "/");
+  assert.equal(safeReturnTo("/%5cexample.com", origin), "/");
+  assert.equal(safeReturnTo("/%2fexample.com", origin), "/");
+  assert.equal(safeReturnTo("/api/auth/actor", origin), "/");
+  assert.equal(safeReturnTo("/sign-in?returnTo=/profile", origin), "/");
+  assert.equal(safeReturnTo("/%E0%A4%A", origin), "/");
+  assert.equal(safeReturnTo(["/profile"], origin), "/");
+  assert.equal(signInHref("/profile"), "/sign-in?returnTo=%2Fprofile");
+});
+
+test("private actor state is bound to the exact verified session generation", () => {
+  const session: AuthSessionSnapshot = {
+    status: "signed-in",
+    subject: "93000000-0000-4000-8000-000000000001",
+    walletAddress: "7YWHMfk9JZe1LM1W7mFDJH8QvJ75zEQY4zBbDx8kPn9M",
+    expiresAt: 1_790_000_000,
+  };
+  const actor: ActorSnapshot = {
+    status: "authorized",
+    profile: { slug: "anna-klein", displayName: "Anna Klein" },
+    demoRun: {
+      slug: "local-foundation-2030",
+      name: "Local foundation run",
+    },
+    role: "member",
+  };
+  const actorState = { sessionKey: actorSessionKey(session), actor };
+
+  assert.deepEqual(visibleActorForSession(session, actorState), actor);
+  assert.deepEqual(
+    visibleActorForSession(
+      { ...session, subject: "93000000-0000-4000-8000-000000000002" },
+      actorState,
+    ),
+    { status: "unavailable" },
+  );
+  assert.deepEqual(
+    visibleActorForSession(
+      { ...session, expiresAt: 1_790_000_001 },
+      actorState,
+    ),
+    { status: "unavailable" },
+  );
+  assert.deepEqual(
+    visibleActorForSession({ status: "signed-out" }, actorState),
+    { status: "signed-out" },
+  );
+  assert.deepEqual(
+    visibleActorForSession(
+      { status: "disabled" },
+      { sessionKey: "disabled", actor: PREVIEW_ACTOR },
+    ),
+    PREVIEW_ACTOR,
+  );
+});

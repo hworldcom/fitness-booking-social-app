@@ -22,6 +22,7 @@ import { walletSessionRelationship } from "@/auth/contracts";
 import { authenticationErrorMessage } from "@/auth/presentation";
 import { WalletAccountChangedError } from "@/auth/wallet-adapter";
 import { solanaAddressFromWeb3Identities } from "@/auth/web3-identity";
+import { useActor } from "@/auth/client/actor-provider";
 import { browserAuthClient } from "@/auth/client/browser-client";
 import { enrollPreparedIdentity } from "@/auth/client/identity-client";
 import { phantomAuthWallet } from "@/auth/client/phantom-wallet";
@@ -46,9 +47,16 @@ type IdentityResult = Readonly<{
   identity: ApplicationIdentitySnapshot;
 }>;
 
-export function SignInScreen() {
+export function SignInScreen({
+  returnTo,
+  accessRequired,
+}: {
+  returnTo: string | null;
+  accessRequired: boolean;
+}) {
   const router = useRouter();
   const { session, refreshSession } = useAuthSession();
+  const { refreshActor } = useActor();
   const mounted = useSyncExternalStore(
     subscribeToHydration,
     () => true,
@@ -69,6 +77,7 @@ export function SignInScreen() {
   );
   const actionLock = useRef(false);
   const enrollmentKey = useRef<string | null>(null);
+  const actorRefreshKey = useRef<string | null>(null);
   const config = supabasePublicConfig();
   const address = mounted ? (connected?.account.address ?? null) : null;
   const relationship = walletSessionRelationship(session, address);
@@ -91,6 +100,7 @@ export function SignInScreen() {
   useEffect(() => {
     if (!identityKey) {
       enrollmentKey.current = null;
+      actorRefreshKey.current = null;
       return;
     }
     if (enrollmentKey.current === identityKey) return;
@@ -109,9 +119,31 @@ export function SignInScreen() {
     };
   }, [identityKey]);
 
+  useEffect(() => {
+    if (
+      !identityKey ||
+      applicationIdentity.status !== "enrolled" ||
+      actorRefreshKey.current === identityKey
+    ) {
+      return;
+    }
+    actorRefreshKey.current = identityKey;
+    let active = true;
+    void refreshActor().then((actor) => {
+      if (active && returnTo && actor.status === "authorized") {
+        router.replace(returnTo);
+        router.refresh();
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [applicationIdentity.status, identityKey, refreshActor, returnTo, router]);
+
   async function retryEnrollment() {
     if (!identityKey) return;
     enrollmentKey.current = identityKey;
+    actorRefreshKey.current = null;
     setIdentityResult(null);
     setIdentityResult({
       key: identityKey,
@@ -225,6 +257,17 @@ export function SignInScreen() {
               <h2>RepX Club sign-in</h2>
             </div>
           </div>
+
+          {accessRequired && (
+            <div className="auth-notice neutral" role="status">
+              <strong>This area needs a prepared RepX Club profile.</strong>
+              <p>
+                Sign in or finish prepared-profile verification first. The
+                requested page opens only after the server authorizes the
+                application identity.
+              </p>
+            </div>
+          )}
 
           {session.status === "disabled" && (
             <div className="auth-notice warning" role="status">

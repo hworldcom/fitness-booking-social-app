@@ -170,8 +170,12 @@ values
 
 set local role app_runtime;
 select set_config(
-  'app.test_direct_binding_count',
-  (select count(*)::text from app.wallet_bindings),
+  'app.test_direct_binding_select',
+  has_table_privilege(
+    current_user,
+    'app.wallet_bindings',
+    'select'
+  )::text,
   true
 );
 
@@ -269,9 +273,9 @@ select throws_ok(
 );
 
 select is(
-  current_setting('app.test_direct_binding_count')::integer,
-  0,
-  'direct app_runtime reads remain default-denied'
+  current_setting('app.test_direct_binding_select')::boolean,
+  false,
+  'app_runtime has no direct wallet-binding read privilege'
 );
 
 select is(

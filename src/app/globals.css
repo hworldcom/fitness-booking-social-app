@@ -2133,6 +2133,28 @@ h1 {
   border-color: #efc7bc;
   background: #fff1ed;
 }
+.protected-access-state {
+  max-width: 680px;
+  margin: 40px auto;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: clamp(24px, 5vw, 48px);
+}
+.protected-access-state h1 {
+  margin: 8px 0 12px;
+}
+.protected-access-state > p {
+  max-width: 54ch;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.protected-access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
 .text-button {
   margin-top: 8px;
   color: #405b25;

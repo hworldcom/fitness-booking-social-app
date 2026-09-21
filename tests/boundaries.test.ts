@@ -137,8 +137,13 @@ test("privileged database entry points carry the Next.js server-only marker", ()
     "src/server/db/env.ts",
     "src/server/db/schema/index.ts",
     "src/server/db/identity/repository.ts",
+    "src/server/db/authorization/repository.ts",
     "src/server/auth/client.ts",
     "src/server/auth/session.ts",
+    "src/server/authorization/contracts.ts",
+    "src/server/authorization/env.ts",
+    "src/server/authorization/page-access.ts",
+    "src/server/authorization/service.ts",
     "src/server/identity/env.ts",
     "src/server/identity/service.ts",
   ]) {

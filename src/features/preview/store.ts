@@ -1,5 +1,7 @@
 "use client";
-import { useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
+import { useActor } from "@/auth/client/actor-provider";
+import { signInHref } from "@/auth/return-to";
 import {
   INITIAL_STATE,
   parseDemo,
@@ -48,7 +50,7 @@ function subscribe(listener: () => void) {
   };
 }
 
-export function dispatch(action: DemoAction) {
+function dispatchPreviewAction(action: DemoAction) {
   const state = reduceDemo(getSnapshot().state, action);
   let storageUnavailable = false;
   try {
@@ -61,6 +63,27 @@ export function dispatch(action: DemoAction) {
 }
 
 export function useDemo() {
+  const { actor } = useActor();
   const current = useSyncExternalStore(subscribe, getSnapshot, serverSnapshot);
-  return { ...current, dispatch };
+  const canAccessPrivatePreview =
+    actor.status === "preview" || actor.status === "authorized";
+  const requestPrivateAccess = useCallback(() => {
+    if (canAccessPrivatePreview) return true;
+    const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    window.location.assign(signInHref(returnTo));
+    return false;
+  }, [canAccessPrivatePreview]);
+  const dispatch = useCallback(
+    (action: DemoAction) => {
+      if (!requestPrivateAccess()) return;
+      dispatchPreviewAction(action);
+    },
+    [requestPrivateAccess],
+  );
+  return {
+    ...current,
+    state: canAccessPrivatePreview ? current.state : INITIAL_STATE,
+    dispatch,
+    requestPrivateAccess,
+  };
 }
