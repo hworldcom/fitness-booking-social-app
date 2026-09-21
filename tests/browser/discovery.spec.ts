@@ -64,33 +64,14 @@ test("challenge comparison filters, chronology and reset work together", async (
   });
 });
 
-test("global search includes events and challenges and handles empty/malformed queries", async ({
+test("direct catalogue search includes events and challenges and handles empty/malformed queries", async ({
   page,
 }, testInfo) => {
-  await page.goto("/explore");
-  if (testInfo.project.name === "mobile") {
-    await page
-      .getByRole("link", { name: "Search RepX Club", exact: true })
-      .click();
-    await page
-      .getByRole("textbox", {
-        name: "Search the public catalogue",
-        exact: true,
-      })
-      .fill("coffee");
-    await page.getByRole("button", { name: "Search", exact: true }).click();
-  } else {
-    await page
-      .getByRole("textbox", {
-        name: "Search activities, studios and challenges",
-      })
-      .fill("coffee");
-    await page
-      .getByRole("textbox", {
-        name: "Search activities, studios and challenges",
-      })
-      .press("Enter");
-  }
+  await page.goto("/search");
+  await page
+    .getByRole("textbox", { name: "Search the public catalogue", exact: true })
+    .fill("coffee");
+  await page.getByRole("button", { name: "Search", exact: true }).click();
   await expect(page.locator(".discovery-result")).toHaveCount(2);
   await expect(
     page

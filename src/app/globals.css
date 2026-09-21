@@ -1,14 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #f5f6f1;
+  --paper: #f8f7f3;
   --white: #fff;
-  --ink: #20251e;
+  --ink: #22251f;
   --muted: #626b5d;
-  --line: #e6e8de;
+  --line: #e8e7df;
   --lime: #d1ef75;
+  --lilac: #e9e2f6;
+  --coral: #ffad99;
+  --font-display:
+    "Bricolage Grotesque Variable", "Manrope Variable", sans-serif;
   --lime-deep: #46611b;
-  --radius: 15px;
+  --radius: 20px;
   --font-sans: "Manrope Variable", sans-serif;
 }
 * {
@@ -192,13 +196,6 @@ button {
 .nav-item.active {
   background: #eaf2d9;
   color: #354321;
-}
-.nav-active-dot {
-  margin-left: auto;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #667e3c;
 }
 .button {
   display: inline-flex;
@@ -397,31 +394,6 @@ button {
   font-size: 11px;
   white-space: nowrap;
 }
-.global-search {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: #626c56;
-  margin-left: 15px;
-  max-width: 290px;
-  flex: 1;
-}
-.global-search input {
-  width: 100%;
-  border: 0;
-  background: none;
-  outline: 0;
-  font-size: 11px;
-  padding: 10px 2px;
-  min-width: 0;
-}
-.global-search kbd {
-  border: 1px solid var(--line);
-  font-size: 11px;
-  border-radius: 4px;
-  width: 19px;
-  text-align: center;
-}
 .header-right {
   margin-left: auto;
   display: flex;
@@ -579,14 +551,6 @@ h1 {
 .feed-rail {
   min-width: 0;
 }
-.hero {
-  height: 305px;
-  border-radius: var(--radius);
-  position: relative;
-  overflow: hidden;
-  background: #29392a;
-  color: white;
-}
 .artwork {
   position: relative;
   overflow: hidden;
@@ -605,48 +569,6 @@ h1 {
     #142e1a38 55%,
     #182a1500 100%
   );
-}
-.hero > .artwork {
-  position: absolute;
-  inset: 0;
-}
-.hero .artwork img {
-  object-position: 63% 20%;
-}
-.hero .photo-shade {
-  background: linear-gradient(90deg, #102019df, #12231760 56%, #16231205);
-}
-.hero-copy {
-  position: relative;
-  padding: 30px;
-  max-width: 370px;
-  height: 100%;
-}
-.hero h2 {
-  font-size: clamp(29px, 2.8vw, 41px);
-  font-weight: 700;
-  letter-spacing: -1.8px;
-  line-height: 1.13;
-  margin: 16px 0 10px;
-}
-.hero p {
-  font-size: 11px;
-  line-height: 1.7;
-  color: #e2e7db;
-  margin-bottom: 20px;
-}
-.hero .button {
-  min-height: 38px;
-  font-size: 10px;
-  padding: 10px 14px;
-}
-.hero-corner {
-  position: absolute;
-  right: 20px;
-  bottom: 15px;
-  letter-spacing: 1.5px;
-  font-size: 9px;
-  color: #f2f5de;
 }
 .pill {
   display: inline-flex;
@@ -2743,18 +2665,6 @@ legend > span {
 }
 
 @media (min-width: 1550px) {
-  .hero {
-    height: 350px;
-  }
-  .hero-copy {
-    padding: 40px;
-  }
-  .hero h2 {
-    font-size: 47px;
-  }
-  .hero p {
-    font-size: 13px;
-  }
   .feed-layout {
     grid-template-columns: minmax(0, 1fr) 310px;
     gap: 30px;
@@ -2784,9 +2694,6 @@ legend > span {
   .preview-status {
     display: none;
   }
-  .global-search {
-    margin-left: 0;
-  }
   .page-content {
     padding: 28px 26px 35px;
   }
@@ -2796,12 +2703,6 @@ legend > span {
   }
   .rail-card {
     padding: 17px;
-  }
-  .hero-copy {
-    padding: 24px;
-  }
-  .hero h2 {
-    font-size: 34px;
   }
   .activity-footer > span {
     display: none;
@@ -2856,15 +2757,6 @@ legend > span {
   .person-row small {
     display: none;
   }
-  .hero {
-    height: 320px;
-  }
-  .hero-copy {
-    padding: 30px;
-  }
-  .hero h2 {
-    font-size: 40px;
-  }
   .heading-date {
     display: none;
   }
@@ -2901,9 +2793,6 @@ legend > span {
   .topbar .location {
     display: none;
   }
-  .global-search {
-    max-width: none;
-  }
 }
 @media (max-height: 830px) and (min-width: 761px) {
   .club-note {
@@ -2930,9 +2819,6 @@ legend > span {
   }
   .brand {
     font-size: 23px;
-  }
-  .global-search {
-    display: none;
   }
   .header-avatar {
     display: none;
@@ -2980,21 +2866,6 @@ legend > span {
   .eyebrow {
     font-size: 9px;
     letter-spacing: 1.3px;
-  }
-  .hero {
-    height: 310px;
-  }
-  .hero-copy {
-    padding: 25px;
-  }
-  .hero h2 {
-    font-size: 37px;
-  }
-  .hero .photo-shade {
-    background: linear-gradient(90deg, #142717df, #18261760 75%);
-  }
-  .hero .artwork img {
-    object-position: 60%;
   }
   .feed-section-heading {
     margin-top: 27px;
@@ -3287,15 +3158,6 @@ legend > span {
   .demo-strip {
     padding: 7px 16px;
   }
-  .hero-copy {
-    padding: 24px;
-  }
-  .hero h2 {
-    font-size: 36px;
-  }
-  .hero p {
-    font-size: 10px;
-  }
   .activity-footer > span {
     display: none;
   }
@@ -3399,9 +3261,6 @@ legend > span {
   .page-heading:has(> .button) h1 {
     font-size: 26px;
   }
-  .hero-corner {
-    font-size: 8px;
-  }
 }
 @media (max-width: 1190px) {
   .studio-grid {
@@ -3470,9 +3329,6 @@ legend > span {
 }
 .how-it-works-link {
   min-height: 40px;
-}
-.mobile-search-link {
-  display: none;
 }
 .challenge-intro-compact {
   font-size: 13px;
@@ -3774,9 +3630,6 @@ legend > span {
   }
 }
 @media (max-width: 760px) {
-  .mobile-search-link {
-    display: inline-flex;
-  }
   .header-right {
     gap: 8px;
   }
@@ -3893,9 +3746,5 @@ legend > span {
   }
   .how-it-works-link {
     font-size: 10px;
-  }
-  .mobile-search-link {
-    width: 28px;
-    min-width: 28px;
   }
 }

@@ -124,7 +124,7 @@ The database commands above add SQL catalogue/constraint/RLS checks and Drizzle 
 - `src/components/`: application shell, presentation formatting and reusable accessible interface/discovery controls.
 - `supabase/`: local configuration, the sole SQL migration history, deterministic seeds and database tests.
 - `tests/`: domain checks and Playwright browser flows.
-- `public/`: local branding and artwork. The running-club image was generated for RepX Club on 19 September 2026 using OpenAI image generation and exported as WebP. Its people and setting are illustrative. Other graphics are CSS/SVG with Lucide icons. Manrope is self-hosted through Fontsource; the app does not fetch external fonts or stock imagery.
+- `public/`: local branding and artwork. The running-club image was generated for RepX Club on 19 September 2026 using OpenAI image generation and exported as WebP. Its people and setting are illustrative. Other graphics are CSS/SVG with Lucide icons. Manrope and Bricolage Grotesque are self-hosted through Fontsource; the app does not fetch external fonts or stock imagery. The [visual asset record](docs/design/DEV0043-assets.md) documents the illustrative studio photos and preferred redesign reference.
 
 The staged frontend/backend/database/blockchain directory plan is tracked by [Coordination COR0001](tickets/current/organisatory/COR0001-project-structure.md). That non-implementation record maps focused peer development tickets and does not claim target directories exist before their owning code is delivered.
 

@@ -19,16 +19,9 @@ import { challengeDate, formatEurc } from "./format";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="brand">
-      <span className="brand-symbol" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-      <span>
-        RepX<span className="brand-club"> Club</span>
-      </span>
-      {!compact && <span className="brand-dot" />}
+    <span className={`brand ${compact ? "brand-compact" : "brand-stacked"}`}>
+      <span>RepX</span>
+      <span className="brand-club">Club</span>
     </span>
   );
 }

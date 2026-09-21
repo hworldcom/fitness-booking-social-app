@@ -1,18 +1,24 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import {
   ArrowUpRight,
   ArrowRight,
   Check,
-  MapPin,
   CalendarDays,
   Users,
   Flag,
   EyeOff,
   Footprints,
+  Coffee,
 } from "lucide-react";
-import { challenges, classes, people } from "@/features/preview/catalogue";
+import {
+  challenges,
+  classes,
+  people,
+  studios,
+} from "@/features/preview/catalogue";
 import { visibleBookings } from "@/features/preview/state";
 import { useDemo } from "@/features/preview/store";
 import {
@@ -25,6 +31,8 @@ import {
   SectionTitle,
 } from "@/components/ui";
 
+import { ShoeDoodle, StarDoodle } from "@/components/club-doodles";
+
 export function Feed() {
   const [filter, setFilter] = useState("For you");
   const { state, dispatch } = useDemo();
@@ -33,45 +41,46 @@ export function Feed() {
   const own = visibleBookings(state);
   return (
     <>
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">YOUR DAILY DOSE OF MOVEMENT</span>
-          <h1>
-            Better together<span className="lime-text">.</span>
+      <section className="club-hero" aria-labelledby="club-welcome">
+        <div className="club-hero-copy">
+          <span className="eyebrow">A LITTLE MOVEMENT. GOOD COMPANY.</span>
+          <h1 id="club-welcome">
+            FIND YOUR PEOPLE.
+            <br />
+            <span>MOVE TOGETHER.</span>
           </h1>
-          <p>A little progress. Good people. Welcome back, Anna.</p>
+          <p>
+            Discover local gyms and studios, join classes, and take on
+            challenges together.
+          </p>
+          <div className="club-hero-actions">
+            <Link href="/explore" className="button lime">
+              Explore classes <ArrowRight size={18} />
+            </Link>
+            <Link href="/challenges" className="button secondary">
+              Find a challenge <ArrowUpRight size={18} />
+            </Link>
+          </div>
+          <ShoeDoodle className="club-shoe" />
+          <StarDoodle className="club-spark" />
         </div>
-        <span className="heading-date">
-          SATURDAY, 19 SEPTEMBER
-          <br />
-          <strong>Let’s make a move.</strong>
-        </span>
-      </div>
+        <div className="club-hero-photo">
+          <Image
+            src="/images/club-friends-hero.webp"
+            alt="Illustrative photograph of four friends laughing together after a run in Berlin"
+            fill
+            sizes="(max-width: 600px) 100vw, (max-width: 1000px) 60vw, 50vw"
+            preload
+          />
+          <span className="club-sticker">
+            Better with
+            <br />
+            company <span aria-hidden="true">↗</span>
+          </span>
+        </div>
+      </section>
       <div className="feed-layout">
         <div className="feed-main">
-          <section className="hero">
-            <Artwork kind="run" large />
-            <div className="hero-copy">
-              <Pill tone="glass">
-                <span className="status-dot" />
-                YOUR PEOPLE ARE OUT THERE
-              </Pill>
-              <h2>
-                Good energy.
-                <br />
-                Better company.
-              </h2>
-              <p>
-                Find a challenge. Bring a friend.
-                <br />
-                Make showing up the best part of your day.
-              </p>
-              <Link href="/challenges" className="button lime">
-                Find your challenge <ArrowUpRight size={18} />
-              </Link>
-            </div>
-            <span className="hero-corner">01 / CLUB CULTURE</span>
-          </section>
           <div className="feed-section-heading">
             <h2>Around your club</h2>
             <div className="segment" aria-label="Feed filter">
@@ -255,59 +264,67 @@ export function Feed() {
           </div>
         </div>
         <aside className="feed-rail">
-          <section className="rail-card rhythm-card">
-            <div className="rail-title">
-              <h2>Your weekly rhythm</h2>
-              <Pill tone="lime">
-                <span className="status-dot" />
-                Looking good
-              </Pill>
-            </div>
-            <div className="rhythm-number">
-              2<span>/ 3</span>
-              <small>weekly visit goal</small>
-            </div>
-            <div className="week-days">
-              {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
-                <div key={i}>
-                  <span
-                    className={
-                      i === 1 || i === 3 ? "done" : i === 5 ? "today" : ""
-                    }
-                  >
-                    {i === 1 || i === 3 ? <Check size={15} /> : <i />}
-                  </span>
-                  <small>{day}</small>
-                </div>
-              ))}
-            </div>
-            <p>One more session. You’ve got this.</p>
-            <span className="fixture-note">
-              Illustrative gym-confirmed visits
-            </span>
-          </section>
-          <section className="rail-card next-session">
-            <div className="rail-title">
-              <h2>Next in your club</h2>
-              <CalendarDays size={17} />
-            </div>
-            <span className="eyebrow">TUESDAY, 22 SEPTEMBER</span>
-            <h3>
-              Muay Thai
-              <br />
-              fundamentals
-            </h3>
-            <p>
-              <MapPin size={14} />
-              Kru Tiger, Kreuzberg
+          <section
+            className="club-discovery"
+            aria-label="Local studio discovery"
+          >
+            <SectionTitle
+              title="Find your next spot"
+              href="/explore?view=studios"
+              action="All studios"
+            />
+            <p className="fixture-note">
+              Example studios · Illustrative imagery
             </p>
-            <div className="session-time">
-              <strong>18:00</strong>
-              <span>60 min · All levels</span>
+            {studios
+              .filter(
+                (studio) => studio.id === "fabrik" || studio.id === "kru-tiger",
+              )
+              .map((studio) => (
+                <Link
+                  key={studio.id}
+                  href={`/explore?view=studios&q=${encodeURIComponent(studio.name)}`}
+                  className="club-studio-card"
+                >
+                  <div className="club-studio-photo">
+                    <Image
+                      src={
+                        studio.id === "fabrik"
+                          ? "/images/strength-studio.webp"
+                          : "/images/muay-thai-studio.webp"
+                      }
+                      alt={
+                        studio.id === "fabrik"
+                          ? "Illustrative sunlit strength studio with weights and plants"
+                          : "Illustrative Muay Thai studio with punching bags and training mats"
+                      }
+                      fill
+                      sizes="(max-width: 760px) 120px, 150px"
+                    />
+                  </div>
+                  <div>
+                    <h3>{studio.name}</h3>
+                    <p>
+                      {studio.activities.join(" · ")} · {studio.area}
+                    </p>
+                    <span className="text-link">
+                      Explore studio <ArrowUpRight size={15} />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            <div className="club-event-card">
+              <div className="club-event-top">
+                <span className="eyebrow">A PLAN WITH A LITTLE EXTRA</span>
+                <Coffee size={28} strokeWidth={1.5} aria-hidden="true" />
+              </div>
+              <h3>Run &amp; Coffee</h3>
+              <p>A social 5K + a coffee. Good company included.</p>
+              <span className="fixture-note">Demo event · Ticket preview</span>
+              <Link href="/events/run-and-coffee" className="button secondary">
+                View event <ArrowUpRight size={17} />
+              </Link>
             </div>
-            <Link href="/classes/muay-thai" className="button secondary full">
-              Your membership covers it <ArrowUpRight size={16} />
-            </Link>
           </section>
           <section className="rail-card">
             <SectionTitle title="Good company" href="/profile" action="More" />
@@ -343,18 +360,6 @@ export function Feed() {
               ))}
             </div>
           </section>
-          <div className="rail-manifesto">
-            <span>MORE THAN A WORKOUT.</span>
-            <h3>
-              A reason
-              <br />
-              to show up.
-            </h3>
-            <p>Social fitness, onchain.</p>
-            <span className="manifesto-mark" aria-hidden="true">
-              ↗
-            </span>
-          </div>
         </aside>
       </div>
     </>

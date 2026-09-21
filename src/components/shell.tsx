@@ -1,15 +1,14 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, type ReactNode, type FormEvent } from "react";
+import { usePathname } from "next/navigation";
+import { useState, type ReactNode } from "react";
 import {
-  Activity,
-  Compass,
-  Flag,
+  House,
+  Dumbbell,
+  Trophy,
   UserRound,
   Plus,
   MapPin,
-  Search,
   ArrowUpRight,
   Info,
   ArrowRight,
@@ -23,9 +22,9 @@ import {
 } from "@/solana/client/wallet-connection";
 
 const navigation = [
-  { label: "Feed", href: "/", Icon: Activity },
-  { label: "Explore", href: "/explore", Icon: Compass },
-  { label: "Challenges", href: "/challenges", Icon: Flag },
+  { label: "Feed", href: "/", Icon: House },
+  { label: "Explore", href: "/explore", Icon: Dumbbell },
+  { label: "Challenges", href: "/challenges", Icon: Trophy },
   { label: "Profile", href: "/profile", Icon: UserRound },
 ];
 export function Shell({
@@ -36,13 +35,7 @@ export function Shell({
   storageUnavailable: boolean;
 }) {
   const path = usePathname();
-  const router = useRouter();
   const [modal, setModal] = useState<"wallet" | "about" | null>(null);
-  function search(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const value = String(new FormData(event.currentTarget).get("q") || "");
-    router.push(`/search?q=${encodeURIComponent(value.trim())}`);
-  }
   const active = (href: string) =>
     href === "/"
       ? path === "/"
@@ -71,9 +64,13 @@ export function Shell({
               className={`nav-item ${active(href) ? "active" : ""}`}
               aria-current={active(href) ? "page" : undefined}
             >
-              <Icon size={20} strokeWidth={1.8} />
+              <Icon
+                size={22}
+                strokeWidth={1.7}
+                aria-hidden="true"
+                fill={href === "/" && active(href) ? "currentColor" : "none"}
+              />
               <span>{label}</span>
-              {active(href) && <span className="nav-active-dot" />}
             </Link>
           ))}
         </nav>
@@ -109,7 +106,11 @@ export function Shell({
             </span>
             <ArrowUpRight size={18} />
           </Link>
-          <span className="sidebar-tagline">Social fitness, onchain.</span>
+          <span className="sidebar-tagline">
+            Social fitness,
+            <br />
+            <span>onchain.</span>
+          </span>
         </div>
       </aside>
       <div className="app-main">
@@ -121,24 +122,7 @@ export function Shell({
             <MapPin size={16} />
             <span>Berlin, Germany</span>
           </span>
-          <form className="global-search" role="search" onSubmit={search}>
-            <Search size={17} />
-            <input
-              name="q"
-              aria-label="Search activities, studios and challenges"
-              placeholder="Search RepX Club…"
-              maxLength={200}
-            />
-            <kbd>↵</kbd>
-          </form>
           <div className="header-right">
-            <Link
-              href="/search"
-              className="mobile-search-link icon-button"
-              aria-label="Search RepX Club"
-            >
-              <Search size={19} />
-            </Link>
             <Link href="/how-it-works" className="how-it-works-link">
               <CircleHelp size={17} aria-hidden="true" />
               <span>How it works</span>
@@ -174,7 +158,7 @@ export function Shell({
         </main>
         <footer className="app-footer">
           <span>RepX Club © 2026</span>
-          <span>Made for movement. Built around people.</span>
+          <span className="footer-tagline">Social fitness, onchain.</span>
           <Pill>Solana Devnet target · Test EURC</Pill>
         </footer>
       </div>
@@ -186,7 +170,12 @@ export function Shell({
             className={active(href) ? "active" : ""}
             aria-current={active(href) ? "page" : undefined}
           >
-            <Icon size={21} />
+            <Icon
+              size={21}
+              strokeWidth={1.7}
+              aria-hidden="true"
+              fill={href === "/" && active(href) ? "currentColor" : "none"}
+            />
             <span>{label}</span>
           </Link>
         ))}

@@ -7,7 +7,7 @@ test("four surfaces render without browser errors or horizontal overflow", async
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Better together." }),
+    page.getByRole("heading", { name: /FIND YOUR PEOPLE.*MOVE TOGETHER/ }),
   ).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath("feed.png"),
@@ -338,7 +338,7 @@ test("keyboard dialog focus and blocked/corrupt storage recover gracefully", asy
   );
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Better together." }),
+    page.getByRole("heading", { name: /FIND YOUR PEOPLE.*MOVE TOGETHER/ }),
   ).toBeVisible();
   await context.addInitScript(() => {
     Object.defineProperty(window, "localStorage", {
