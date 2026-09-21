@@ -1,11 +1,11 @@
 # Ticket DEV0039: Prepared identity and wallet bindings
 
-- Status: In progress
+- Status: Completed
 - Created: 2026-09-20
 - Last updated: 2026-09-21
 - Milestone: M0 identity / M2 wallet prerequisite
-- Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on completed [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md) and [DEV0015 — Supabase database foundation](../../archive/backend/DEV0015-supabase-database-foundation.md); enables [DEV0040 — Protected access and database context](DEV0040-protected-access-and-database-context.md) and [DEV0041 — Company wallet authorization](DEV0041-company-wallet-authorization.md)
+- Coordination: [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md)
+- Related records: depends on completed [DEV0038 — Phantom Supabase Web3 authentication](DEV0038-phantom-supabase-web3-authentication.md) and [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md); enables [DEV0040 — Protected access and database context](../../current/backend/DEV0040-protected-access-and-database-context.md) and [DEV0041 — Company wallet authorization](../../current/backend/DEV0041-company-wallet-authorization.md)
 
 ## Objective and context
 
@@ -71,13 +71,13 @@ The migration is forward-only. Disposable local rollback uses `npm run db:reset`
 
 ## Acceptance criteria
 
-- [ ] AC1: The verified prepared wallet atomically enrolls as Anna Klein in the server-selected active demo dataset and returns the same identity on retries or simultaneous identical requests.
-- [ ] AC2: A wallet has exactly one personal or organization owner per dataset/cluster; one Auth subject/profile cannot be silently merged with another prepared actor.
-- [ ] AC3: Personal enrollment relies on the verified DEV0038 Supabase subject/wallet and private roster without a second Phantom signature. Disallowed, mismatched or conflicting inputs produce no partial enrollment.
-- [ ] AC4: The server derives Anna, the active demo dataset and personal owner type from protected configuration and verified session data; the client cannot select them as authority.
-- [ ] AC5: Disconnecting Phantom preserves the Supabase session and durable Anna binding while blocking wallet-required actions. Reconnecting the same wallet restores the match; a different wallet cannot replace or merge the binding.
-- [ ] AC6: Migration, Drizzle mapping, repository, response and server-only configuration contracts are documented with rollback/recovery steps. No private key, recovery phrase, signature or unrestricted roster data reaches the browser.
-- [ ] AC7: Clean database reset, repeated migration/seed, SQL and driver integration tests, unit/boundary checks, lint, typecheck, build and affected browser checks pass with exact results recorded.
+- [x] AC1: The verified prepared wallet atomically enrolls as Anna Klein in the server-selected active demo dataset and returns the same identity on retries or simultaneous identical requests.
+- [x] AC2: A wallet has exactly one personal or organization owner per dataset/cluster; one Auth subject/profile cannot be silently merged with another prepared actor.
+- [x] AC3: Personal enrollment relies on the verified DEV0038 Supabase subject/wallet and private roster without a second Phantom signature. Disallowed, mismatched or conflicting inputs produce no partial enrollment.
+- [x] AC4: The server derives Anna, the active demo dataset and personal owner type from protected configuration and verified session data; the client cannot select them as authority.
+- [x] AC5: Disconnecting Phantom preserves the Supabase session and durable Anna binding while blocking wallet-required actions. Reconnecting the same wallet restores the match; a different wallet cannot replace or merge the binding.
+- [x] AC6: Migration, Drizzle mapping, repository, response and server-only configuration contracts are documented with rollback/recovery steps. No private key, recovery phrase, signature or unrestricted roster data reaches the browser.
+- [x] AC7: Clean database reset, repeated migration/seed, SQL and driver integration tests, unit/boundary checks, lint, typecheck, build and affected browser checks pass with exact results recorded.
 
 ## Validation plan
 
@@ -87,7 +87,7 @@ Run clean reset and repeatability checks, database integration tests, existing u
 
 ## Implementation record
 
-Implementation is complete and automated validation passes. One required real-Phantom enrollment/disconnect rehearsal remains before this ticket can be marked Completed and archived. This ticket was created when the unimplemented DEV0016 plan was converted to COR0002. It owns the shared binding schema and personal prepared-enrollment behavior.
+Implementation and validation are complete. The user confirmed the real prepared-Phantom enrollment, reload, disconnect and same-wallet reconnect behavior on 2026-09-21. This ticket was created when the unimplemented DEV0016 plan was converted to COR0002. It owns the shared binding schema and personal prepared-enrollment behavior.
 
 ### Changes and rationale
 
@@ -133,19 +133,21 @@ For disposable local use after each `db:reset` or first `auth:start`, run `npm r
 
 ## Validation results
 
-Automated implementation validation is complete. The final real prepared-wallet rehearsal is waiting for the user to approve one fresh Supabase login message after the clean reset; that check must confirm Anna enrollment creates no second prompt and that disconnect preserves the displayed identity/session.
+Automated implementation validation and the real prepared-wallet rehearsal are complete. On 2026-09-21 the user approved one fresh Supabase login message, observed Anna's successful enrollment without a second Phantom prompt, reloaded successfully, disconnected while the Anna session remained active, reloaded in the disconnected state and reconnected the same wallet successfully. A read-only database check then found exactly one active binding, for Anna, owned by one Auth subject; it printed no wallet address or session data.
 
-| Criterion | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                              | Result                                                            |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| AC1       | `npm run db:test` exercises repeat enrollment; `npm run test:db` starts two simultaneous runtime-login calls and confirms one binding plus identical repository retry/current results.                                                                                                                                                                                                                                                                | Passed automatically.                                             |
-| AC2       | pgTAP verifies target checks and all four partial unique ownership indexes; the driver conflict check leaves the original subject and single binding unchanged.                                                                                                                                                                                                                                                                                       | Passed automatically.                                             |
-| AC3       | Roster unit tests reject disallowed/malformed/duplicate mappings; pgTAP rejects inactive participation without partial writes; source and route checks prove no request identity body or signing adapter is used. Real no-second-prompt observation remains.                                                                                                                                                                                          | Automated portion passed; manual prompt check pending.            |
-| AC4       | Server-only boundary tests cover roster, service and repository; POST accepts no body; exact response parsing rejects extra roster/authority fields.                                                                                                                                                                                                                                                                                                  | Passed automatically.                                             |
-| AC5       | Existing relationship unit tests cover matched/disconnected/mismatched states; the UI retains keyed enrollment across provider disconnect and exposes explicit disconnect. Real disconnect/reconnect observation remains.                                                                                                                                                                                                                             | Automated portion passed; manual wallet check pending.            |
-| AC6       | Migration, Drizzle, repository, response, environment, local-login and rollback contracts are documented here, in `.env.example`, README and the database operations guide.                                                                                                                                                                                                                                                                           | Passed.                                                           |
-| AC7       | Two consecutive `npm run db:reset` runs applied both migrations and seed successfully; `npm run db:runtime` passed after each. `npm run db:test` passed 43/43, `npm run test:db` 8/8, `npm test` 40/40, `npm run db:lint` with no schema errors, `npm run lint`, `npm run typecheck`, `npm run format:check`, webpack production build and `npm run test:e2e` 34/34 across desktop/mobile. The final build's affected sign-in subset then passed 4/4. | Automated portion passed; required real-wallet rehearsal pending. |
+| Criterion | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Result                |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| AC1       | `npm run db:test` exercises repeat enrollment; `npm run test:db` starts two simultaneous runtime-login calls and confirms one binding plus identical repository retry/current results.                                                                                                                                                                                                                                                                                                                  | Passed automatically. |
+| AC2       | pgTAP verifies target checks and all four partial unique ownership indexes; the driver conflict check leaves the original subject and single binding unchanged.                                                                                                                                                                                                                                                                                                                                         | Passed automatically. |
+| AC3       | Roster unit tests reject disallowed/malformed/duplicate mappings; pgTAP rejects inactive participation without partial writes; source and route checks prove no request identity body or signing adapter is used. The real rehearsal produced only the Supabase login prompt and no second enrollment prompt.                                                                                                                                                                                           | Passed.               |
+| AC4       | Server-only boundary tests cover roster, service and repository; POST accepts no body; exact response parsing rejects extra roster/authority fields.                                                                                                                                                                                                                                                                                                                                                    | Passed automatically. |
+| AC5       | Existing relationship unit tests cover matched/disconnected/mismatched states and the database prevents reassignment. The real rehearsal preserved Anna and the Supabase session across disconnect/reload, then restored the matched state when the same wallet reconnected.                                                                                                                                                                                                                            | Passed.               |
+| AC6       | Migration, Drizzle, repository, response, environment, local-login and rollback contracts are documented here, in `.env.example`, README and the database operations guide.                                                                                                                                                                                                                                                                                                                             | Passed.               |
+| AC7       | Two consecutive `npm run db:reset` runs applied both migrations and seed successfully; `npm run db:runtime` passed after each. `npm run db:test` passed 43/43, `npm run test:db` 8/8, `npm test` 40/40, `npm run db:lint` with no schema errors, `npm run lint`, `npm run typecheck`, `npm run format:check`, webpack production build and `npm run test:e2e` 34/34 across desktop/mobile. The final build's affected sign-in subset then passed 4/4, followed by the successful real-wallet rehearsal. | Passed.               |
 
 The first database-lint run identified an unused PL/pgSQL variable and an incorrect `STABLE` marker on a function that uses transaction-local configuration; both were removed before clean-reset validation. An early pgTAP failure came from invoking the test assertion itself while the restricted runtime role was active, not from the migration. Moving the assertion outside that role preserved the intended direct-access check, after which all SQL tests passed.
+
+Completion/archive validation found 38 unique work records with valid lifecycle status and index paths, and resolved 600 repository-local links across the 58 Markdown files in this commit snapshot. Focused Prettier formatting and `git diff --check` passed.
 
 ## Risks, limitations, and follow-ups
 
@@ -157,7 +159,7 @@ The local runtime helper intentionally contains a fixed password only for the di
 
 ## Completion and review references
 
-- Completed: Not completed — final real prepared-Phantom enrollment, disconnect and same/different-wallet observations remain.
-- Commit: `[DEV0039] Implement prepared identity enrollment`.
-- Review: Implementation self-review completed; no independent review.
+- Completed: 2026-09-21 — implementation, automated validation and the real prepared-wallet enrollment/disconnect/reconnect rehearsal passed.
+- Commits: `f64a5db` (`[DEV0039] Implement prepared identity enrollment`) and `[DEV0039] Complete prepared identity enrollment`.
+- Review: Implementation self-review and user acceptance rehearsal completed; no independent code review.
 - Deployment or release: None.

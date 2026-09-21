@@ -5,7 +5,7 @@
 - Last updated: 2026-09-21
 - Milestone: M0 identity / M2 company authority prerequisite
 - Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0040 — Protected access and database context](DEV0040-protected-access-and-database-context.md); implements C14 from [DEV0007 — EURC-only wallet contract](../../archive/blockchain/DEV0007-eurc-only-wallet-contract.md); later financial tickets consume its authority result
+- Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0040 — Protected access and database context](DEV0040-protected-access-and-database-context.md); implements C14 from [DEV0007 — EURC-only wallet contract](../../archive/blockchain/DEV0007-eurc-only-wallet-contract.md); later financial tickets consume its authority result
 
 ## Objective and context
 
@@ -81,7 +81,7 @@ Expected contracts are a one-time `auth_challenges` migration/mapping, server-on
 
 ## Validation results
 
-Pending validation. DEV0039 and DEV0040 must complete before implementation evidence can begin.
+Pending validation. DEV0039 is complete; DEV0040 must still complete before implementation evidence can begin.
 
 | Criterion | Evidence | Result  |
 | --------- | -------- | ------- |
