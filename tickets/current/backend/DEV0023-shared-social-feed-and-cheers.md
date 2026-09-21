@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M4 social interaction slice
 - Coordination: None — independent development ticket
-- Related tickets: Planning [DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md); depends on [DEV0040](DEV0040-protected-access-and-database-context.md), [DEV0017](DEV0017-persistent-catalogue-and-drafts.md), and [DEV0018](DEV0018-membership-booking-and-visits.md); challenge sources follow in [DEV0024](../blockchain/DEV0024-verified-challenge-activity.md)
+- Related tickets: Planning [DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md); depends on completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md), [DEV0017](DEV0017-persistent-catalogue-and-drafts.md), and [DEV0018](DEV0018-membership-booking-and-visits.md); challenge sources follow in [DEV0024](../blockchain/DEV0024-verified-challenge-activity.md)
 
 ## Objective and context
 

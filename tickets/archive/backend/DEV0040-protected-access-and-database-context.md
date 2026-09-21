@@ -1,11 +1,11 @@
 # Ticket DEV0040: Protected access and database context
 
-- Status: In progress
+- Status: Completed
 - Created: 2026-09-20
 - Last updated: 2026-09-21
 - Milestone: M0 identity and protected access
-- Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0025 — Next.js backend boundary](../../archive/backend/DEV0025-nextjs-backend-boundary.md); enables [DEV0017 — Persistent catalogue and private drafts](DEV0017-persistent-catalogue-and-drafts.md), [DEV0018 — Membership booking and confirmed visits](DEV0018-membership-booking-and-visits.md), and [DEV0023 — Shared social feed and Cheers](DEV0023-shared-social-feed-and-cheers.md)
+- Coordination: [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md)
+- Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0025 — Next.js backend boundary](DEV0025-nextjs-backend-boundary.md); enables [DEV0017 — Persistent catalogue and private drafts](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018 — Membership booking and confirmed visits](../../current/backend/DEV0018-membership-booking-and-visits.md), and [DEV0023 — Shared social feed and Cheers](../../current/backend/DEV0023-shared-social-feed-and-cheers.md)
 
 ## Objective and context
 
@@ -191,7 +191,7 @@ The applied migration is `20260921000200_protect_actor_context.sql`. It is forwa
 
 ## Validation results
 
-Automated implementation validation passed on 2026-09-21. One live configured authenticated browser rehearsal remains because the available browser-control process could not start; prior DEV0038/DEV0039 evidence already covers Phantom message cancellation, sign-out with Phantom still connected, wallet disconnect and account mismatch, but the newly combined actor endpoint/private-page flow still needs confirmation.
+Automated implementation validation and the configured authenticated browser rehearsal passed on 2026-09-21. After the UI compatibility correction, the user ran the prescribed flow and confirmed it worked: the prepared wallet reached the bounded authorized actor state, protected navigation succeeded, sign-out removed protected access, and disconnecting Phantom alone preserved the application session and non-wallet actor access.
 
 - **Scope and ownership review — passed:** the ticket stops at shared authorization infrastructure and one current-actor read slice. DEV0017, DEV0018, DEV0023 and DEV0041 retain their feature repositories, mutations and narrower permission checks.
 - **Existing-contract review — passed:** the locked actor derives from DEV0038's verified session and DEV0039's durable binding/current-identity result. It preserves wallet disconnect without sign-out and does not change either completed endpoint contract.
@@ -206,17 +206,18 @@ Automated implementation validation passed on 2026-09-21. One live configured au
 - **Configured production build — passed:** `npm run build -- --webpack` compiled with `.env.local`; every application route that consumes the authorization root was emitted as request-time dynamic output.
 - **Configured guest browser checks — passed:** `npm run test:e2e -- tests/browser/authorization.spec.ts` passed 4 desktop/mobile tests. The exact public routes remained directly reachable; all locked private pages and UUID draft paths redirected to sign-in with the original safe path; save and My Drafts attempts changed no local state.
 - **Configuration-free preview build/regression — passed:** building and running Playwright with all five access variables explicitly empty preserved preview mode. The full suite reported 40 passed and 4 configured-only checks skipped across desktop and mobile; draft, booking, follow, saved-item, keyboard, error and responsive behavior remained intact.
-- **Authenticated browser rehearsal — not run:** confirm `/api/auth/actor` returns the bounded authorized projection after sign-in/enrollment, the protected page opens, sign-out hides it, and disconnecting Phantom alone preserves the session and non-wallet actor access. No second real transaction or message signature beyond normal sign-in is expected.
+- **Authenticated browser rehearsal — passed:** the user confirmed the prescribed configured flow worked after the UI compatibility correction. `/api/auth/actor` reached the bounded authorized state after sign-in/enrollment, the protected page opened, sign-out removed protected access, and disconnecting Phantom alone preserved the session and non-wallet actor access. No second message or transaction signature was requested beyond normal sign-in.
+- **Completion/archive integrity — passed:** DEV0040 moved to the backend archive, the root/index/specification/dependency links were updated, 42 unique work records have lifecycle-correct placement, and 685 repository-relative links resolve across 63 Markdown files.
 
-| Criterion | Evidence                                                                                                                             | Result                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| AC1       | SQL live-validation/revocation assertions, driver forged-binding/revocation checks and current-actor projection                      | Passed                  |
-| AC2       | One-connection alternating-actor driver test across commit, rollback and thrown-error reuse                                          | Passed                  |
-| AC3       | SQL privilege/policy assertions, direct wallet denial and schema lint                                                                | Passed                  |
-| AC4       | Configured desktop/mobile public-route, private-route, draft-path, return-target and no-mutation browser checks                      | Passed                  |
-| AC5       | Unit invalidation coverage and existing DEV0038/DEV0039 manual wallet/session evidence; new combined authenticated rehearsal above   | Pending final rehearsal |
-| AC6       | Exact no-store API implementation, configured dynamic build, configured failure tests and full configuration-free preview regression | Passed                  |
-| AC7       | All automated commands above pass; the authenticated browser rehearsal is the only outstanding required evidence                     | Pending final rehearsal |
+| Criterion | Evidence                                                                                                                             | Result |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| AC1       | SQL live-validation/revocation assertions, driver forged-binding/revocation checks and current-actor projection                      | Passed |
+| AC2       | One-connection alternating-actor driver test across commit, rollback and thrown-error reuse                                          | Passed |
+| AC3       | SQL privilege/policy assertions, direct wallet denial and schema lint                                                                | Passed |
+| AC4       | Configured desktop/mobile public-route, private-route, draft-path, return-target and no-mutation browser checks                      | Passed |
+| AC5       | Unit invalidation coverage, existing DEV0038/DEV0039 wallet/session evidence and the combined configured authenticated rehearsal     | Passed |
+| AC6       | Exact no-store API implementation, configured dynamic build, configured failure tests and full configuration-free preview regression | Passed |
+| AC7       | All automated commands above and the configured authenticated browser rehearsal passed                                               | Passed |
 
 ## Risks, limitations, and follow-ups
 
@@ -224,11 +225,11 @@ PostgreSQL connection pooling makes session-level settings unsafe; use transacti
 
 This ticket does not create repositories for every protected feature. DEV0017/DEV0018/DEV0023 must use the delivered context while owning their specific authorization and data tests.
 
-Remaining action: run the four authenticated browser observations listed above using the prepared Phantom wallet. If they pass, mark AC5/AC7 complete, archive DEV0040 and update COR0002. If any fails, retain this ticket in progress and record the exact state/route before changing implementation.
+No required DEV0040 work remains. DEV0017, DEV0018, DEV0023 and DEV0041 must reuse this boundary while adding their own feature-specific repositories and authorization checks. User-prioritized DEV0046 may revise the login and personal-wallet model, but it must preserve the delivered server-derived actor and transaction-local isolation guarantees.
 
 ## Completion and review references
 
-- Completed: Not completed.
-- Commit: Pending implementation commit.
-- Review: Pre-implementation scope and contract review completed; no independent review.
+- Completed: 2026-09-21 — implementation, automated validation and the configured authenticated browser rehearsal passed.
+- Commits: `1a02f8c` (`[DEV0040] Lock protected access contracts`) and `643b5ff` (`[DEV0040] Enforce protected actor context`).
+- Review: Implementation self-review and user acceptance rehearsal completed; no independent review.
 - Deployment or release: None.

@@ -5,7 +5,7 @@
 - Last updated: 2026-09-21
 - Milestone: M0 identity / M2 wallet prerequisite
 - Coordination: [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on completed [DEV0038 — Phantom Supabase Web3 authentication](DEV0038-phantom-supabase-web3-authentication.md) and [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md); enables [DEV0040 — Protected access and database context](../../current/backend/DEV0040-protected-access-and-database-context.md) and [DEV0041 — Company wallet authorization](../../current/backend/DEV0041-company-wallet-authorization.md)
+- Related records: depends on completed [DEV0038 — Phantom Supabase Web3 authentication](DEV0038-phantom-supabase-web3-authentication.md) and [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md); enabled completed [DEV0040 — Protected access and database context](DEV0040-protected-access-and-database-context.md) and enables [DEV0041 — Company wallet authorization](../../current/backend/DEV0041-company-wallet-authorization.md)
 
 ## Objective and context
 

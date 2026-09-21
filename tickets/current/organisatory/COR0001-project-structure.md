@@ -115,7 +115,7 @@ The following records are downstream consumers. They implement product behavior 
 | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md)   | Uses DEV0027's browser wallet plus the server boundary to establish and verify the Supabase Auth session.                                       |
 | [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md) | Adds prepared identity and wallet-binding mappings and repositories over DEV0015's database boundary.                                           |
-| [DEV0040 — Protected access and database context](../backend/DEV0040-protected-access-and-database-context.md)            | Adds the verified transaction-local database context and guarded server/frontend adapters.                                                      |
+| [DEV0040 — Protected access and database context](../../archive/backend/DEV0040-protected-access-and-database-context.md) | Added the verified transaction-local database context and guarded server/frontend adapters.                                                     |
 | [DEV0041 — Company wallet authorization](../backend/DEV0041-company-wallet-authorization.md)                              | Combines verified personal admin context with a separately proved company wallet without creating financial transactions.                       |
 | [DEV0017 — Persistent catalogue and private drafts](../backend/DEV0017-persistent-catalogue-and-drafts.md)                | Owns catalogue/profile/draft/follow/bookmark repositories and services, mapping rows into shared contracts rather than exposing storage shapes. |
 | [DEV0018 — Membership booking and confirmed visits](../backend/DEV0018-membership-booking-and-visits.md)                  | Owns booking/attendance/activity repositories and workflows within the established server/domain/database boundaries.                           |
@@ -128,7 +128,7 @@ Recommended sequence:
 2. Preserve completed DEV0031 as the domain/discovery/preview baseline before persistence work replaces preview adapters.
 3. Preserve completed DEV0027 as the browser wallet/Solana client baseline.
 4. Preserve completed DEV0015 and DEV0025 with separate file ownership and evidence: DEV0015 created the real database artifacts/access modules; DEV0025 supplied and validated the server boundary rules around them.
-5. Implement DEV0038 → DEV0039 → DEV0040 under COR0002 after DEV0015 and DEV0027, then progress through DEV0017, DEV0018 and DEV0023 in dependency order. DEV0041 follows DEV0040 for company authority but does not block DEV0017.
+5. DEV0038 → DEV0039 → DEV0040 completed under COR0002 after DEV0015 and DEV0027. On 2026-09-21 the user prioritized independent DEV0046 next, before resuming DEV0041 or progressing through DEV0017, DEV0018 and DEV0023 in dependency order.
 6. Create the server-Solana verification and Anchor/program-client tickets before adding `src/server/solana`, `programs` or generated program bindings; later verified projections enable DEV0024.
 7. Complete COR0001 only after every direct structural ticket is completed or explicitly replaced/cancelled and the final tree, import, client-bundle and integration review passes.
 
