@@ -5,7 +5,7 @@
 - Last updated: 2026-09-22
 - Milestone: M0 club onboarding and public guidance
 - Coordination: None — independent development ticket
-- Related records: follows the public guide delivered by [DEV0020 — Discovery and How it works](../../archive/frontend/DEV0020-discovery-and-how-it-works.md); reuses the email account flow from [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md); depends on [DEV0041 — Club wallet authorization](../backend/DEV0041-club-wallet-authorization.md) for server-derived club eligibility and workspace authority; persistent public organization data remains owned by [DEV0017 — Persistent catalogue and private drafts](../backend/DEV0017-persistent-catalogue-and-drafts.md)
+- Related records: follows the public guide delivered by [DEV0020 — Discovery and How it works](../../archive/frontend/DEV0020-discovery-and-how-it-works.md) and the account-backed shell/profile delivered by [DEV0052 — Account-backed personal profile](../../archive/frontend/DEV0052-account-backed-personal-profile.md); reuses the email account flow from [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md); depends on [DEV0041 — Club wallet authorization](../backend/DEV0041-club-wallet-authorization.md) for server-derived club eligibility and workspace authority; persistent public organization data remains owned by [DEV0017 — Persistent catalogue and private drafts](../backend/DEV0017-persistent-catalogue-and-drafts.md)
 
 ## Objective and context
 

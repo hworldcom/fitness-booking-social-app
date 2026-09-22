@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Avatar, Brand, Modal, Pill } from "./ui";
 import { AuthStatusLink } from "@/auth/client/auth-status-link";
+import { useActor } from "@/auth/client/actor-provider";
+import { profileInitials } from "@/auth/profile-presentation";
 import {
   WalletConnectionPanel,
   WalletStatusButton,
@@ -36,7 +38,9 @@ export function Shell({
   storageUnavailable: boolean;
 }) {
   const path = usePathname();
+  const { actor } = useActor();
   const [modal, setModal] = useState<"wallet" | "about" | null>(null);
+  const currentProfile = actor.status === "authorized" ? actor.profile : null;
   const active = (href: string) =>
     href === "/"
       ? path === "/"
@@ -100,14 +104,16 @@ export function Shell({
             <Info size={15} />
             About this preview
           </button>
-          <Link href="/profile" className="sidebar-profile">
-            <Avatar />
-            <span>
-              <strong>Anna Klein</strong>
-              <small>Your demo profile</small>
-            </span>
-            <ArrowUpRight size={18} />
-          </Link>
+          {currentProfile && (
+            <Link href="/profile" className="sidebar-profile">
+              <Avatar initials={profileInitials(currentProfile.displayName)} />
+              <span>
+                <strong>{currentProfile.displayName}</strong>
+                <small>Your account profile</small>
+              </span>
+              <ArrowUpRight size={18} />
+            </Link>
+          )}
           <span className="sidebar-tagline">
             Social fitness,
             <br />
@@ -131,13 +137,18 @@ export function Shell({
             </Link>
             <AuthStatusLink />
             <WalletStatusButton onOpen={() => setModal("wallet")} />
-            <Link
-              href="/profile"
-              className="header-avatar"
-              aria-label="Your profile"
-            >
-              <Avatar small />
-            </Link>
+            {currentProfile && (
+              <Link
+                href="/profile"
+                className="header-avatar"
+                aria-label={`Your profile: ${currentProfile.displayName}`}
+              >
+                <Avatar
+                  initials={profileInitials(currentProfile.displayName)}
+                  small
+                />
+              </Link>
+            )}
           </div>
         </header>
         <div className="demo-strip">

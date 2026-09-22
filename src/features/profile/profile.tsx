@@ -1,18 +1,19 @@
 "use client";
+
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import {
-  MapPin,
-  Check,
-  RotateCcw,
-  Wallet,
-  LockKeyhole,
   ArrowLeft,
-  Footprints,
+  BadgeCheck,
+  Check,
   Flag,
+  Footprints,
+  RotateCcw,
+  UserRound,
 } from "lucide-react";
-import { challenges, people } from "@/features/preview/catalogue";
-import { useDemo } from "@/features/preview/store";
+import { useActor } from "@/auth/client/actor-provider";
+import { profileInitials } from "@/auth/profile-presentation";
+import { signInHref } from "@/auth/return-to";
 import {
   Avatar,
   ChallengeCard,
@@ -21,19 +22,15 @@ import {
   Pill,
   SectionTitle,
 } from "@/components/ui";
+import { challenges, people } from "@/features/preview/catalogue";
+import { useDemo } from "@/features/preview/store";
 
-export function Profile({
-  personId,
-  drafts,
-}: {
-  personId?: string;
-  drafts?: ReactNode;
-}) {
-  const { state, dispatch } = useDemo();
-  const [reset, setReset] = useState(false);
-  const [tab, setTab] = useState("My sessions");
-  const person = people.find((p) => p.id === personId);
-  if (personId && !person)
+type DemoPerson = (typeof people)[number];
+
+export function Profile({ personId }: { personId?: string }) {
+  const person = people.find((candidate) => candidate.id === personId);
+
+  if (personId && !person) {
     return (
       <Empty
         title="We haven’t met this member yet."
@@ -42,202 +39,223 @@ export function Profile({
         action="Back to your profile"
       />
     );
-  if (person)
+  }
+  if (person) return <PublicDemoProfile person={person} />;
+  return <OwnerProfile />;
+}
+
+function PublicDemoProfile({ person }: { person: DemoPerson }) {
+  const { state, dispatch } = useDemo();
+
+  return (
+    <>
+      <Link href="/" className="back-link">
+        <ArrowLeft size={16} />
+        Back to the club
+      </Link>
+      <section className="profile-cover">
+        <span className="profile-cover-word">GOOD COMPANY.</span>
+      </section>
+      <div className="profile-heading">
+        <Avatar initials={person.initials} color={person.color} />
+        <div>
+          <h1>{person.name}</h1>
+          <p>{person.bio} · Berlin</p>
+          <Pill>Demo community member</Pill>
+        </div>
+        <button
+          className="button dark"
+          onClick={() => dispatch({ type: "follow", id: person.id })}
+        >
+          {state.following.includes(person.id) ? <Check size={16} /> : null}
+          {state.following.includes(person.id) ? "Following" : "Follow"}
+        </button>
+      </div>
+      <section className="profile-public-note">
+        <Footprints size={24} />
+        <h2>Movement is better with company.</h2>
+        <p>
+          Follow {person.name.split(" ")[0]} to see their demo class joins and
+          challenges in your Following feed.
+        </p>
+      </section>
+      <SectionTitle title="Something to try together" href="/challenges" />
+      <div className="challenge-grid">
+        {challenges.slice(0, 2).map((challenge) => (
+          <ChallengeCard
+            key={challenge.id}
+            challenge={challenge}
+            saved={state.saved.includes(challenge.id)}
+            onToggleSaved={() => dispatch({ type: "save", id: challenge.id })}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function OwnerProfile() {
+  const { actor } = useActor();
+
+  if (actor.status === "unavailable") {
+    return <ProfileAccessUnavailable />;
+  }
+
+  if (actor.status !== "authorized") {
+    const preview = actor.status === "preview";
+    const profileRequired = actor.status === "forbidden";
     return (
-      <>
-        <Link href="/" className="back-link">
-          <ArrowLeft size={16} />
-          Back to the club
-        </Link>
-        <section className="profile-cover">
-          <span className="profile-cover-word">GOOD COMPANY.</span>
-        </section>
-        <div className="profile-heading">
-          <Avatar initials={person.initials} color={person.color} />
-          <div>
-            <h1>{person.name}</h1>
-            <p>{person.bio} · Berlin</p>
-            <Pill>Demo community member</Pill>
-          </div>
-          <button
+      <section className="protected-access-state">
+        <span className="eyebrow">YOUR PROFILE</span>
+        <h1>
+          {preview
+            ? "Create an account to make this space yours."
+            : profileRequired
+              ? "Finish setting up your profile."
+              : "Sign in to see your profile."}
+        </h1>
+        <p>
+          {preview
+            ? "This frontend preview does not assign you a demo person. After email sign-in, your profile uses the display name you chose."
+            : profileRequired
+              ? "Your verified email session has no completed MovX Club profile yet. Choose a display name to continue."
+              : "MovX Club shows personal identity only after the server verifies the signed-in account."}
+        </p>
+        <div className="protected-access-actions">
+          <Link
+            href={
+              preview
+                ? "/sign-in"
+                : profileRequired
+                  ? "/sign-in?returnTo=%2Fprofile&reason=forbidden"
+                  : signInHref("/profile")
+            }
             className="button dark"
-            onClick={() => dispatch({ type: "follow", id: person.id })}
           >
-            {state.following.includes(person.id) ? <Check size={16} /> : null}
-            {state.following.includes(person.id) ? "Following" : "Follow"}
-          </button>
+            {profileRequired ? "Complete profile" : "Go to sign-in"}
+          </Link>
+          <Link href="/explore" className="button secondary">
+            Continue public browsing
+          </Link>
+          {preview && <ResetPreviewButton />}
         </div>
-        <section className="profile-public-note">
-          <Footprints size={24} />
-          <h2>Movement is better with company.</h2>
-          <p>
-            Follow {person.name.split(" ")[0]} to see their demo class joins and
-            challenges in your Following feed.
-          </p>
-        </section>
-        <SectionTitle title="Something to try together" href="/challenges" />
-        <div className="challenge-grid">
-          {challenges.slice(0, 2).map((c) => (
-            <ChallengeCard
-              key={c.id}
-              challenge={c}
-              saved={state.saved.includes(c.id)}
-              onToggleSaved={() => dispatch({ type: "save", id: c.id })}
-            />
-          ))}
-        </div>
-      </>
+      </section>
     );
+  }
+
   return (
     <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">YOUR OWN KIND OF PROGRESS</span>
+          <span className="eyebrow">YOUR ACCOUNT PROFILE</span>
           <h1>
             Your corner of the club<span className="lime-text">.</span>
           </h1>
         </div>
-        <button
-          className="button secondary reset-button"
-          onClick={() => setReset(true)}
-        >
-          <RotateCcw size={15} />
-          Reset preview
-        </button>
+        <ResetPreviewButton extraClassName="reset-button" />
       </div>
       <section className="profile-cover">
         <span className="profile-cover-word">KEEP SHOWING UP.</span>
         <span className="cover-spark">✳</span>
       </section>
       <div className="profile-heading">
-        <Avatar />
+        <Avatar initials={profileInitials(actor.profile.displayName)} />
         <div>
-          <h2>Anna Klein</h2>
+          <h2>{actor.profile.displayName}</h2>
           <p>
-            <MapPin size={14} />
-            Berlin · Here for the movement, staying for the people.
+            <UserRound size={14} />
+            Email-backed MovX Club profile
           </p>
-          <Pill>Demo profile</Pill>
+          <Pill>Account profile</Pill>
         </div>
         <Link href="/challenges/new" className="button dark">
           <Flag size={16} />
           Start a challenge
         </Link>
       </div>
-      <div className="profile-grid">
-        <div>
-          <div className="profile-stats">
-            <div>
-              <strong>12</strong>
-              <span>Confirmed visits</span>
-              <small>Illustrative history</small>
-            </div>
-            <div>
-              <strong>{state.following.length}</strong>
-              <span>Following</span>
-              <small>Your local choices</small>
-            </div>
-            <div>
-              <strong>0</strong>
-              <span>Upcoming sessions</span>
-              <small>No pass purchased</small>
-            </div>
-          </div>
-          <div className="chips profile-tabs" aria-label="Profile section">
-            {["My sessions", "My drafts", "My people"].map((t) => (
-              <button
-                key={t}
-                className={`chip ${tab === t ? "active" : ""}`}
-                aria-pressed={tab === t}
-                onClick={() => setTab(t)}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-          {tab === "My drafts" ? (
-            drafts
-          ) : tab === "My people" ? (
-            <div className="rail-card people-list">
-              {people.map((p) => (
-                <div className="person-row" key={p.id}>
-                  <Avatar initials={p.initials} color={p.color} />
-                  <Link href={`/users/${p.id}`}>
-                    <strong>{p.name}</strong>
-                    <small>{p.bio}</small>
-                  </Link>
-                  <button
-                    className="button secondary small-button"
-                    onClick={() => dispatch({ type: "follow", id: p.id })}
-                  >
-                    {state.following.includes(p.id) ? "Following" : "Follow"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Empty
-              title="Your next good habit starts here."
-              description="Explore the demo sessions and find your next reason to show up."
-              href="/explore"
-              action="Find a session"
-            />
-          )}
-        </div>
-        <aside>
-          <section className="rail-card balance-card">
-            <div className="rail-title">
-              <h2>
-                <Wallet size={18} />
-                Your balance
-              </h2>
-              <LockKeyhole size={15} />
-            </div>
-            <Pill tone="amber">Sample balance · Not live</Pill>
-            <p>Available test EURC</p>
-            <strong className="balance-amount">€40.00</strong>
-            <div className="balance-secondary">
-              <div>
-                <span>Committed to challenges</span>
-                <strong>€6.00</strong>
-              </div>
-              <div>
-                <span>Awaiting payout</span>
-                <strong>€10.00</strong>
-              </div>
-            </div>
-            <p className="small-copy">
-              Committed funds and unclaimed payouts aren’t available to spend.
-              These figures are examples, not wallet balances.
-            </p>
-            <div className="balance-foot">Devnet target · No real money</div>
-          </section>
-        </aside>
+      <section className="profile-public-note account-profile-note">
+        <BadgeCheck size={24} />
+        <h2>Your profile is connected to this account.</h2>
+        <p>
+          This page currently shows only the display name you chose. Personal
+          activity appears here only when its owning app features store real
+          data for this account.
+        </p>
+      </section>
+      <div className="account-profile-empty">
+        <Empty
+          title="Your account starts with a clean slate."
+          description="No visits, passes, balances, sessions, follows or activity history are being claimed for this profile."
+          href="/explore"
+          action="Find something to do"
+        />
       </div>
-      {reset && (
-        <Modal
-          title="Start with a clean slate?"
-          onClose={() => setReset(false)}
-        >
+    </>
+  );
+}
+
+function ProfileAccessUnavailable() {
+  return (
+    <section className="protected-access-state" role="alert">
+      <span className="eyebrow">PROFILE UNAVAILABLE</span>
+      <h1>We couldn’t verify your profile right now.</h1>
+      <p>
+        Your session or the local database may be unavailable. No personal
+        identity or history was shown.
+      </p>
+      <div className="protected-access-actions">
+        <Link href="/sign-in" className="button dark">
+          Check sign-in
+        </Link>
+        <Link href="/explore" className="button secondary">
+          Continue public browsing
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function ResetPreviewButton({
+  extraClassName = "",
+}: {
+  extraClassName?: string;
+}) {
+  const { dispatch } = useDemo();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        type="button"
+        className={`button secondary ${extraClassName}`.trim()}
+        onClick={() => setOpen(true)}
+      >
+        <RotateCcw size={15} />
+        Reset browser preview
+      </button>
+      {open && (
+        <Modal title="Start with a clean slate?" onClose={() => setOpen(false)}>
           <p className="dialog-copy">
-            This clears local drafts, saved challenges and follows. No real
-            accounts, funds or blockchain records are affected.
+            This clears browser-only drafts, saved challenges and follows. It
+            does not change your account, funds or blockchain records.
           </p>
           <div className="button-row">
             <button
+              type="button"
               className="button secondary"
-              onClick={() => setReset(false)}
+              onClick={() => setOpen(false)}
             >
               Keep my preview
             </button>
             <button
+              type="button"
               className="button dark"
               onClick={() => {
                 dispatch({ type: "reset" });
-                setReset(false);
+                setOpen(false);
               }}
             >
-              Reset local preview
+              Reset browser preview
             </button>
           </div>
         </Modal>

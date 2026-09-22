@@ -77,9 +77,23 @@ async function completeProfile(page, displayName) {
   return actor;
 }
 
+async function verifyAccountProfile(page, displayName) {
+  await page.goto(`${siteUrl}/profile`, { waitUntil: "domcontentloaded" });
+  await page
+    .getByRole("heading", { name: displayName, exact: true })
+    .waitFor({ timeout: 20_000 });
+  await page.getByText("Email-backed MovX Club profile").waitFor();
+  assert.equal(await page.getByText("Available test EURC").count(), 0);
+  assert.equal(await page.getByText("Confirmed visits").count(), 0);
+  assert.equal(await page.getByText("Illustrative history").count(), 0);
+}
+
 async function signOut(page) {
+  await page.goto(`${siteUrl}/sign-in`, { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Sign out on this device" }).click();
   await page.getByLabel("Email address").waitFor();
+  assert.equal(await page.locator(".sidebar-profile").count(), 0);
+  assert.equal(await page.locator(".header-avatar").count(), 0);
   const response = await page.request.get(`${siteUrl}/api/auth/actor`);
   assert.equal(response.status(), 401);
   assert.deepEqual(await response.json(), { status: "signed-out" });
@@ -93,12 +107,16 @@ try {
   const firstPage = await firstContext.newPage();
   const firstErrors = [];
   firstPage.on("pageerror", (error) => firstErrors.push(error.message));
-  const firstEmail = `dev0046-anna-${nonce}@example.com`;
+  const firstEmail = `dev0052-riley-${nonce}@example.com`;
 
   const firstCode = await requestAndVerify(firstPage, firstEmail, {
     testInvalidCode: true,
   });
-  const firstActor = await completeProfile(firstPage, "Anna Klein");
+  const firstActor = await completeProfile(firstPage, "Riley Morgan");
+  await firstPage
+    .getByRole("link", { name: "Your profile: Riley Morgan" })
+    .waitFor();
+  await verifyAccountProfile(firstPage, "Riley Morgan");
   await signOut(firstPage);
 
   const secondContext = await browser.newContext({
@@ -109,11 +127,12 @@ try {
   const secondPage = await secondContext.newPage();
   const secondErrors = [];
   secondPage.on("pageerror", (error) => secondErrors.push(error.message));
-  const secondEmail = `dev0046-daniel-${nonce}@example.com`;
+  const secondEmail = `dev0052-morgan-${nonce}@example.com`;
 
   await requestAndVerify(secondPage, secondEmail);
-  const secondActor = await completeProfile(secondPage, "Daniel Park");
+  const secondActor = await completeProfile(secondPage, "Morgan Lee");
   assert.notEqual(firstActor.profile.slug, secondActor.profile.slug);
+  await verifyAccountProfile(secondPage, "Morgan Lee");
   assert.equal(
     await secondPage.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -123,14 +142,15 @@ try {
 
   await requestAndVerify(firstPage, firstEmail, { replayedCode: firstCode });
   await firstPage
-    .getByText("Signed in as Anna Klein.")
+    .getByText("Signed in as Riley Morgan.")
     .waitFor({ timeout: 20_000 });
   assert.equal(await firstPage.getByLabel("Display name").count(), 0);
+  await verifyAccountProfile(firstPage, "Riley Morgan");
 
   assert.deepEqual(firstErrors, []);
   assert.deepEqual(secondErrors, []);
   console.log(
-    "Email OTP rehearsal passed for two new accounts, one returning account, invalid/replayed-code recovery, profile isolation and sign-out.",
+    "Email OTP rehearsal passed for two new account-backed profiles, one returning account, invalid/replayed-code recovery, profile isolation and immediate sign-out cleanup.",
   );
 } finally {
   await browser.close();

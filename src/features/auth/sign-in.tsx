@@ -461,7 +461,7 @@ export function SignInScreen({
                   value={displayNameInput}
                   disabled={activeAction !== null}
                   onChange={(event) => setDisplayNameInput(event.target.value)}
-                  placeholder="Anna Klein"
+                  placeholder="Your display name"
                   required
                 />
                 <button

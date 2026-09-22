@@ -26,11 +26,11 @@ export function Brand({ compact = false }: { compact?: boolean }) {
   );
 }
 export function Avatar({
-  initials = "AK",
+  initials,
   color = "lime",
   small = false,
 }: {
-  initials?: string;
+  initials: string;
   color?: string;
   small?: boolean;
 }) {

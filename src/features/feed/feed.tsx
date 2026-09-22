@@ -185,8 +185,8 @@ export function Feed() {
               <Empty
                 title="Your people, your feed."
                 description="Follow a few club members to see their next moves here."
-                href="/profile"
-                action="Meet the community"
+                href="/explore"
+                action="Explore activities"
               />
             )}
           </div>
@@ -268,7 +268,7 @@ export function Feed() {
             </div>
           </section>
           <section className="rail-card">
-            <SectionTitle title="Good company" href="/profile" action="More" />
+            <SectionTitle title="Good company" />
             <div className="people-list">
               {people.map((person) => (
                 <div className="person-row" key={person.id}>

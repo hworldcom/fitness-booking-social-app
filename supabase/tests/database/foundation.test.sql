@@ -130,8 +130,8 @@ select is(
     from app.profiles
     where record_source = 'fixture'
   ),
-  6,
-  'six fixture profiles are seeded'
+  5,
+  'five public fixture profiles are seeded without a prepared current user'
 );
 select is((select count(*)::integer from app.class_sessions), 3, 'three classes are seeded');
 select ok(

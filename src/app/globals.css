@@ -2725,6 +2725,13 @@ legend > span {
   color: #626c56;
   font-size: 12px;
 }
+.account-profile-note {
+  max-width: 720px;
+}
+.account-profile-empty {
+  max-width: 720px;
+  margin-top: 18px;
+}
 
 @media (min-width: 1550px) {
   .feed-layout {

@@ -1,5 +1,4 @@
 import { Profile } from "@/features/profile/profile";
-import { DraftList } from "@/features/challenges/challenges";
 import { ProtectedAccessUnavailable } from "@/features/auth/protected-access";
 import { protectedPageAccess } from "@/server/authorization/page-access";
 export const metadata = { title: "Your profile" };
@@ -8,5 +7,5 @@ export default async function Page() {
   if (access.status === "unavailable") {
     return <ProtectedAccessUnavailable />;
   }
-  return <Profile drafts={<DraftList />} />;
+  return <Profile />;
 }

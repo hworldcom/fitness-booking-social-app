@@ -144,8 +144,17 @@ test("simplified navigation keeps destinations and nested selection without head
     const link = nav.getByRole("link", { name: label, exact: true });
     await link.focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(new RegExp(`${route}$`));
-    await expect(link).toHaveAttribute("aria-current", "page");
+    await page.waitForURL((url) =>
+      label === "Profile"
+        ? url.pathname === "/profile" || url.pathname === "/sign-in"
+        : url.pathname === route,
+    );
+    const destination = new URL(page.url());
+    if (label === "Profile" && destination.pathname === "/sign-in") {
+      expect(destination.searchParams.get("returnTo")).toBe("/profile");
+    } else {
+      await expect(link).toHaveAttribute("aria-current", "page");
+    }
     await expect(
       page.locator(".topbar input, .topbar a[href='/search']"),
     ).toHaveCount(0);

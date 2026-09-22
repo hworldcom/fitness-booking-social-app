@@ -30,7 +30,7 @@ test("Drizzle mappings read the deterministic foundation fixtures", async () => 
     .from(profiles)
     .where(eq(profiles.recordSource, "fixture"))
     .orderBy(asc(profiles.slug));
-  assert.equal(seededProfiles.length, 6);
+  assert.equal(seededProfiles.length, 5);
   assert.ok(seededProfiles.every((profile) => profile.authUserId === null));
 
   const seededClasses = await db
