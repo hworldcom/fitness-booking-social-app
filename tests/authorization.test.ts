@@ -84,6 +84,10 @@ test("return destinations preserve safe internal state and reject redirects", ()
   assert.equal(safeReturnTo("/%E0%A4%A", origin), "/");
   assert.equal(safeReturnTo(["/profile"], origin), "/");
   assert.equal(signInHref("/profile"), "/sign-in?returnTo=%2Fprofile");
+  assert.equal(
+    signInHref("/clubs/sign-in"),
+    "/sign-in?returnTo=%2Fclubs%2Fsign-in",
+  );
 });
 
 test("private actor state is bound to the exact verified session generation", () => {

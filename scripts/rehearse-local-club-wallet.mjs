@@ -185,9 +185,25 @@ try {
   const otherSigner = await generateKeyPairSigner();
 
   await createAccount(page, email, "Club Administrator");
+  await page.goto(`${siteUrl}/clubs/sign-in`, { waitUntil: "networkidle" });
+  await page
+    .getByRole("heading", {
+      name: "This account has no prepared club access.",
+    })
+    .waitFor();
+  assert.equal(await page.getByLabel("Email address").count(), 0);
+  await page.getByText("Signed in personally as").waitFor();
+  await page
+    .locator(".club-personal-context")
+    .getByText("Club Administrator", { exact: true })
+    .waitFor();
+
   await prepareClub(email, clubSigner.address);
 
   await page.reload({ waitUntil: "networkidle" });
+  await page.getByText("Prepared access: Kru Tiger", { exact: true }).waitFor();
+  await page.getByText("Connect the prepared club wallet.").waitFor();
+  await page.getByText(clubSigner.address).waitFor();
   await page.getByRole("button", { name: "Connect Phantom wallet" }).click();
   const dialog = page.getByRole("dialog", {
     name: "Your club. Your wallet.",
@@ -281,7 +297,7 @@ try {
 
   assert.deepEqual(pageErrors, []);
   console.log(
-    "Club wallet rehearsal passed for server-derived eligibility, same-origin protection, exact message proof, replay rejection, ten-minute authority and explicit revocation.",
+    "Club wallet rehearsal passed for no-access and eligible club-entry states, server-derived eligibility, same-origin protection, exact message proof, replay rejection, ten-minute authority and explicit revocation.",
   );
 } finally {
   await browser.close();

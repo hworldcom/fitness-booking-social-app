@@ -35,7 +35,7 @@ Every former DEV0016 implementation concern has one owner. Cross-ticket integrat
 - DEV0017 is a downstream consumer of the DEV0038–DEV0040 identity/access sequence. It owns catalogue/profile/draft/follow/bookmark persistence rather than authentication.
 - DEV0018 and DEV0023 consume the same verified access context later. They are not direct COR0002 members.
 - DEV0037 may later add embedded Phantom onboarding. Its Portal blocker does not prevent this extension-first sequence.
-- [DEV0051 — Club value proposition and sign-in entry](../frontend/DEV0051-club-value-proposition-and-sign-in-entry.md) is a downstream, independent frontend consumer. It owns the public club explanation and dedicated club-facing entrance, not authorization.
+- Completed [DEV0051 — Club value proposition and sign-in entry](../../archive/frontend/DEV0051-club-value-proposition-and-sign-in-entry.md) is a downstream, independent frontend consumer. It owns the public club explanation and dedicated club-facing entrance, not authorization.
 - Financial and on-chain tickets may later consume DEV0041's club-authority result; DEV0041 itself signs no transaction and verifies no payment.
 
 ## Delivery sequence and completion conditions
