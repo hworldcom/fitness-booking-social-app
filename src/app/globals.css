@@ -3593,27 +3593,136 @@ legend > span {
 .how-it-works .page-heading {
   max-width: 760px;
 }
-.guide-steps {
+.guide-audiences {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  margin: 30px 0 45px;
+  margin: 34px 0 18px;
 }
-.guide-steps section {
-  border: 1px solid #dfe5d6;
-  border-radius: 16px;
-  background: #f0f5e7;
-  padding: 24px;
+.guide-audience {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+  min-width: 0;
+  border: 1px solid;
+  border-radius: 17px;
+  padding: 22px;
+  color: #263128;
+  text-decoration: none;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease;
 }
-.guide-step-number {
-  display: flex;
-  justify-content: space-between;
+.guide-audience:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgb(42 53 40 / 8%);
+}
+.guide-audience.people {
+  border-color: #ddd4e7;
+  background: #f5f1f8;
+}
+.guide-audience.clubs {
+  border-color: #d7e1ca;
+  background: #eef5e5;
+}
+.guide-audience > svg:last-child {
+  align-self: center;
+}
+.guide-audience.people > svg {
+  color: #745e83;
+}
+.guide-audience.clubs > svg {
   color: #526840;
-  font-size: 13px;
-  font-weight: 750;
+}
+.guide-audience span {
+  min-width: 0;
+}
+.guide-audience small,
+.guide-audience strong {
+  display: block;
+}
+.guide-audience small {
+  margin-bottom: 5px;
+  color: #697060;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.guide-audience strong {
+  margin-bottom: 7px;
+  font-size: 18px;
+}
+.guide-audience p {
+  color: #626c5b;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.guide-people {
+  scroll-margin-top: 24px;
+  margin: 18px 0 28px;
+  border: 1px solid #ded5e7;
+  border-radius: 20px;
+  background: #f6f2f8;
+  padding: clamp(24px, 4vw, 42px);
+}
+.guide-people-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28px;
   margin-bottom: 26px;
 }
-.guide-steps h2 {
+.guide-people-heading > div {
+  max-width: 720px;
+}
+.guide-people-heading > svg {
+  flex-shrink: 0;
+  color: #745e83;
+}
+.guide-people h2 {
+  max-width: 650px;
+  margin: 9px 0 12px;
+  font-size: clamp(25px, 3vw, 36px);
+  letter-spacing: -1px;
+}
+.guide-people-heading p {
+  color: #655d6b;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.guide-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 0 34px;
+}
+.guide-steps article {
+  border: 1px solid #e3dce9;
+  border-radius: 14px;
+  background: #fff;
+  padding: 24px;
+}
+.guide-step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.guide-step-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #745e83;
+  font-size: 13px;
+  font-weight: 750;
+}
+.guide-step-top .guide-status {
+  float: none;
+  margin-left: 0;
+}
+.guide-steps h3 {
   font-size: 18px;
   line-height: 1.45;
   margin-bottom: 12px;
@@ -3626,7 +3735,7 @@ legend > span {
   line-height: 1.9;
   color: #626c56;
 }
-.guide-choices > h2,
+.guide-choices > h3,
 .guide-faq > h2,
 .guide-preview h2 {
   font-size: 25px;
@@ -3647,7 +3756,7 @@ legend > span {
   align-items: flex-start;
   flex-direction: column;
 }
-.guide-choice-grid h3 {
+.guide-choice-grid h4 {
   margin: 15px 0 10px;
   font-size: 18px;
 }
@@ -3657,9 +3766,59 @@ legend > span {
 .guide-choice-grid a {
   margin-top: auto;
 }
+.guide-community-loop {
+  display: grid;
+  gap: 22px;
+  margin: 28px 0;
+  border-radius: 20px;
+  background: #253129;
+  padding: clamp(24px, 4vw, 38px);
+  color: #fff;
+}
+.guide-community-loop .eyebrow {
+  color: #cbea99;
+}
+.guide-community-loop h2 {
+  max-width: 720px;
+  margin-top: 9px;
+  font-size: clamp(23px, 3vw, 32px);
+  letter-spacing: -0.8px;
+}
+.guide-loop-steps {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+}
+.guide-loop-steps span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 62px;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 7%);
+  padding: 13px;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+.guide-loop-steps span > svg {
+  flex-shrink: 0;
+  color: #cbea99;
+}
+.guide-loop-steps > svg {
+  color: #aebca7;
+}
+.guide-community-loop > p {
+  max-width: 760px;
+  color: #d2dcc9;
+  font-size: 12px;
+  line-height: 1.7;
+}
 .guide-clubs {
   scroll-margin-top: 24px;
-  margin: 42px 0;
+  margin: 28px 0 42px;
   border: 1px solid #d9e2ce;
   border-radius: 20px;
   background: #f1f6e9;
@@ -4009,9 +4168,6 @@ legend > span {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  .guide-step-number {
-    margin-bottom: 14px;
-  }
 }
 @media (max-width: 760px) {
   .header-right {
@@ -4077,11 +4233,22 @@ legend > span {
   .guide-choice-grid {
     grid-template-columns: 1fr;
   }
+  .guide-audiences {
+    grid-template-columns: 1fr;
+  }
   .guide-club-grid {
     grid-template-columns: 1fr;
   }
+  .guide-people-heading > svg,
   .guide-clubs-heading > svg {
     display: none;
+  }
+  .guide-loop-steps {
+    grid-template-columns: 1fr;
+  }
+  .guide-loop-steps > svg {
+    justify-self: center;
+    transform: rotate(90deg);
   }
   .club-entry-hero {
     grid-template-columns: 1fr;
@@ -4094,12 +4261,13 @@ legend > span {
     margin-bottom: 30px;
   }
   .guide-preview,
+  .guide-people,
   .guide-clubs,
   .guide-choice-grid article,
-  .guide-steps section {
+  .guide-steps article {
     padding: 22px;
   }
-  .guide-choices > h2,
+  .guide-choices > h3,
   .guide-faq > h2,
   .guide-preview h2 {
     font-size: 22px;

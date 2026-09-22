@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  BadgeCheck,
   Building2,
   CalendarDays,
   Compass,
@@ -9,6 +10,7 @@ import {
   Coffee,
   Dumbbell,
   ShieldCheck,
+  UserRound,
   WalletCards,
 } from "lucide-react";
 
@@ -28,94 +30,197 @@ export function HowItWorksScreen() {
           </p>
         </div>
       </div>
-      <div className="guide-steps">
-        <section>
-          <span className="guide-step-number">
-            01 <Compass size={22} />
-          </span>
-          <h2>Find your next move</h2>
-          <p>
-            Browse classes, studios, events and challenges. Explore and
-            Challenges are open to everyone, with no login or wallet needed to
-            look around.
-          </p>
-        </section>
-        <section>
-          <span className="guide-step-number">
-            02 <Users size={22} />
-          </span>
-          <h2>Choose your kind of together</h2>
-          <p>
-            Book a class, meet at an event or work towards a challenge. Check
-            the dates, cost and participation rules before you commit.
-          </p>
-        </section>
-        <section>
-          <span className="guide-step-number">
-            03 <Flag size={22} />
-          </span>
-          <h2>Show up for each other</h2>
-          <p>
-            A confirmed class pass can let your friends know your plan. Venue
-            staff confirms attendance separately. Challenge rewards follow the
-            published voting or judging rules.
-          </p>
-        </section>
-      </div>
-      <section className="guide-choices">
-        <span className="eyebrow">FOUR WAYS TO TAKE PART</span>
-        <h2>Pick what moves you.</h2>
-        <div className="guide-choice-grid">
-          <article>
-            <Dumbbell size={23} />
-            <h3>Classes</h3>
+      <nav className="guide-audiences" aria-label="Choose how MovX Club helps">
+        <Link href="#for-people" className="guide-audience people">
+          <UserRound size={27} strokeWidth={1.5} aria-hidden="true" />
+          <span>
+            <small>FOR PEOPLE</small>
+            <strong>The social layer</strong>
             <p>
-              Find a studio and a dated session, then buy a class pass. A pass
-              grants class access; staff confirmation separately records your
-              visit.
+              Discover activities, create with your people and make real
+              progress worth sharing.
             </p>
-            <Link href="/explore" className="text-link">
-              Find a class <ArrowRight size={15} />
-            </Link>
+          </span>
+          <ArrowRight size={20} aria-hidden="true" />
+        </Link>
+        <Link href="#for-clubs" className="guide-audience clubs">
+          <Building2 size={27} strokeWidth={1.5} aria-hidden="true" />
+          <span>
+            <small>FOR FITNESS AND SPORTS CLUBS</small>
+            <strong>The community channel</strong>
+            <p>
+              Reach participants, shape experiences and manage accountable club
+              authority.
+            </p>
+          </span>
+          <ArrowRight size={20} aria-hidden="true" />
+        </Link>
+      </nav>
+
+      <section className="guide-people" id="for-people">
+        <div className="guide-people-heading">
+          <div>
+            <span className="eyebrow">FOR PEOPLE · THE SOCIAL LAYER</span>
+            <h2>Turn showing up into something you share.</h2>
+            <p>
+              Find a reason to move, bring your people and build a visible
+              rhythm around real participation rather than empty engagement.
+            </p>
+          </div>
+          <UserRound size={54} strokeWidth={1.2} aria-hidden="true" />
+        </div>
+        <div className="guide-steps">
+          <article>
+            <div className="guide-step-top">
+              <span className="guide-step-number">
+                01 <Compass size={22} aria-hidden="true" />
+              </span>
+              <span className="guide-status available">Preview available</span>
+            </div>
+            <h3>Discover your next move</h3>
+            <p>
+              Browse demonstration classes, studios, events and challenges.
+              Public Explore and Challenges need no login or wallet.
+            </p>
           </article>
           <article>
-            <Coffee size={23} />
-            <h3>Events</h3>
+            <div className="guide-step-top">
+              <span className="guide-step-number">
+                02 <Users size={22} aria-hidden="true" />
+              </span>
+              <span className="guide-status planned">Access planned</span>
+            </div>
+            <h3>Choose your kind of together</h3>
             <p>
-              Pay for a shared experience with something included for every
-              ticket holder. Run & Coffee includes a social 5K and a coffee. No
-              prize, winner or vote.
+              Compare classes, events and challenge rules before committing.
+              Real booking, entry and payment flows are not live yet.
             </p>
-            <Link href="/explore?view=events" className="text-link">
-              Explore events <ArrowRight size={15} />
-            </Link>
           </article>
           <article>
-            <Users size={23} />
-            <h3>Community challenges</h3>
+            <div className="guide-step-top">
+              <span className="guide-step-number">
+                03 <Flag size={22} aria-hidden="true" />
+              </span>
+              <span className="guide-status preview">
+                Browser draft preview
+              </span>
+            </div>
+            <h3>Create with your community</h3>
             <p>
-              Participants contribute to a shared pool and vote after the
-              challenge. At least half must vote; below that turnout at the
-              deadline, the pool is shared evenly among participants.
+              Plan a challenge or event around your people. Current drafts stay
+              in this browser and are not published or funded.
             </p>
-            <Link href="/challenges?mode=community" className="text-link">
-              See community challenges <ArrowRight size={15} />
-            </Link>
           </article>
           <article>
-            <Flag size={23} />
-            <h3>Sponsored challenges</h3>
+            <div className="guide-step-top">
+              <span className="guide-step-number">
+                04 <BadgeCheck size={22} aria-hidden="true" />
+              </span>
+              <span className="guide-status planned">Shared data planned</span>
+            </div>
+            <h3>Make real progress social</h3>
             <p>
-              The creator funds the prize and chooses the winner under the
-              challenge rules. If no winner is chosen within 24 hours of the
-              end, the pool is shared evenly among participants.
+              Confirmed participation can later become trusted community
+              activity. A plan, payment or wallet connection is not attendance.
             </p>
-            <Link href="/challenges?mode=sponsored" className="text-link">
-              See sponsored challenges <ArrowRight size={15} />
-            </Link>
           </article>
         </div>
+        <div className="guide-choices">
+          <span className="eyebrow">FOUR WAYS TO TAKE PART</span>
+          <h3>Pick what moves you.</h3>
+          <div className="guide-choice-grid">
+            <article>
+              <Dumbbell size={23} />
+              <h4>Classes</h4>
+              <p>
+                Find a studio and a dated session, then buy a class pass. A pass
+                grants class access; staff confirmation separately records your
+                visit.
+              </p>
+              <Link href="/explore" className="text-link">
+                Find a class <ArrowRight size={15} />
+              </Link>
+            </article>
+            <article>
+              <Coffee size={23} />
+              <h4>Events</h4>
+              <p>
+                Pay for a shared experience with something included for every
+                ticket holder. Run & Coffee includes a social 5K and a coffee.
+                No prize, winner or vote.
+              </p>
+              <Link href="/explore?view=events" className="text-link">
+                Explore events <ArrowRight size={15} />
+              </Link>
+            </article>
+            <article>
+              <Users size={23} />
+              <h4>Community challenges</h4>
+              <p>
+                Participants contribute to a shared pool and vote after the
+                challenge. At least half must vote; below that turnout at the
+                deadline, the pool is shared evenly among participants.
+              </p>
+              <Link href="/challenges?mode=community" className="text-link">
+                See community challenges <ArrowRight size={15} />
+              </Link>
+            </article>
+            <article>
+              <Flag size={23} />
+              <h4>Sponsored challenges</h4>
+              <p>
+                The creator funds the prize and chooses the winner under the
+                challenge rules. If no winner is chosen within 24 hours of the
+                end, the pool is shared evenly among participants.
+              </p>
+              <Link href="/challenges?mode=sponsored" className="text-link">
+                See sponsored challenges <ArrowRight size={15} />
+              </Link>
+            </article>
+          </div>
+        </div>
+        <div className="discovery-links">
+          <Link className="button dark" href="/explore">
+            Explore as a participant <ArrowRight size={17} />
+          </Link>
+          <Link className="button secondary" href="/challenges">
+            Find a challenge
+          </Link>
+        </div>
       </section>
+
+      <section
+        className="guide-community-loop"
+        aria-labelledby="community-loop-title"
+      >
+        <div>
+          <span className="eyebrow">ONE COMMUNITY LOOP</span>
+          <h2 id="community-loop-title">
+            Clubs create the reasons to show up. People make them social.
+          </h2>
+        </div>
+        <div className="guide-loop-steps">
+          <span>
+            <Building2 size={21} aria-hidden="true" />
+            Clubs shape activities
+          </span>
+          <ArrowRight size={18} aria-hidden="true" />
+          <span>
+            <Users size={21} aria-hidden="true" />
+            People discover and participate
+          </span>
+          <ArrowRight size={18} aria-hidden="true" />
+          <span>
+            <BadgeCheck size={21} aria-hidden="true" />
+            Verified activity can become shared progress
+          </span>
+        </div>
+        <p>
+          Public discovery is available as a preview. Persistent publishing,
+          confirmed participation and shared activity remain planned.
+        </p>
+      </section>
+
       <section className="guide-clubs" id="for-clubs">
         <div className="guide-clubs-heading">
           <div>

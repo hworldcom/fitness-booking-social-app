@@ -11,6 +11,56 @@ test("public guide is reachable by keyboard and explains distinct participation 
   await help.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/how-it-works$/);
+
+  const peopleAudience = page.locator('.guide-audiences a[href="#for-people"]');
+  const clubAudience = page.locator('.guide-audiences a[href="#for-clubs"]');
+  await expect(peopleAudience).toContainText("FOR PEOPLE");
+  await expect(peopleAudience).toContainText("The social layer");
+  await expect(clubAudience).toContainText("FOR FITNESS AND SPORTS CLUBS");
+  await expect(clubAudience).toContainText("The community channel");
+
+  const audienceSections = page.locator("#for-people, #for-clubs");
+  await expect(audienceSections).toHaveCount(2);
+  await peopleAudience.focus();
+  await expect(peopleAudience).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/how-it-works#for-people$/);
+
+  const peopleSection = page.locator("#for-people");
+  await expect(
+    peopleSection.getByRole("heading", {
+      name: "Turn showing up into something you share.",
+    }),
+  ).toBeVisible();
+  for (const name of [
+    "Discover your next move",
+    "Choose your kind of together",
+    "Create with your community",
+    "Make real progress social",
+  ]) {
+    await expect(
+      peopleSection.getByRole("heading", { name, exact: true }),
+    ).toBeVisible();
+  }
+  await expect(peopleSection.getByText("Preview available")).toBeVisible();
+  await expect(peopleSection.getByText("Access planned")).toBeVisible();
+  await expect(peopleSection.getByText("Shared data planned")).toBeVisible();
+
+  await clubAudience.focus();
+  await expect(clubAudience).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/how-it-works#for-clubs$/);
+  await expect(
+    page.getByRole("heading", {
+      name: "Turn activities into a community people return to.",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Clubs create the reasons to show up. People make them social.",
+    }),
+  ).toBeVisible();
+
   for (const name of [
     "Classes",
     "Events",
