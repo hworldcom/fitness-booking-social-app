@@ -51,6 +51,22 @@ Development mode compiles routes when first visited and recompiles after changes
 
 Both modes use port 3100. Stop the existing server with Ctrl+C before switching modes, then refresh your browser once to load the new client. Switching modes on the same address preserves this browser's saved preview data.
 
+## Cloudflare Workers compatibility
+
+The additive vinext toolchain builds the existing Next.js application for Cloudflare Workers while the standard Next.js commands above remain available. It targets the staging-only Worker name `movx-club-staging`; no Worker or custom domain is deployed by the runtime-foundation work.
+
+```sh
+npm run dev:vinext
+npm run build:vinext
+npm run start:vinext
+```
+
+The vinext development and built-Worker servers use [localhost:3102](http://localhost:3102), avoiding the standard preview on 3100 and Playwright on 3101. Build the Worker before `start:vinext`; generated `dist/`, `.vinext/` and `.wrangler/` output stays untracked.
+
+The initial staging configuration uses Cloudflare Images for the existing public artwork. Persistent application data/page caching and global route pre-rendering are deliberately disabled until dynamic Auth, profile and database behavior has been validated on the custom staging origin.
+
+A hosted build requires `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and the exact `NEXT_PUBLIC_SITE_URL` at build time and in the Worker environment. The Worker additionally receives `DATABASE_URL` as a runtime secret. Never put the database URL, migration credentials, Supabase secret/service-role keys or mail credentials in browser-visible variables or committed Wrangler configuration. The current variable contract remains documented in [.env.example](.env.example); hosted Supabase provisioning and the first release belong to DEV0055 and DEV0056.
+
 ## Local database foundation
 
 Database work is optional for the current frontend preview. To validate the in-progress foundation, start Docker Desktop and run:
