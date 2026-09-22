@@ -2,7 +2,7 @@
 
 **Social fitness, onchain.**
 
-MovX Club is a community fitness platform for discovering local classes and events, creating challenges, and sharing meaningful activity with other members. It brings individuals, trainers, gyms, cafés, and community organizers into one product where people can find something to join and organizers can turn existing fitness communities into structured experiences.
+MovX Club is a community fitness platform for discovering local classes and events, creating challenges, and sharing meaningful activity with other members. It brings individuals, trainers, gyms, businesses, and community organizers into one product where people can find something to join and organizers can turn existing fitness communities into structured experiences.
 
 The MVP supports two challenge models: community challenges funded by their participants and decided by participant voting, and sponsored challenges funded by a creator who selects the winner. It also covers dated class passes, paid community events, gym-confirmed attendance, public activity sharing, follows, and lightweight reactions. Booking, payment, attendance, and social activity remain separate states so a post or wallet transaction cannot be mistaken for a verified visit.
 

@@ -324,10 +324,10 @@ export function HowItWorksScreen() {
         <details>
           <summary>Can I organize something?</summary>
           <p>
-            Yes. Friends, trainers, gyms, cafés and organizations can plan a
-            challenge or event. Try saving a draft now; it stays in this browser
-            and is not published. Authenticated creation, invitations and
-            funding come with the backend integration.
+            Yes. Friends, trainers, gyms, businesses and community organizations
+            can plan a challenge or event. Try saving a draft now; it stays in
+            this browser and is not published. Authenticated creation,
+            invitations and funding come with the backend integration.
           </p>
         </details>
       </section>

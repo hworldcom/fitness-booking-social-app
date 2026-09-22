@@ -76,6 +76,16 @@ test("public guide is reachable by keyboard and explains distinct participation 
   await expect(
     page.getByText(/A prepared club administrator proves/),
   ).toBeVisible();
+  const organizerQuestion = page.getByText("Can I organize something?", {
+    exact: true,
+  });
+  await organizerQuestion.focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    page.getByText(
+      /Friends, trainers, gyms, businesses and community organizations/,
+    ),
+  ).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath("how-it-works.png"),
     fullPage: true,
