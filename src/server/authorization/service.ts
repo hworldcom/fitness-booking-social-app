@@ -20,7 +20,7 @@ import { currentApplicationIdentity } from "@/server/identity/service";
 import type { AuthorizedActor } from "./contracts";
 import { applicationAccessMode } from "./env";
 
-type AuthorizedResult<T> =
+export type AuthorizedResult<T> =
   | Readonly<{ status: "preview" }>
   | Readonly<{ status: "authorized"; actor: AuthorizedActor; value: T }>
   | Readonly<{ status: "signed-out" | "forbidden" | "unavailable" }>;
@@ -36,10 +36,10 @@ export async function withAuthorizedActor<T>(
   if (mode === "unavailable") return UNAVAILABLE_ACTOR;
 
   const session = await verifiedAuthSession();
-  return withVerifiedSession(session, work);
+  return withAuthorizedSession(session, work);
 }
 
-async function withVerifiedSession<T>(
+export async function withAuthorizedSession<T>(
   session: AuthSessionSnapshot,
   work: (
     transaction: ActorDatabaseTransaction,
@@ -81,7 +81,7 @@ async function actorSnapshotForSession(
   if (mode === "preview") return PREVIEW_ACTOR;
   if (mode === "unavailable") return UNAVAILABLE_ACTOR;
 
-  const result = await withVerifiedSession(session, (transaction, actor) =>
+  const result = await withAuthorizedSession(session, (transaction, actor) =>
     currentActorProjection(transaction, actor),
   );
   if (result.status !== "authorized") return result;

@@ -10,6 +10,11 @@ import {
   normalizeEmail,
   normalizeEmailOtp,
 } from "../src/auth/email-otp";
+import {
+  EMAIL_REAUTHENTICATION_WINDOW_SECONDS,
+  isRecentEmailOtpAuthentication,
+  latestEmailOtpAuthenticationAt,
+} from "../src/auth/reauthentication";
 
 test("public Auth config requires a secure site or literal localhost", () => {
   const local = parseSupabasePublicConfig(
@@ -127,4 +132,38 @@ test("canonical sign-in checking permits return queries on the exact route", () 
     }),
     false,
   );
+});
+
+test("wallet security changes require a recent detailed email OTP claim", () => {
+  const now = 2_000_000_000;
+  assert.equal(
+    latestEmailOtpAuthenticationAt([
+      { method: "password", timestamp: now },
+      { method: "otp", timestamp: now - 30 },
+      { method: "otp", timestamp: now - 10 },
+    ]),
+    now - 10,
+  );
+  assert.equal(latestEmailOtpAuthenticationAt(["otp"]), null);
+  assert.equal(
+    latestEmailOtpAuthenticationAt([{ method: "otp", timestamp: "recent" }]),
+    null,
+  );
+  assert.equal(isRecentEmailOtpAuthentication(now - 1, now), true);
+  assert.equal(
+    isRecentEmailOtpAuthentication(
+      now - EMAIL_REAUTHENTICATION_WINDOW_SECONDS,
+      now,
+    ),
+    true,
+  );
+  assert.equal(
+    isRecentEmailOtpAuthentication(
+      now - EMAIL_REAUTHENTICATION_WINDOW_SECONDS - 1,
+      now,
+    ),
+    false,
+  );
+  assert.equal(isRecentEmailOtpAuthentication(now + 31, now), false);
+  assert.equal(isRecentEmailOtpAuthentication(null, now), false);
 });

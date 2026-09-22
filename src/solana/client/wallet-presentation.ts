@@ -22,3 +22,14 @@ export function walletErrorMessage(error: unknown): string | null {
   }
   return "Phantom could not connect. Check the extension and try again.";
 }
+
+export function walletProofErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  if (REJECTION_MARKERS.some((marker) => message.includes(marker))) {
+    return "The Phantom message request was cancelled. Your wallet link was not changed.";
+  }
+  if (message.includes("lock")) {
+    return "Unlock Phantom, then try the message request again.";
+  }
+  return "Phantom could not sign the ownership message. Your wallet link was not changed.";
+}

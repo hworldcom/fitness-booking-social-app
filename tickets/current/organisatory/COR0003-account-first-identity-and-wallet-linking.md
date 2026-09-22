@@ -16,10 +16,10 @@ This coordination record implements no runtime behavior and is never used in a c
 
 ## Direct development work
 
-| Implementation part                       | Development ticket                                                                                             | Owned deliverable                                                                                                                        | Start condition or dependency                                      |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Email account and application profile     | [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md) | Open email-OTP Auth, minimal user profile, ordinary dataset participation, wallet-independent actor context and local reset/cutover.      | Completed 2026-09-21 with automated database/Auth/browser evidence. |
-| Optional personal-wallet ownership        | [DEV0047 — Personal wallet linking and replacement](../backend/DEV0047-personal-wallet-linking-and-replacement.md)                   | Shared one-time challenges, personal link/unlink/replace lifecycle, recent reauthentication and honest wallet state without wallet login. | Ready after DEV0046 delivered the account/session/profile contract. |
+| Implementation part                   | Development ticket                                                                                                                            | Owned deliverable                                                                                                                         | Start condition or dependency                                             |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Email account and application profile | [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md) | Open email-OTP Auth, minimal user profile, ordinary dataset participation, wallet-independent actor context and local reset/cutover.      | Completed 2026-09-21 with automated database/Auth/browser evidence.       |
+| Optional personal-wallet ownership    | [DEV0047 — Personal wallet linking and replacement](../backend/DEV0047-personal-wallet-linking-and-replacement.md)                            | Shared one-time challenges, personal link/unlink/replace lifecycle, recent reauthentication and honest wallet state without wallet login. | In progress after DEV0046 delivered the account/session/profile contract. |
 
 Every implementation part is assigned exactly once. No implementation may be performed under COR0003 as a substitute for its direct DEV owner.
 
@@ -41,7 +41,7 @@ Every implementation part is assigned exactly once. No implementation may be per
 
 Created on 2026-09-21 after the user accepted email OTP, open registration, minimal profiles, optional one-wallet ownership, email-protected replacement, no automatic merging and local reset rather than production migration. DEV0046 already had planning commit `4250c8e`, so its identity/history was preserved and a separate coordination record plus peer DEV0047 were created instead of converting or retiring it.
 
-DEV0046 completed on 2026-09-21. It replaced wallet-first personal login and the prepared Anna roster with open email OTP, idempotent minimal-profile enrollment and wallet-independent protected actors. Its clean migration replay, 66 database assertions, 9 driver tests, 38 unit/boundary checks, two-account real local Auth rehearsal, configured route checks and configuration-free browser regression passed. DEV0047 is now Ready; COR0003 remains open for that peer's wallet-link lifecycle and final integration evidence.
+DEV0046 completed on 2026-09-21. It replaced wallet-first personal login and the prepared Anna roster with open email OTP, idempotent minimal-profile enrollment and wallet-independent protected actors. Its clean migration replay, 66 database assertions, 9 driver tests, 38 unit/boundary checks, two-account real local Auth rehearsal, configured route checks and configuration-free browser regression passed. DEV0047 is now In progress with its challenge, personal binding, HTTP and wallet-settings implementation present; its final clean migration replay, database suites and local Auth/HTTP rehearsals passed. Real Phantom and signed-in responsive keyboard evidence remain before DEV0047 and COR0003 can complete.
 
 ## Validation results
 
@@ -54,7 +54,7 @@ Changing the Auth subject model affects every protected actor consumer. DEV0046 
 ## Completion and review references
 
 - Completed: Not completed.
-- Direct development tickets: DEV0046 Completed; DEV0047 Ready.
+- Direct development tickets: DEV0046 Completed; DEV0047 In progress.
 - Commit: Not applicable — coordination-record IDs are not used in commit subjects.
 - Review: Requirements reviewed with the user; no independent integration review.
 - Deployment or release: None.

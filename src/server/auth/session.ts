@@ -8,7 +8,13 @@ import {
   type AuthSessionSnapshot,
 } from "@/auth/contracts";
 import { normalizeEmail } from "@/auth/email-otp";
+import { latestEmailOtpAuthenticationAt } from "@/auth/reauthentication";
 import { serverAuthClient } from "./client";
+
+export type VerifiedAuthContext = Readonly<{
+  session: AuthSessionSnapshot;
+  emailOtpAuthenticatedAt: number | null;
+}>;
 
 function isMissingSession(error: AuthError) {
   return (
@@ -18,30 +24,47 @@ function isMissingSession(error: AuthError) {
   );
 }
 
-export async function verifiedAuthSession(): Promise<AuthSessionSnapshot> {
+export async function verifiedAuthContext(): Promise<VerifiedAuthContext> {
   try {
     const client = await serverAuthClient();
-    if (!client) return DISABLED_AUTH_SESSION;
+    if (!client) {
+      return Object.freeze({
+        session: DISABLED_AUTH_SESSION,
+        emailOtpAuthenticatedAt: null,
+      });
+    }
 
     const claimsResult = await client.auth.getClaims();
     if (claimsResult.error) {
-      return isMissingSession(claimsResult.error)
-        ? SIGNED_OUT_AUTH_SESSION
-        : UNAVAILABLE_AUTH_SESSION;
+      return Object.freeze({
+        session: isMissingSession(claimsResult.error)
+          ? SIGNED_OUT_AUTH_SESSION
+          : UNAVAILABLE_AUTH_SESSION,
+        emailOtpAuthenticatedAt: null,
+      });
     }
 
     const claims = claimsResult.data?.claims;
     const subject = claims?.sub;
     if (typeof subject !== "string" || !subject) {
-      return SIGNED_OUT_AUTH_SESSION;
+      return Object.freeze({
+        session: SIGNED_OUT_AUTH_SESSION,
+        emailOtpAuthenticatedAt: null,
+      });
     }
 
     const userResult = await client.auth.getUser();
     if (userResult.error || !userResult.data.user) {
-      return UNAVAILABLE_AUTH_SESSION;
+      return Object.freeze({
+        session: UNAVAILABLE_AUTH_SESSION,
+        emailOtpAuthenticatedAt: null,
+      });
     }
     if (userResult.data.user.id !== subject) {
-      return UNAVAILABLE_AUTH_SESSION;
+      return Object.freeze({
+        session: UNAVAILABLE_AUTH_SESSION,
+        emailOtpAuthenticatedAt: null,
+      });
     }
 
     const user = userResult.data.user;
@@ -50,16 +73,31 @@ export async function verifiedAuthSession(): Promise<AuthSessionSnapshot> {
       typeof user.email_confirmed_at === "string" &&
       user.identities?.some((identity) => identity.provider === "email") ===
         true;
-    if (!email || !hasVerifiedEmailIdentity) return UNAVAILABLE_AUTH_SESSION;
+    if (!email || !hasVerifiedEmailIdentity) {
+      return Object.freeze({
+        session: UNAVAILABLE_AUTH_SESSION,
+        emailOtpAuthenticatedAt: null,
+      });
+    }
 
     const expiry = claims.exp;
     return Object.freeze({
-      status: "signed-in",
-      subject,
-      email,
-      expiresAt: typeof expiry === "number" ? expiry : null,
+      session: Object.freeze({
+        status: "signed-in",
+        subject,
+        email,
+        expiresAt: typeof expiry === "number" ? expiry : null,
+      }),
+      emailOtpAuthenticatedAt: latestEmailOtpAuthenticationAt(claims.amr),
     });
   } catch {
-    return UNAVAILABLE_AUTH_SESSION;
+    return Object.freeze({
+      session: UNAVAILABLE_AUTH_SESSION,
+      emailOtpAuthenticatedAt: null,
+    });
   }
+}
+
+export async function verifiedAuthSession(): Promise<AuthSessionSnapshot> {
+  return (await verifiedAuthContext()).session;
 }
