@@ -2008,6 +2008,13 @@ h1 {
   gap: 7px;
   margin-bottom: 18px;
 }
+.wallet-mode-tabs {
+  margin: 0 0 14px;
+}
+.wallet-mode-tabs .chip {
+  flex: 1;
+  justify-content: center;
+}
 .wallet-error {
   color: #853d2a;
   background: #fff0eb;

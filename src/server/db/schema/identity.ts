@@ -12,7 +12,13 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { app, demoRunMemberships, demoRuns, organizations } from "./foundation";
+import {
+  app,
+  demoRunMemberships,
+  demoRuns,
+  organizationMemberships,
+  organizations,
+} from "./foundation";
 
 const auth = pgSchema("auth");
 const authUsers = auth.table("users", {
@@ -35,6 +41,7 @@ export const authChallenges = app.table(
     authUserId: uuid("auth_user_id")
       .notNull()
       .references(() => authUsers.id, { onDelete: "restrict" }),
+    authSessionId: uuid("auth_session_id"),
     ownerType: text("owner_type").notNull(),
     profileId: uuid("profile_id"),
     organizationId: uuid("organization_id"),
@@ -93,11 +100,11 @@ export const authChallenges = app.table(
     ),
     check(
       "auth_challenges_purpose_check",
-      sql`${table.purpose} in ('link-personal-wallet', 'replace-personal-wallet')`,
+      sql`${table.purpose} in ('link-personal-wallet', 'replace-personal-wallet', 'authorize-club-wallet')`,
     ),
     check(
-      "auth_challenges_personal_purpose_check",
-      sql`${table.ownerType} = 'personal'`,
+      "auth_challenges_owner_purpose_check",
+      sql`(${table.ownerType} = 'personal' and ${table.authSessionId} is null and ${table.purpose} in ('link-personal-wallet', 'replace-personal-wallet')) or (${table.ownerType} = 'organization' and ${table.authSessionId} is not null and ${table.purpose} = 'authorize-club-wallet')`,
     ),
     check(
       "auth_challenges_cluster_check",
@@ -133,7 +140,7 @@ export const authChallenges = app.table(
     ),
     check(
       "auth_challenges_consumed_result_check",
-      sql`${table.consumedResult} is null or ${table.consumedResult} in ('linked', 'replaced', 'wallet-conflict', 'state-conflict')`,
+      sql`${table.consumedResult} is null or ${table.consumedResult} in ('linked', 'replaced', 'authorized', 'wallet-conflict', 'state-conflict')`,
     ),
     index("auth_challenges_actor_expiry_idx").on(
       table.authUserId,
@@ -277,3 +284,102 @@ export const walletBindings = app.table(
 );
 
 export type WalletBindingRow = typeof walletBindings.$inferSelect;
+
+export const organizationWalletAuthorities = app.table(
+  "organization_wallet_authorities",
+  {
+    id: uuid("id").primaryKey(),
+    runId: uuid("run_id").notNull(),
+    authUserId: uuid("auth_user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "restrict" }),
+    authSessionId: uuid("auth_session_id").notNull(),
+    profileId: uuid("profile_id").notNull(),
+    organizationId: uuid("organization_id").notNull(),
+    walletBindingId: uuid("wallet_binding_id").notNull(),
+    walletAddress: text("wallet_address").notNull(),
+    cluster: text("cluster").notNull(),
+    challengeId: uuid("challenge_id").notNull(),
+    grantedAt: timestamp("granted_at", {
+      withTimezone: true,
+      mode: "string",
+    }).notNull(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+      mode: "string",
+    }).notNull(),
+    revokedAt: timestamp("revoked_at", {
+      withTimezone: true,
+      mode: "string",
+    }),
+    revocationReason: text("revocation_reason"),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+      mode: "string",
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+      mode: "string",
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    foreignKey({
+      name: "organization_wallet_authorities_membership_fkey",
+      columns: [table.runId, table.organizationId, table.profileId],
+      foreignColumns: [
+        organizationMemberships.runId,
+        organizationMemberships.organizationId,
+        organizationMemberships.profileId,
+      ],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "organization_wallet_authorities_binding_fkey",
+      columns: [table.runId, table.walletBindingId],
+      foreignColumns: [walletBindings.runId, walletBindings.id],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "organization_wallet_authorities_challenge_fkey",
+      columns: [table.runId, table.challengeId],
+      foreignColumns: [authChallenges.runId, authChallenges.id],
+    }).onDelete("restrict"),
+    unique("organization_wallet_authorities_challenge_key").on(
+      table.challengeId,
+    ),
+    check(
+      "organization_wallet_authorities_cluster_check",
+      sql`${table.cluster} = 'solana:devnet'`,
+    ),
+    check(
+      "organization_wallet_authorities_wallet_address_check",
+      sql`char_length(${table.walletAddress}) between 32 and 44 and ${table.walletAddress} ~ '^[1-9A-HJ-NP-Za-km-z]+$'`,
+    ),
+    check(
+      "organization_wallet_authorities_lifetime_check",
+      sql`${table.expiresAt} = ${table.grantedAt} + interval '10 minutes'`,
+    ),
+    check(
+      "organization_wallet_authorities_revoked_state_check",
+      sql`(${table.revokedAt} is null) = (${table.revocationReason} is null)`,
+    ),
+    check(
+      "organization_wallet_authorities_revocation_reason_check",
+      sql`${table.revocationReason} is null or ${table.revocationReason} in ('client-disconnect', 'expired', 'context-changed', 'superseded')`,
+    ),
+    uniqueIndex("organization_wallet_authorities_active_actor_idx")
+      .on(table.runId, table.authUserId)
+      .where(sql`${table.revokedAt} is null`),
+    uniqueIndex("organization_wallet_authorities_active_organization_idx")
+      .on(table.runId, table.organizationId)
+      .where(sql`${table.revokedAt} is null`),
+    index("organization_wallet_authorities_expiry_idx")
+      .on(table.expiresAt)
+      .where(sql`${table.revokedAt} is null`),
+  ],
+);
+
+export type OrganizationWalletAuthorityRow =
+  typeof organizationWalletAuthorities.$inferSelect;

@@ -20,6 +20,7 @@ import {
   WalletConnectionPanel,
   WalletStatusButton,
 } from "@/solana/client/wallet-connection";
+import { ClubWalletAuthorityGuard } from "@/solana/client/club-wallet-authority";
 
 const navigation = [
   { label: "Feed", href: "/", Icon: House },
@@ -44,6 +45,7 @@ export function Shell({
           (path.startsWith("/classes") || path.startsWith("/events")));
   return (
     <>
+      <ClubWalletAuthorityGuard />
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>

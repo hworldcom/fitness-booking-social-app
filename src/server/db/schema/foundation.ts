@@ -269,6 +269,11 @@ export const organizationMemberships = app.table(
       table.profileId,
       table.status,
     ),
+    uniqueIndex("organization_memberships_one_active_primary_admin_idx")
+      .on(table.runId, table.organizationId)
+      .where(
+        sql`${table.status} = 'active' and ${table.role} = 'primary_admin'`,
+      ),
   ],
 );
 

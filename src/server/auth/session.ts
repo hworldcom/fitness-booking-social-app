@@ -13,8 +13,19 @@ import { serverAuthClient } from "./client";
 
 export type VerifiedAuthContext = Readonly<{
   session: AuthSessionSnapshot;
+  authSessionId: string | null;
   emailOtpAuthenticatedAt: number | null;
 }>;
+
+function normalizedAuthSessionId(value: unknown) {
+  if (typeof value !== "string") return null;
+  const normalized = value.toLowerCase();
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(
+    normalized,
+  )
+    ? normalized
+    : null;
+}
 
 function isMissingSession(error: AuthError) {
   return (
@@ -30,6 +41,7 @@ export async function verifiedAuthContext(): Promise<VerifiedAuthContext> {
     if (!client) {
       return Object.freeze({
         session: DISABLED_AUTH_SESSION,
+        authSessionId: null,
         emailOtpAuthenticatedAt: null,
       });
     }
@@ -40,6 +52,7 @@ export async function verifiedAuthContext(): Promise<VerifiedAuthContext> {
         session: isMissingSession(claimsResult.error)
           ? SIGNED_OUT_AUTH_SESSION
           : UNAVAILABLE_AUTH_SESSION,
+        authSessionId: null,
         emailOtpAuthenticatedAt: null,
       });
     }
@@ -49,6 +62,7 @@ export async function verifiedAuthContext(): Promise<VerifiedAuthContext> {
     if (typeof subject !== "string" || !subject) {
       return Object.freeze({
         session: SIGNED_OUT_AUTH_SESSION,
+        authSessionId: null,
         emailOtpAuthenticatedAt: null,
       });
     }
@@ -57,12 +71,14 @@ export async function verifiedAuthContext(): Promise<VerifiedAuthContext> {
     if (userResult.error || !userResult.data.user) {
       return Object.freeze({
         session: UNAVAILABLE_AUTH_SESSION,
+        authSessionId: null,
         emailOtpAuthenticatedAt: null,
       });
     }
     if (userResult.data.user.id !== subject) {
       return Object.freeze({
         session: UNAVAILABLE_AUTH_SESSION,
+        authSessionId: null,
         emailOtpAuthenticatedAt: null,
       });
     }
@@ -76,6 +92,16 @@ export async function verifiedAuthContext(): Promise<VerifiedAuthContext> {
     if (!email || !hasVerifiedEmailIdentity) {
       return Object.freeze({
         session: UNAVAILABLE_AUTH_SESSION,
+        authSessionId: null,
+        emailOtpAuthenticatedAt: null,
+      });
+    }
+
+    const authSessionId = normalizedAuthSessionId(claims.session_id);
+    if (!authSessionId) {
+      return Object.freeze({
+        session: UNAVAILABLE_AUTH_SESSION,
+        authSessionId: null,
         emailOtpAuthenticatedAt: null,
       });
     }
@@ -88,11 +114,13 @@ export async function verifiedAuthContext(): Promise<VerifiedAuthContext> {
         email,
         expiresAt: typeof expiry === "number" ? expiry : null,
       }),
+      authSessionId,
       emailOtpAuthenticatedAt: latestEmailOtpAuthenticationAt(claims.amr),
     });
   } catch {
     return Object.freeze({
       session: UNAVAILABLE_AUTH_SESSION,
+      authSessionId: null,
       emailOtpAuthenticatedAt: null,
     });
   }

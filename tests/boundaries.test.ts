@@ -137,6 +137,7 @@ test("privileged database entry points carry the Next.js server-only marker", ()
     "src/server/db/env.ts",
     "src/server/db/schema/index.ts",
     "src/server/db/identity/repository.ts",
+    "src/server/db/wallet/club-repository.ts",
     "src/server/db/wallet/repository.ts",
     "src/server/db/authorization/repository.ts",
     "src/server/auth/client.ts",
@@ -147,6 +148,7 @@ test("privileged database entry points carry the Next.js server-only marker", ()
     "src/server/authorization/service.ts",
     "src/server/identity/service.ts",
     "src/server/wallet/signature.ts",
+    "src/server/wallet/club-service.ts",
     "src/server/wallet/service.ts",
   ]) {
     const contents = readFileSync(path.join(root, relative), "utf8");

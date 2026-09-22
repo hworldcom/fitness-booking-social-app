@@ -1,6 +1,6 @@
 # Ticket DEV0041: Club wallet authorization
 
-- Status: Draft
+- Status: In progress
 - Created: 2026-09-20
 - Last updated: 2026-09-22
 - Milestone: M0 identity / M2 club authority prerequisite
@@ -46,11 +46,13 @@ DEV0039 owns the shared `wallet_bindings` table and its one-owner-per-run/cluste
 
 Use message signatures only for authority proof. A successful proof does not establish funds, token accounts, a valid recipient, a transaction signature or chain finality. Later financial tickets must recheck current administrator/club authority and request explicit transaction approval for each operation.
 
-Proposed implementation default pending the readiness review: club authority lasts ten minutes at most and still ends immediately on disconnect, account change or current role/binding mismatch. The one-time proof challenge retains DEV0047's shorter five-minute lifetime.
+Implementation default locked when work started on 2026-09-22: club authority lasts ten minutes at most and still ends immediately on disconnect, account change or current role/binding mismatch. The one-time proof challenge retains DEV0047's shorter five-minute lifetime.
+
+The user chose to begin this implementation before DEV0047's deferred real-Phantom rehearsal. DEV0047's clean database replay, automated proof tests and local generated-signer rehearsal are sufficient to reuse its contract; DEV0041 and DEV0047 both remain incomplete until their required real-wallet evidence is recorded.
 
 ## Implementation plan
 
-1. Complete DEV0047's real-Phantom validation, then review the delivered binding/challenge contracts and DEV0046/DEV0040 authorization context; lock the club authority lifetime, invalidation and prepared-club configuration before implementation.
+1. Review DEV0047's delivered and automatically validated binding/challenge contracts plus DEV0046/DEV0040's authorization context; lock the club authority lifetime, invalidation and prepared-club configuration. Defer the real-Phantom rehearsal without treating it as implementation evidence.
 2. Extend the shared challenge purpose/organization-owner contract only as needed, then add organization binding and club-proof repository/service methods with active primary-admin checks and atomic challenge consumption.
 3. Add explicit club-workspace authority state that retains the personal application session while treating the selected Phantom account only as club signing authority. Supply the bounded contract consumed by DEV0051's club sign-in entrance.
 4. Invalidate authority on mismatch, disconnect, expiry, role/binding revocation or account change; never trust a club ID or role supplied by the browser.
@@ -58,12 +60,12 @@ Proposed implementation default pending the readiness review: club authority las
 
 ## Acceptance criteria
 
-- [ ] AC1: An individually authenticated active primary administrator can prove only the prepared distinct wallet bound to their club/run and receives a bounded, expiring club-authority result.
-- [ ] AC2: Club authority is tied to the administrator's existing verified personal email identity and creates no shared club credentials, second Supabase user or duplicate personal profile.
-- [ ] AC3: Personal wallet, unrelated club wallet, foreign run/organization, non-admin/staff-only actor, revoked organization role/binding and browser-selected club metadata cannot grant authority.
-- [ ] AC4: Personal and organization ownership are mutually exclusive for one wallet within a run/cluster, including concurrent binding/proof attempts.
-- [ ] AC5: Intentional club-wallet switching retains the administrator's personal application session but never signs in or merges the club as a user. Disconnect/account change/expiry/revocation clears club authority.
-- [ ] AC6: The interface distinguishes personal session from `Club wallet · Solana Devnet · Test funds`; success claims no balance, payment, transaction signature or finality.
+- [x] AC1: An individually authenticated active primary administrator can prove only the prepared distinct wallet bound to their club/run and receives a bounded, expiring club-authority result.
+- [x] AC2: Club authority is tied to the administrator's existing verified personal email identity and creates no shared club credentials, second Supabase user or duplicate personal profile.
+- [x] AC3: Personal wallet, unrelated club wallet, foreign run/organization, non-admin/staff-only actor, revoked organization role/binding and browser-selected club metadata cannot grant authority.
+- [x] AC4: Personal and organization ownership are mutually exclusive for one wallet within a run/cluster, including concurrent binding/proof attempts.
+- [x] AC5: Intentional club-wallet switching retains the administrator's personal application session but never signs in or merges the club as a user. Disconnect/account change/expiry/revocation clears club authority.
+- [x] AC6: The interface distinguishes personal session from `Club wallet · Solana Devnet · Test funds`; success claims no balance, payment, transaction signature or finality.
 - [ ] AC7: SQL/repository/service tests, unit/boundary checks, lint, typecheck, build, desktop/mobile browser checks and a real prepared club-wallet message-proof rehearsal pass with exact evidence recorded.
 
 ## Validation plan
@@ -74,45 +76,81 @@ In desktop Chrome, sign in through the existing application email route, enter t
 
 ## Implementation record
 
-Pending implementation. This ticket was created when the unimplemented DEV0016 plan was converted to COR0002. Its terminology and login boundary were refined on 2026-09-22 after the user clarified that the financial organizations are fitness and sports clubs and accepted a dedicated club-facing entrance backed by individual administrator login. It owns club authority only; public club messaging/entry UI belongs to DEV0051 and financial tickets remain separate.
+Implementation is functionally complete and remains in progress only for the required real-Phantom validation. This ticket was created when the unimplemented DEV0016 plan was converted to COR0002. Its terminology and login boundary were refined on 2026-09-22 after the user clarified that the financial organizations are fitness and sports clubs and accepted a dedicated club-facing entrance backed by individual administrator login. It owns club authority only; public club messaging/entry UI belongs to DEV0051 and financial tickets remain separate.
 
 ### Changes and rationale
 
-Not implemented.
+The database now supports organization-owned one-time challenges and ten-minute club authorities. Both are bound to the verified Supabase user, the exact Supabase Auth session ID, the application profile and demo run, the server-derived active primary-administrator membership, the prepared active club-wallet binding and Solana Devnet. Challenge completion is atomic; a copied, expired, consumed, differently signed or differently logged-in proof fails without granting authority.
+
+The server exposes bounded snapshot, challenge, proof and revocation endpoints. Request bodies never accept a club ID, run ID, profile ID or role. The challenge message displays the administrator email, club identity, origin, Devnet wallet, one-time nonce/timestamps and an explicit statement that no transaction is created and no funds move. A new browser session, role/binding change or expiry invalidates authority during the next bounded server lookup.
+
+The existing wallet dialog now offers separate `Personal wallet` and eligible `<club> club wallet` contexts without changing the email-authenticated application identity. The club state connects only the prepared address, requests `signMessage`, shows `Personal email session`, `Club authority` and `Solana Devnet · Test funds`, and provides explicit leave/disconnect actions. A guard mounted with the application shell revokes active club authority when Phantom disconnects or changes accounts even if the wallet dialog is closed. No balance lookup or transaction API was added.
+
+Local preparation and rehearsal scripts assign an already enrolled email account as the sole active primary administrator of a chosen prepared club and install a distinct prepared wallet without storing signing material. The automated Chrome rehearsal creates a temporary email account, signs with an in-memory generated Solana key, verifies server-derived Kru Tiger eligibility, denial paths, exact proof, replay rejection, ten-minute authority, responsive/keyboard presentation and explicit revocation. It is useful integration evidence but is not the still-pending real Phantom extension rehearsal.
 
 ### Affected files
 
-| File or component | Change and purpose                                                                                  |
-| ----------------- | --------------------------------------------------------------------------------------------------- |
-| Pending           | Record exact prepared-club configuration, repository, service, authority-state and test files here. |
+| File or component | Change and purpose |
+| ----------------- | ------------------ |
+| [`supabase/migrations/20260922000200_create_club_wallet_authority.sql`](../../../supabase/migrations/20260922000200_create_club_wallet_authority.sql), [`src/server/db/schema/foundation.ts`](../../../src/server/db/schema/foundation.ts), [`src/server/db/schema/identity.ts`](../../../src/server/db/schema/identity.ts) | Extend shared challenges with organization purpose/session binding, enforce one active primary administrator per club and add the RLS-protected authority table plus bounded database functions. |
+| [`src/server/auth/session.ts`](../../../src/server/auth/session.ts), [`src/server/db/wallet/club-repository.ts`](../../../src/server/db/wallet/club-repository.ts), [`src/server/wallet/club-service.ts`](../../../src/server/wallet/club-service.ts) | Extract the immutable Supabase session ID, establish transaction-local club session context, derive the eligible club and enforce challenge/authority state without trusting browser authority claims. |
+| [`src/solana/club-wallet.ts`](../../../src/solana/club-wallet.ts), [`src/app/api/wallet/club/`](../../../src/app/api/wallet/club), [`src/solana/client/club-wallet-client.ts`](../../../src/solana/client/club-wallet-client.ts) | Define the bounded public contract and same-origin snapshot/challenge/proof/revocation transport. |
+| [`src/solana/client/club-wallet-authority.tsx`](../../../src/solana/client/club-wallet-authority.tsx), [`src/solana/client/wallet-connection.tsx`](../../../src/solana/client/wallet-connection.tsx), [`src/components/shell.tsx`](../../../src/components/shell.tsx), [`src/app/globals.css`](../../../src/app/globals.css) | Present separate personal/club wallet contexts, message-only proof, explicit exit controls and global disconnect/account-change invalidation. |
+| [`scripts/prepare-local-club-wallet.mjs`](../../../scripts/prepare-local-club-wallet.mjs), [`scripts/rehearse-local-club-wallet.mjs`](../../../scripts/rehearse-local-club-wallet.mjs), [`package.json`](../../../package.json) | Add repeatable local fixture preparation and generated-signer Chrome rehearsal commands. |
+| [`supabase/tests/database/club-wallet.test.sql`](../../../supabase/tests/database/club-wallet.test.sql), [`tests/database/club-wallet.test.ts`](../../../tests/database/club-wallet.test.ts), [`tests/club-wallet.test.ts`](../../../tests/club-wallet.test.ts), [`tests/boundaries.test.ts`](../../../tests/boundaries.test.ts) | Cover schema privileges, exact-session binding, expiry, revocation, role loss, cross-actor denial, concurrent replay, wallet-owner exclusivity, public validators, no-transaction behavior and server-only imports. |
 
 ### Decisions and deviations
 
 The 2026-09-22 planning refinement replaced user-facing `company` terminology with `club`, while preserving `organization` as the internal data model. It also rejected a shared or separate club authentication identity: the dedicated club interface is an alternate entrance for individually authenticated administrators.
 
+The implementation reuses DEV0047's shared `auth_challenges` table but adds an organization-only purpose instead of creating a parallel proof store. A club proof is additionally bound to the immutable Supabase `session_id`; signing out or starting another login session cannot reuse an old challenge or authority. The database remains the authority for club/run/membership/wallet selection. The browser sends only the connected address and signed message proof.
+
+The local rehearsal initially used a production build without the local public Auth key because the direct `supabase` binary was not on the shell path. That run exposed the honest “Local authentication is not configured” state and did not reach proof creation. The command was corrected to obtain the public key through `npx --no-install supabase status`; the rebuilt local rehearsal then passed. No application code or environment file was changed for this setup correction.
+
 ### Contracts, configuration, and operations
 
-Expected contracts are an organization-owner purpose on DEV0047's one-time challenge foundation, server-controlled prepared club-wallet configuration and a short-lived club-authority response tied to the verified administrator session. DEV0051 consumes this result after the shared email authentication flow. Record exact variables, lifetimes, hashing, invalidation and recovery behavior before completion; never record signing material.
+`auth_challenges` gains nullable `auth_session_id`; it must be null for personal purposes and non-null for `authorize-club-wallet`. `organization_wallet_authorities` stores the exact user/session/profile/run/club/binding/challenge context, has a fixed ten-minute lifetime and retains revoked rows for audit. The proof challenge expires after five minutes. The migration must be applied before these endpoints are enabled; it has not been applied to hosted Supabase. Rolling back requires removing the club functions/policies/authority table and restoring the previous personal-only challenge constraints, so rollback should happen only before club-authority rows are relied upon.
+
+The public API adds `GET`/`DELETE /api/wallet/club`, `POST /api/wallet/club/challenge` and `POST /api/wallet/club/proof`. Mutations require the configured exact origin and return only bounded status, club display/wallet context and authority timestamps. `club:prepare-local` accepts `CLUB_ADMIN_EMAIL`, `CLUB_WALLET_ADDRESS` and optional `CLUB_SLUG` (default `kru-tiger`); it stores no private key. No new application environment variable or dependency was added. DEV0051 may consume the delivered snapshot after the shared email authentication flow.
 
 ## Validation results
 
-Implementation validation is pending. DEV0039, DEV0040 and DEV0046 are complete; DEV0047's implementation and automated validation exist, but its required real Phantom evidence must complete before this ticket becomes Ready.
+Implementation started on 2026-09-22 after the user explicitly chose to defer DEV0047's real-Phantom rehearsal. DEV0039, DEV0040 and DEV0046 are complete, and DEV0047's implementation, clean migration replay, automated proof tests and local generated-signer rehearsal supply the shared contract. Real Phantom evidence remains required before either wallet ticket completes.
 
-Planning validation on 2026-09-22 passed the repository-local record/link check across 70 Markdown files, 752 local links and 48 unique indexed records; DEV0052/COR0004 remain the next IDs. Focused Prettier checks and `git diff --check` passed. Application, database and wallet checks were not run because this refinement changes planning documents only.
+Implementation validation on 2026-09-22:
 
-| Criterion | Evidence | Result  |
-| --------- | -------- | ------- |
-| AC1–AC7   | Not run  | Not run |
+- `npm run typecheck` — passed; Next route types and TypeScript completed without errors.
+- `npm run lint` — passed with no ESLint findings.
+- `npm run format:check` — passed for configured scripts, source, tests and configuration files.
+- `npm test` — passed, 45/45 unit and boundary tests.
+- `npm run db:reset` — passed from an empty local database with all migrations and deterministic seed; run once before database validation and again after the rehearsal to remove temporary accounts/authority. `npm run db:runtime` passed after each reset.
+- `npm run db:lint` — passed with no schema errors.
+- `npm run db:test` — passed, 86/86 pgTAP assertions across four SQL files.
+- `npm run test:db` — passed, 13/13 repository integration tests. DEV0041 coverage includes wrong wallet/actor/session, tampered and replayed proof, concurrent completion, exact ten-minute authority, expiry, explicit revocation, role loss and personal/club owner exclusivity.
+- `npx --no-install next build --webpack` — passed against the unchanged hosted `.env.local`, passed against the local Auth/database stack for rehearsal, and passed again against hosted configuration after local cleanup.
+- `npm run test:e2e -- tests/browser/wallet.spec.ts tests/browser/auth.spec.ts` — passed, 6/6 existing desktop/mobile guest, keyboard and wallet regression scenarios.
+- `npm run test:club-wallet-auth` — passed against local Supabase and a production server using Chrome. The generated-signer rehearsal covered email enrollment, server-derived prepared club, exact-origin denial, wrong-wallet denial, message contents, signature/tamper/replay handling, ten-minute authority, explicit revocation, the keyboard-operable club tab and a 393×852 mobile viewport.
+- `git diff --check` — passed before the implementation-record update.
+
+| Criterion | Evidence | Result |
+| --------- | -------- | ------ |
+| AC1 | Clean migration, repository integration and local generated-signer proof establish prepared primary-admin wallet authorization with fixed expiry. | Passed |
+| AC2 | API/service derive the existing email subject/profile/session and the rehearsal retains one personal Auth identity. | Passed |
+| AC3 | Database joins and exact request shapes deny wrong actor/session/wallet, non-primary role, role loss and browser authority metadata. | Passed |
+| AC4 | Existing active-owner uniqueness plus new primary-admin/authority indexes and concurrent proof tests enforce exclusivity. | Passed |
+| AC5 | Session-bound database authority, role/binding/expiry checks, explicit exit controls and the globally mounted Phantom mismatch guard clear authority without changing personal identity. | Passed automatically; real Phantom observation pending under AC7 |
+| AC6 | Browser copy and source checks distinguish all contexts and confirm only `signMessage`, with no transaction API. | Passed |
+| AC7 | All required automated checks and a generated-signer Chrome rehearsal passed. The real prepared Phantom extension proof plus disconnect/account-switch observation was deliberately deferred by the user. | Incomplete |
 
 ## Risks, limitations, and follow-ups
 
-The extension supports one active Phantom account at a time, so club context needs explicit UX and strong mismatch handling. A retained personal application session must never be mistaken for proof that the selected wallet belongs to the club. Later financial tickets must still display and simulate every transaction before requesting explicit user approval.
+The extension supports one active Phantom account at a time, so club context needs explicit UX and strong mismatch handling. A retained personal application session must never be mistaken for proof that the selected wallet belongs to the club. The guard makes a best-effort same-session DELETE when the browser observes disconnect/account change; the exact Auth-session binding, current-context checks and ten-minute expiry remain the server-side fail-closed protections. Later financial tickets must still display and simulate every transaction before requesting explicit user approval.
 
 One prepared primary administrator per club is sufficient for the MVP but is not a production treasury-control model. Self-service club creation, invitations, administrator removal, wallet rotation/recovery, multisignature control and several-admin approval require separate requirements and tickets.
 
 ## Completion and review references
 
 - Completed: Not completed.
-- Commit: Not created.
-- Review: Requirements refined with the user; no independent review.
-- Deployment or release: None.
+- Commit: `[DEV0041] Add club wallet authorization` (this commit).
+- Review: Requirements refined with the user and implementation self-reviewed against AC1–AC7; no independent review.
+- Deployment or release: None. Local disposable Supabase only; the migration has not been applied to hosted Supabase.
