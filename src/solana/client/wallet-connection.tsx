@@ -106,7 +106,7 @@ export function WalletConnectionPanel({ onSignIn }: { onSignIn?: () => void }) {
           <Pill>Test funds</Pill>
         </div>
         <div className="notice">
-          <strong>Wallet connected. RepX Club signed out.</strong>
+          <strong>Wallet connected. MovX Club signed out.</strong>
           <p>
             This connection shares only your public address. Sign-in is a
             separate, fee-free message approval; payments always require their
@@ -129,7 +129,7 @@ export function WalletConnectionPanel({ onSignIn }: { onSignIn?: () => void }) {
             : "Disconnect Phantom"}
         </button>
         <Link href="/sign-in" className="button dark full" onClick={onSignIn}>
-          Continue to RepX Club sign-in
+          Continue to MovX Club sign-in
         </Link>
       </div>
     );

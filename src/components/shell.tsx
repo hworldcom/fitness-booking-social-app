@@ -48,7 +48,7 @@ export function Shell({
         Skip to content
       </a>
       <aside className="sidebar">
-        <Link href="/" className="brand-home" aria-label="RepX Club home">
+        <Link href="/" className="brand-home" aria-label="MovX Club home">
           <Brand />
         </Link>
         <div className="sidebar-caption">
@@ -115,7 +115,7 @@ export function Shell({
       </aside>
       <div className="app-main">
         <header className="topbar">
-          <Link href="/" className="mobile-brand" aria-label="RepX Club home">
+          <Link href="/" className="mobile-brand" aria-label="MovX Club home">
             <Brand compact />
           </Link>
           <span className="location">
@@ -157,7 +157,12 @@ export function Shell({
           {children}
         </main>
         <footer className="app-footer">
-          <span>RepX Club © 2026</span>
+          <span className="footer-contact-line">
+            <span>MovX Club © 2026</span>
+            <a className="footer-contact" href="mailto:hello@movx.club">
+              hello@movx.club
+            </a>
+          </span>
           <span className="footer-tagline">Social fitness, onchain.</span>
           <Pill>Solana Devnet target · Test EURC</Pill>
         </footer>
@@ -185,7 +190,7 @@ export function Shell({
           title={
             modal === "wallet"
               ? "Your club. Your wallet."
-              : "A first look at RepX Club."
+              : "A first look at MovX Club."
           }
           onClose={() => setModal(null)}
         >

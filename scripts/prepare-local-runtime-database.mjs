@@ -52,7 +52,7 @@ try {
       );
     }
   }
-  console.log("Prepared the loopback-only RepX Club runtime database login.");
+  console.log("Prepared the loopback-only MovX Club runtime database login.");
 } catch (error) {
   const message =
     error instanceof Error

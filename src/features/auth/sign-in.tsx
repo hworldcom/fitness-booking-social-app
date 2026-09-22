@@ -266,7 +266,7 @@ export function SignInScreen({
       router.refresh();
     } catch {
       setActionError(
-        "RepX Club could not sign out. Check the connection and try again.",
+        "MovX Club could not sign out. Check the connection and try again.",
       );
     } finally {
       actionLock.current = false;
@@ -278,7 +278,7 @@ export function SignInScreen({
     <section className="auth-page">
       <div className="auth-heading">
         <div>
-          <span className="eyebrow">RepX Club identity</span>
+          <span className="eyebrow">MovX Club identity</span>
           <h1>Sign in with your email.</h1>
           <p>
             Request a one-time code, verify your email and create a small
@@ -294,13 +294,13 @@ export function SignInScreen({
             <ShieldCheck size={22} aria-hidden="true" />
             <div>
               <span>Application account</span>
-              <h2>RepX Club sign-in</h2>
+              <h2>MovX Club sign-in</h2>
             </div>
           </div>
 
           {accessRequired && (
             <div className="auth-notice neutral" role="status">
-              <strong>This area needs a RepX Club account.</strong>
+              <strong>This area needs a MovX Club account.</strong>
               <p>
                 Sign in and complete your profile first. The requested page
                 opens only after the server authorizes your account.
@@ -384,7 +384,7 @@ export function SignInScreen({
               <div className="auth-notice neutral" role="status">
                 <strong>Check your email.</strong>
                 <p>
-                  If <strong>{pendingEmail}</strong> can receive RepX Club
+                  If <strong>{pendingEmail}</strong> can receive MovX Club
                   email, a six-digit code is on its way. New and returning
                   accounts follow the same steps.
                 </p>
@@ -435,7 +435,7 @@ export function SignInScreen({
             (applicationIdentity.status === "idle" ||
               applicationIdentity.status === "checking") && (
               <div className="auth-notice neutral" role="status">
-                <strong>Checking your RepX Club profile…</strong>
+                <strong>Checking your MovX Club profile…</strong>
                 <p>The server is loading the profile for this account.</p>
               </div>
             )}
@@ -447,7 +447,7 @@ export function SignInScreen({
                   <strong>Email verified.</strong>
                   <p>
                     Signed in as {session.email}. Choose the name other people
-                    will see in RepX Club.
+                    will see in MovX Club.
                   </p>
                 </div>
                 <label htmlFor="profile-display-name">Display name</label>
@@ -484,7 +484,7 @@ export function SignInScreen({
                   Signed in as {applicationIdentity.profile.displayName}.
                 </strong>
                 <p>
-                  Your verified email account has ordinary RepX Club access. A
+                  Your verified email account has ordinary MovX Club access. A
                   wallet is not required for this application session.
                 </p>
               </div>
@@ -540,7 +540,7 @@ export function SignInScreen({
           )}
 
           <p className="wallet-safety">
-            RepX Club never asks for your email password, wallet recovery phrase
+            MovX Club never asks for your email password, wallet recovery phrase
             or private key.
           </p>
         </div>

@@ -23,6 +23,9 @@ test("local Supabase enables six-digit email OTP on the canonical route", () => 
     /content_path = "\.\/supabase\/templates\/email-otp\.html"/,
   );
   assert.match(template, /\{\{ \.Token \}\}/);
+  assert.match(config, /Your MovX Club sign-in code/);
+  assert.match(template, /Your MovX Club sign-in code/);
+  assert.doesNotMatch(template, /RepX Club/);
   assert.match(config, /\[auth\.web3\.solana\]\nenabled = false/);
   assert.doesNotMatch(config, /\[auth\.captcha\]\nenabled = true/);
 });
@@ -45,6 +48,10 @@ test("database-only and Auth-enabled local startup remain separate", () => {
   assert.equal(
     packageJson.scripts["db:runtime"],
     "node scripts/prepare-local-runtime-database.mjs",
+  );
+  assert.equal(
+    (JSON.parse(read("package.json")) as { name: string }).name,
+    "movx-club",
   );
   assert.equal(packageJson.dependencies["@supabase/supabase-js"], "2.116.0");
   assert.equal(packageJson.dependencies["@supabase/ssr"], "0.12.7");

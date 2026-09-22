@@ -1,8 +1,8 @@
-# RepX Club
+# MovX Club
 
 **Social fitness, onchain.**
 
-RepX Club is a community fitness platform for discovering local classes and events, creating challenges, and sharing meaningful activity with other members. It brings individuals, trainers, gyms, cafés, and community organizers into one product where people can find something to join and organizers can turn existing fitness communities into structured experiences.
+MovX Club is a community fitness platform for discovering local classes and events, creating challenges, and sharing meaningful activity with other members. It brings individuals, trainers, gyms, cafés, and community organizers into one product where people can find something to join and organizers can turn existing fitness communities into structured experiences.
 
 The MVP supports two challenge models: community challenges funded by their participants and decided by participant voting, and sponsored challenges funded by a creator who selects the winner. It also covers dated class passes, paid community events, gym-confirmed attendance, public activity sharing, follows, and lightweight reactions. Booking, payment, attendance, and social activity remain separate states so a post or wallet transaction cannot be mistaken for a verified visit.
 
@@ -107,7 +107,7 @@ npm run build
 npm run test:e2e
 ```
 
-Domain tests cover validation, local state transitions, sharing privacy and storage recovery. `test:auth` requires the Auth-enabled local stack, Mailpit and an already-running configured app on port 3100; it creates disposable email accounts and proves new/returning login, invalid-code recovery, profile isolation and sign-out. Browser tests exercise desktop and mobile layouts and keyboard flows using **installed Google Chrome**. Build first; Playwright starts a separate production server on port 3101 and refuses to reuse an existing server, so another local project cannot be mistaken for RepX Club. Browser evidence and failure traces go to ignored `test-results/`. In restricted agent environments, the test runner, build worker and browser/server may require permission to use local IPC/ports.
+Domain tests cover validation, local state transitions, sharing privacy and storage recovery. `test:auth` requires the Auth-enabled local stack, Mailpit and an already-running configured app on port 3100; it creates disposable email accounts and proves new/returning login, invalid-code recovery, profile isolation and sign-out. Browser tests exercise desktop and mobile layouts and keyboard flows using **installed Google Chrome**. Build first; Playwright starts a separate production server on port 3101 and refuses to reuse an existing server, so another local project cannot be mistaken for MovX Club. Browser evidence and failure traces go to ignored `test-results/`. In restricted agent environments, the test runner, build worker and browser/server may require permission to use local IPC/ports.
 
 The database commands above add SQL catalogue/constraint/RLS checks and Drizzle integration coverage. They require the isolated local stack and are intentionally separate from the configuration-free `npm test` preview suite.
 
@@ -116,7 +116,7 @@ The database commands above add SQL catalogue/constraint/RLS checks and Drizzle 
 - `src/app/`: thin Next.js App Router adapters, shared layout and visual styles.
 - `src/features/`: capability-owned Feed, Explore/discovery, challenge, event, class and profile screens.
 - `src/domain/`: framework-independent catalogue/event contracts and deterministic challenge/discovery rules; no browser, network or persistence authority.
-- `src/features/preview/`: typed demonstration catalogue, derived discovery data, validated local state transitions and browser persistence under `repx-club-preview-v1`; never live inventory, authorization, payment proof or a financial ledger.
+- `src/features/preview/`: typed demonstration catalogue, derived discovery data, validated local state transitions and browser persistence under the legacy compatibility key `repx-club-preview-v1`; never live inventory, authorization, payment proof or a financial ledger. DEV0049 retains that opaque key so the MovX Club rename does not discard existing browser choices.
 - `src/solana/client/`: browser-safe, Devnet-only Phantom discovery/connection state and accessible wallet presentation; no RPC, authentication, balance or transaction authority.
 - `src/auth/`: public Auth/identity response contracts, bounded email/code rules and the browser-side Supabase session/identity clients.
 - `src/server/auth/`: server-only Supabase client and verified session boundary; `src/proxy.ts` refreshes session cookies without protecting public routes.
@@ -125,7 +125,7 @@ The database commands above add SQL catalogue/constraint/RLS checks and Drizzle 
 - `src/components/`: application shell, presentation formatting and reusable accessible interface/discovery controls.
 - `supabase/`: local configuration, the sole SQL migration history, deterministic seeds and database tests.
 - `tests/`: domain checks and Playwright browser flows.
-- `public/`: local branding and artwork. The running-club image was generated for RepX Club on 19 September 2026 using OpenAI image generation and exported as WebP. Its people and setting are illustrative. Other graphics are CSS/SVG with Lucide icons. Manrope and Bricolage Grotesque are self-hosted through Fontsource; the app does not fetch external fonts or stock imagery. The [visual asset record](docs/design/DEV0043-assets.md) documents the illustrative studio photos and preferred redesign reference.
+- `public/`: local branding and artwork. The running-club image was generated for the original preview on 19 September 2026 using OpenAI image generation and exported as WebP. Its people and setting are illustrative. Other graphics are CSS/SVG with Lucide icons. Manrope and Bricolage Grotesque are self-hosted through Fontsource; the app does not fetch external fonts or stock imagery. The [visual asset record](docs/design/DEV0043-assets.md) documents the illustrative studio photos and preferred redesign reference.
 
 The staged frontend/backend/database/blockchain directory plan is tracked by [Coordination COR0001](tickets/current/organisatory/COR0001-project-structure.md). That non-implementation record maps focused peer development tickets and does not claim target directories exist before their owning code is delivered.
 

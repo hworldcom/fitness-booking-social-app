@@ -2,6 +2,8 @@
 
 The [MVP visual direction](../mvp-spec.md#visual-design-direction--21-september-2026) remains the product contract. [DEV0043](../../tickets/archive/frontend/DEV0043-playful-club-ui-redesign.md) records implementation and validation.
 
+DEV0049 renamed the current platform to MovX Club without regenerating these assets. The verbatim historical prompt below retains the former product name as generation provenance; none of the generated images contains branding or text.
+
 - [Preferred concept](DEV0043-preferred-concept.png): first generated homepage mockup accepted by the user. This is a design reference, never rendered as the application UI. Features pictured in it do not override the specification.
 - Existing [running-club image](../../public/images/run-club.webp): generated 19 September 2026 for the original preview; reused without changing the original file. CSS crops it responsively.
 - [Strength studio](../../public/images/strength-studio.webp) and [Muay Thai studio](../../public/images/muay-thai-studio.webp): generated 21 September 2026 using the built-in image-generation tool. Fictional illustrative interiors, not photographs of the named example businesses. Exported as 1000-pixel-wide WebP at quality 82 using Sharp for local delivery. Original generated PNGs remain in the generation output directory.

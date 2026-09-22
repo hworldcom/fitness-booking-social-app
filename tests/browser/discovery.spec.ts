@@ -24,7 +24,7 @@ test("public guide is reachable by keyboard and explains distinct participation 
   await walletQuestion.focus();
   await page.keyboard.press("Enter");
   await expect(
-    page.getByText(/RepX Club sign-in and payments are not connected/),
+    page.getByText(/MovX Club sign-in and payments are not connected/),
   ).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath("how-it-works.png"),

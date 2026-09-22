@@ -249,7 +249,7 @@ otp_expiry = 3600
 # content_path = "./supabase/templates/invite.html"
 
 [auth.email.template.magic_link]
-subject = "Your RepX Club sign-in code"
+subject = "Your MovX Club sign-in code"
 content_path = "./supabase/templates/email-otp.html"
 
 # Uncomment to customize notification email template

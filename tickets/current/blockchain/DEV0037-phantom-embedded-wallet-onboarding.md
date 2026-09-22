@@ -20,9 +20,9 @@ This behavior was originally planned inside DEV0027 after the user preferred Pol
 
 ## Expected behavior and edge cases
 
-When available, a participant can choose the supported embedded path and create or restore the same Phantom-managed Solana wallet for the same provider identity. The UI identifies `Embedded` versus `External`, keeps provider connection distinct from RepX Club authentication and never merges addresses automatically. Existing extension users retain the external path, and companies continue using distinct external wallets.
+When available, a participant can choose the supported embedded path and create or restore the same Phantom-managed Solana wallet for the same provider identity. The UI identifies `Embedded` versus `External`, keeps provider connection distinct from MovX Club authentication and never merges addresses automatically. Existing extension users retain the external path, and companies continue using distinct external wallets.
 
-Cancelled provider login, popup/callback failure, repeated or invalid callback, expired session, browser privacy restrictions, account change and provider outage preserve public browsing and recover without false connection/authentication. Migration must not silently replace an extension-authenticated RepX Club identity with an embedded address.
+Cancelled provider login, popup/callback failure, repeated or invalid callback, expired session, browser privacy restrictions, account change and provider outage preserve public browsing and recover without false connection/authentication. Migration must not silently replace an extension-authenticated MovX Club identity with an embedded address.
 
 ## Assumptions, decisions, and dependencies
 

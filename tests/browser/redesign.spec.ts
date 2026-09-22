@@ -4,6 +4,8 @@ test("home discovery links preserve usable catalogue destinations", async ({
   page,
 }, testInfo) => {
   await page.goto("/");
+  await expect(page).toHaveTitle(/MovX Club/);
+  await expect(page.locator("body")).not.toContainText("RepX Club");
   await expect(
     page.getByRole("heading", { name: /FIND YOUR PEOPLE.*MOVE TOGETHER/ }),
   ).toBeVisible();
@@ -66,9 +68,18 @@ test("club layout remains usable at narrow and intermediate widths", async ({
     await expect(page.locator(".footer-tagline")).toBeVisible();
     await expect(
       page
-        .getByRole("link", { name: "RepX Club home" })
+        .getByRole("link", { name: "MovX Club home" })
         .filter({ visible: true }),
     ).toBeVisible();
+    await expect(
+      page.locator(".brand").filter({ visible: true }),
+    ).toContainText("MovXClub");
+    const contact = page.getByRole("link", { name: "hello@movx.club" });
+    await expect(contact).toBeVisible();
+    await expect(contact).toHaveAttribute("href", "mailto:hello@movx.club");
+    await contact.focus();
+    await expect(contact).toBeFocused();
+    await expect(contact).toBeInViewport();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

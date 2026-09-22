@@ -13,7 +13,7 @@ export function HowItWorksScreen() {
     <div className="how-it-works">
       <div className="page-heading">
         <div>
-          <span className="eyebrow">WELCOME TO REPX CLUB</span>
+          <span className="eyebrow">WELCOME TO MOVX CLUB</span>
           <h1>
             A little plan.
             <br />A little more together<span className="lime-text">.</span>
@@ -119,7 +119,7 @@ export function HowItWorksScreen() {
           <p>
             You can browse without one. The demo uses Phantom for a public
             wallet connection and later Solana Devnet transactions with test
-            EURC. RepX Club sign-in and payments are not connected yet; each
+            EURC. MovX Club sign-in and payments are not connected yet; each
             future signature will need its own approval.
           </p>
         </details>

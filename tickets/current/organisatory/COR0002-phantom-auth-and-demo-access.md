@@ -10,7 +10,7 @@
 
 ## Objective and boundaries
 
-Coordinate the replacement of the implicit Anna preview persona with verified RepX Club identities backed by prepared Phantom wallets and Supabase Auth. Wallet connection, Sign-In With Solana, application identity/run enrollment, protected data access and company-wallet authority remain separate security boundaries even when the interface presents a continuous flow.
+Coordinate the replacement of the implicit Anna preview persona with verified MovX Club identities backed by prepared Phantom wallets and Supabase Auth. Wallet connection, Sign-In With Solana, application identity/run enrollment, protected data access and company-wallet authority remain separate security boundaries even when the interface presents a continuous flow.
 
 This record preserves the complete planning intent of retired DEV0016 while assigning each implementation boundary to one small peer development ticket. It does not authorize source, dependency, configuration, migration or test changes and is never used in a commit subject.
 

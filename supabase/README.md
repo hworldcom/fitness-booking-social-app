@@ -1,10 +1,10 @@
 # Local database operations
 
-This directory owns RepX Club's checked-in Supabase PostgreSQL history. The SQL files under `migrations/` are the only applied migration source of truth; Drizzle mirrors them for typed server queries and must not create a second migration journal.
+This directory owns MovX Club's checked-in Supabase PostgreSQL history. The SQL files under `migrations/` are the only applied migration source of truth; Drizzle mirrors them for typed server queries and must not create a second migration journal.
 
 ## Local workflow
 
-Prerequisites are Node.js 24.21.x, the locked npm dependencies and a running Docker-compatible container runtime. RepX Club's database uses port `55322` so it can coexist with another project using Supabase's default `5432x` range. The DEV0015 `db:start` command remains a lean PostgreSQL-only workflow. The `auth:start` profile also starts Auth, its API gateway and a local captured mailbox while continuing to exclude unrelated services.
+Prerequisites are Node.js 24.21.x, the locked npm dependencies and a running Docker-compatible container runtime. MovX Club's database uses port `55322` so it can coexist with another project using Supabase's default `5432x` range. The DEV0015 `db:start` command remains a lean PostgreSQL-only workflow. The `auth:start` profile also starts Auth, its API gateway and a local captured mailbox while continuing to exclude unrelated services.
 
 ```sh
 npm ci
@@ -20,7 +20,7 @@ npm run db:lint
 
 The local integration test uses Supabase's disposable `postgres` credential on `127.0.0.1:55322`; it is not an application credential. The frontend preview does not read `DATABASE_URL`, initialize a database client or require this stack.
 
-`npm run db:runtime` idempotently provisions the loopback-only `repx_runtime_login` used by the Next.js application and grants it only the non-bypass `app_runtime` group role. Its fixed `postgres` password is acceptable only for this disposable database bound to the local Supabase port; hosted environments must use a generated secret and the environment-specific login described below. For local application enrollment, set `DATABASE_URL=postgresql://repx_runtime_login:postgres@127.0.0.1:55322/postgres`. Open email registration no longer uses a prepared-person or wallet roster.
+`npm run db:runtime` idempotently provisions the loopback-only `repx_runtime_login` used by the Next.js application and grants it only the non-bypass `app_runtime` group role. DEV0049 preserves this legacy infrastructure identifier so existing local credentials keep working after the MovX Club brand rename. Its fixed `postgres` password is acceptable only for this disposable database bound to the local Supabase port; hosted environments must use a generated secret and the environment-specific login described below. For local application enrollment, set `DATABASE_URL=postgresql://repx_runtime_login:postgres@127.0.0.1:55322/postgres`. Open email registration no longer uses a prepared-person or wallet roster.
 
 ## Local email Auth profile
 

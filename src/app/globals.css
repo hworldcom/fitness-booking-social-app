@@ -1180,6 +1180,18 @@ h1 {
   font-size: 10px;
   color: #626c56;
 }
+.footer-contact-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+}
+.footer-contact {
+  color: #405b25;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .mobile-brand,
 .mobile-nav {
   display: none;

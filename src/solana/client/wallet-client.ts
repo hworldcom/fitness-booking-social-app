@@ -12,4 +12,4 @@ export const walletClient = createClient().use(
   }),
 );
 
-export type RepXWalletClient = typeof walletClient;
+export type MovXWalletClient = typeof walletClient;

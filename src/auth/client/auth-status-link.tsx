@@ -18,7 +18,7 @@ export function AuthStatusLink() {
     <Link
       href="/sign-in"
       className={`auth-status-link ${signedIn ? "signed-in" : ""}`}
-      aria-label={signedIn ? `RepX Club signed in as ${session.email}` : label}
+      aria-label={signedIn ? `MovX Club signed in as ${session.email}` : label}
     >
       <Icon size={16} aria-hidden="true" />
       <span>{label}</span>

@@ -9,7 +9,7 @@
 
 ## Objective and context
 
-Authorize a prepared company's distinct Phantom wallet only when the current RepX Club session belongs to that company's active primary admin and a fresh company-scoped wallet proof succeeds. Preserve the admin's personal application identity while keeping personal and company signing authority, balances and future financial actions separate.
+Authorize a prepared company's distinct Phantom wallet only when the current MovX Club session belongs to that company's active primary admin and a fresh company-scoped wallet proof succeeds. Preserve the admin's personal application identity while keeping personal and company signing authority, balances and future financial actions separate.
 
 This is an authorization prerequisite, not a payment ticket. It implements the identity-side portion of C14/P08 and the specification's [company wallet rule](../../../docs/mvp-spec.md#authentication-and-data-access-recommendation) without constructing, signing, simulating or submitting a transaction.
 

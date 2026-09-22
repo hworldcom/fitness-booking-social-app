@@ -20,7 +20,7 @@ import { challengeDate, formatEurc } from "./format";
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <span className={`brand ${compact ? "brand-compact" : "brand-stacked"}`}>
-      <span>RepX</span>
+      <span>MovX</span>
       <span className="brand-club">Club</span>
     </span>
   );
@@ -127,7 +127,7 @@ export function Artwork({
               ? "FIND YOUR FIRE."
               : "MAKE SPACE.")}
       </span>
-      <span className="graphic-meta">REPX CLUB / MOVEMENT FOR EVERYONE</span>
+      <span className="graphic-meta">MOVX CLUB / MOVEMENT FOR EVERYONE</span>
     </div>
   );
 }
@@ -282,7 +282,7 @@ export function Modal({
       }}
     >
       <div className="dialog-top">
-        <span className="eyebrow">REPX CLUB / PREVIEW</span>
+        <span className="eyebrow">MOVX CLUB / PREVIEW</span>
         <button
           type="button"
           className="icon-button"

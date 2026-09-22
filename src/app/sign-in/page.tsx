@@ -6,7 +6,7 @@ import { SignInScreen } from "@/features/auth/sign-in";
 export const metadata: Metadata = {
   title: "Sign in",
   description:
-    "Request a one-time email code to create or restore your RepX Club account.",
+    "Request a one-time email code to create or restore your MovX Club account.",
 };
 
 export default async function SignInPage({

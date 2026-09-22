@@ -14,6 +14,10 @@ async function emailCodeFor(email) {
     const message = mailbox.messages?.find((candidate) =>
       candidate.To?.some((recipient) => recipient.Address === email),
     );
+    if (message) {
+      assert.equal(message.Subject, "Your MovX Club sign-in code");
+      assert.match(message.Snippet ?? "", /MovX Club/);
+    }
     const code = message?.Snippet?.match(/\b\d{6}\b/)?.[0];
     if (code) return code;
     await new Promise((resolve) => setTimeout(resolve, 500));
