@@ -9,7 +9,7 @@
 
 ## Objective and context
 
-Add low-friction embedded Solana wallet onboarding through Phantom Connect when Phantom Developer Portal access becomes available. Ordinary participants should be able to create or restore a Phantom-managed wallet through supported social onboarding without first installing the browser extension, while the existing external Phantom path and separate company-wallet authority remain available.
+Add low-friction embedded Solana wallet onboarding through Phantom Connect when Phantom Developer Portal access becomes available. Ordinary participants should be able to create or restore a Phantom-managed wallet through supported social onboarding without first installing the browser extension, while the existing external Phantom path and separate club-wallet authority remain available.
 
 This behavior was originally planned inside DEV0027 after the user preferred Polymarket-style account onboarding. On 2026-09-20, Phantom Portal displayed `New sign ups are paused` for new developer accounts. The user chose not to block the MVP: DEV0027 continues with the prepared extension, and this record preserves the embedded-wallet outcome for later.
 
@@ -28,7 +28,7 @@ Cancelled provider login, popup/callback failure, repeated or invalid callback, 
 
 Implementation is blocked until a Phantom Developer Portal developer account and public App ID can be created. The SDK, supported identity methods, session lifetime, pricing, domain verification and Supabase Sign-In With Solana compatibility must be revalidated at start because provider contracts may change while sign-ups are paused.
 
-DEV0027 remains the external Wallet Standard foundation. This ticket must update the product specification before changing the MVP's onboarding behavior and must preserve C14's separate company-wallet authority. No Portal credential, OAuth token, private key or recovery phrase may enter source control.
+DEV0027 remains the external Wallet Standard foundation. This ticket must update the product specification before changing the MVP's onboarding behavior and must preserve C14's separate club-wallet authority. No Portal credential, OAuth token, private key or recovery phrase may enter source control.
 
 ## Implementation plan
 
@@ -43,7 +43,7 @@ DEV0027 remains the external Wallet Standard foundation. This ticket must update
 - [ ] AC1: Phantom Portal access and a valid development App ID are available, with current SDK/terms and supported onboarding methods recorded before implementation.
 - [ ] AC2: A real supported embedded-wallet flow creates or restores the expected Solana account on the selected non-production cluster without requiring the desktop extension.
 - [ ] AC3: Embedded and external sessions remain visibly distinct, recover from cancellation/expiry/account changes and never merge application identities automatically.
-- [ ] AC4: Existing external Phantom, public browsing, separate company authority and application-authentication boundaries continue to pass their regressions.
+- [ ] AC4: Existing external Phantom, public browsing, separate club authority and application-authentication boundaries continue to pass their regressions.
 - [ ] AC5: Responsive/keyboard checks, focused tests, lint, typecheck, build and real desktop/mobile provider rehearsals pass with no private key, OAuth token or provider secret in the app.
 
 ## Validation plan

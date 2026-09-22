@@ -2,11 +2,11 @@
 
 - Status: In progress
 - Created: 2026-09-20
-- Last updated: 2026-09-20
+- Last updated: 2026-09-22
 - Milestone: Cross-cutting application foundation
 - Converted from: Not applicable — created as a coordination record
 - Tracked development tickets: completed [DEV0030 — Frontend screen module boundaries](../../archive/frontend/DEV0030-frontend-screen-module-boundaries.md), completed [DEV0031 — Preview data and domain boundaries](../../archive/frontend/DEV0031-preview-data-and-domain-boundaries.md), completed [DEV0015 — Database foundation](../../archive/backend/DEV0015-supabase-database-foundation.md), completed [DEV0025 — Next.js backend boundary](../../archive/backend/DEV0025-nextjs-backend-boundary.md), and completed [DEV0027 — Phantom wallet connection foundation](../../archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md); dedicated server-Solana verification and Anchor/program-client foundation tickets are still required
-- Related records: [DEV0008 — Frontend foundation](../../archive/frontend/DEV0008-repx-club-frontend.md) is the delivered baseline; [COR0002 — Phantom authentication and demo access](COR0002-phantom-auth-and-demo-access.md) coordinates downstream DEV0038–DEV0041; DEV0017–DEV0018 and DEV0023–DEV0024 are additional downstream development tickets as mapped below
+- Related records: [DEV0008 — Frontend foundation](../../archive/frontend/DEV0008-repx-club-frontend.md) is the delivered baseline; [COR0002 — Phantom authentication and demo access](COR0002-phantom-auth-and-demo-access.md) coordinates downstream DEV0038–DEV0041; DEV0017–DEV0018, DEV0023–DEV0024 and DEV0051 are additional downstream development tickets as mapped below
 
 ## Objective and context
 
@@ -116,7 +116,8 @@ The following records are downstream consumers. They implement product behavior 
 | [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md)   | Uses DEV0027's browser wallet plus the server boundary to establish and verify the Supabase Auth session.                                       |
 | [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md) | Adds prepared identity and wallet-binding mappings and repositories over DEV0015's database boundary.                                           |
 | [DEV0040 — Protected access and database context](../../archive/backend/DEV0040-protected-access-and-database-context.md) | Added the verified transaction-local database context and guarded server/frontend adapters.                                                     |
-| [DEV0041 — Company wallet authorization](../backend/DEV0041-company-wallet-authorization.md)                              | Combines verified personal admin context with a separately proved company wallet without creating financial transactions.                       |
+| [DEV0041 — Club wallet authorization](../backend/DEV0041-club-wallet-authorization.md) | Combines an individually authenticated club administrator with a separately proved club wallet without shared credentials or financial transactions. |
+| [DEV0051 — Club value proposition and sign-in entry](../frontend/DEV0051-club-value-proposition-and-sign-in-entry.md) | Reuses the delivered How-it-works and email-Auth boundaries for public club guidance and a thin club-facing sign-in route after DEV0041 supplies authority. |
 | [DEV0017 — Persistent catalogue and private drafts](../backend/DEV0017-persistent-catalogue-and-drafts.md)                | Owns catalogue/profile/draft/follow/bookmark repositories and services, mapping rows into shared contracts rather than exposing storage shapes. |
 | [DEV0018 — Class-pass reservations and confirmed visits](../backend/DEV0018-class-pass-reservations-and-confirmed-visits.md) | Owns pass-backed reservation, attendance and activity repositories/workflows within the established server/domain/database boundaries. |
 | [DEV0023 — Shared social feed and Cheers](../backend/DEV0023-shared-social-feed-and-cheers.md)                            | Owns feed/reaction repositories, social services and UI consumption after identity, catalogue and attendance sources exist.                     |
@@ -128,9 +129,10 @@ Recommended sequence:
 2. Preserve completed DEV0031 as the domain/discovery/preview baseline before persistence work replaces preview adapters.
 3. Preserve completed DEV0027 as the browser wallet/Solana client baseline.
 4. Preserve completed DEV0015 and DEV0025 with separate file ownership and evidence: DEV0015 created the real database artifacts/access modules; DEV0025 supplied and validated the server boundary rules around them.
-5. DEV0038 → DEV0039 → DEV0040 completed under COR0002 after DEV0015 and DEV0027. DEV0046 then completed account-first email Auth under COR0003 on 2026-09-21; DEV0047 is the next Ready identity ticket before DEV0041 or the later product-data sequence.
-6. Create the server-Solana verification and Anchor/program-client tickets before adding `src/server/solana`, `programs` or generated program bindings; later verified projections enable DEV0024.
-7. Complete COR0001 only after every direct structural ticket is completed or explicitly replaced/cancelled and the final tree, import, client-bundle and integration review passes.
+5. DEV0038 → DEV0039 → DEV0040 completed under COR0002 after DEV0015 and DEV0027. DEV0046 then completed account-first email Auth under COR0003 on 2026-09-21; DEV0047 is in progress and must complete its real Phantom evidence before DEV0041 club-wallet authority begins.
+6. Deliver DEV0041 before DEV0051 connects its public club entry to real server-derived club authority; neither ticket creates a second authentication system.
+7. Create the server-Solana verification and Anchor/program-client tickets before adding `src/server/solana`, `programs` or generated program bindings; later verified projections enable DEV0024.
+8. Complete COR0001 only after every direct structural ticket is completed or explicitly replaced/cancelled and the final tree, import, client-bundle and integration review passes.
 
 Generated Playwright output under `test-results/` is reproducible validation output rather than source or durable review evidence. The root [`.gitignore`](../../../.gitignore) ignores it, and owning tickets retain the observations needed for review.
 
