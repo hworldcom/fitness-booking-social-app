@@ -2,10 +2,10 @@
 
 - Status: Draft
 - Created: 2026-09-19
-- Last updated: 2026-09-20
+- Last updated: 2026-09-22
 - Milestone: M0 shared app data
 - Coordination: None — independent development ticket
-- Related tickets: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0038](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md), completed [DEV0039](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md), and completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md) under [COR0002](../organisatory/COR0002-phantom-auth-and-demo-access.md); precedes [DEV0018](DEV0018-class-pass-reservations-and-confirmed-visits.md)
+- Related records: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0038](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md), completed [DEV0039](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md), and completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md) under [COR0002](../organisatory/COR0002-phantom-auth-and-demo-access.md); follows [DEV0052 — Account-backed personal profile](../frontend/DEV0052-account-backed-personal-profile.md); precedes [DEV0018](DEV0018-class-pass-reservations-and-confirmed-visits.md)
 
 ## Objective and context
 
@@ -14,6 +14,7 @@ Deliver the first useful shared-backend checkpoint: guests browse the public Exp
 ## Scope and non-goals
 
 - In scope: DB-backed public catalogue/list/detail reads, authorized profile reads, owner-scoped challenge/event drafts, follows/bookmarks, capability-owned catalogue/profile/draft/social repositories and services, server validation and authorization, frontend loading/error states and an explicit boundary between fixture preview and database mode.
+- Existing identity boundary: DEV0052 first removes the hardcoded current user and connects the minimal owner profile/shell to DEV0046's actor snapshot. This ticket expands that real profile with persistent permitted data and must not reintroduce a preselected persona or fabricated personal history.
 - Out of scope: reservations, shared booking/feed events, Cheers/reactions, tickets, real balances, challenge publication/funding, voting, uploads, notifications, Realtime, paid organization onboarding or importing the entire browser store.
 
 ## Expected behavior and edge cases

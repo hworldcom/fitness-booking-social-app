@@ -96,7 +96,7 @@ No new authentication provider or credential type is planned. `/clubs/sign-in` r
 
 Implementation validation is pending. DEV0041 is Draft, so its club eligibility/authority contract is not available yet.
 
-Planning validation on 2026-09-22 passed the repository-local record/link check across 70 Markdown files, 752 local links and 48 unique indexed records; DEV0052/COR0004 remain the next IDs. Focused Prettier checks and `git diff --check` passed. Application/browser checks were not run because no runtime implementation changed.
+Planning validation on 2026-09-22 passed the repository-local record/link check across 70 Markdown files, 752 local links and 48 unique indexed records; DEV0052/COR0004 were the next IDs in that snapshot. DEV0052 was subsequently allocated to the independent account-backed personal-profile cleanup. Focused Prettier checks and `git diff --check` passed. Application/browser checks were not run because no runtime implementation changed.
 
 | Criterion | Evidence | Result  |
 | --------- | -------- | ------- |
