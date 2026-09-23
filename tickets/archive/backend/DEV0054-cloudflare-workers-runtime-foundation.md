@@ -1,10 +1,10 @@
 # Ticket DEV0054: Cloudflare Workers runtime foundation
 
-- Status: Blocked
+- Status: Completed
 - Created: 2026-09-23
 - Last updated: 2026-09-23
 - Milestone: M0 hosted integration environment
-- Coordination: [COR0004 — Hosted staging deployment](../organisatory/COR0004-hosted-staging-deployment.md)
+- Coordination: [COR0004 — Hosted staging deployment](../../current/organisatory/COR0004-hosted-staging-deployment.md)
 - Related records: [DEV0025 — Next.js backend boundary](../../archive/backend/DEV0025-nextjs-backend-boundary.md), [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md), and [DEV0053 — Distinct personal and club guide](../../archive/frontend/DEV0053-distinct-personal-and-club-guide.md)
 
 ## Objective and context
@@ -66,12 +66,12 @@ Relevant product boundaries are the specification's [architecture](../../../docs
 
 ## Acceptance criteria
 
-- [ ] AC1: The repository contains reviewed, version-pinned vinext/Cloudflare dependencies and minimal Workers configuration with no credentials.
-- [ ] AC2: Existing Next.js development/build/test commands remain available and pass their relevant regression checks.
-- [ ] AC3: The vinext production build succeeds and a local Wrangler Worker serves representative public pages and server routes without an unsupported-runtime crash.
-- [ ] AC4: Authentication/session, database-client and Solana signature-verification modules either pass focused Workers-runtime checks or have a concrete documented blocker that prevents completion.
-- [ ] AC5: The first staging configuration has no persistent application data/page cache, no global prerender-all pass and no production hostname or production release claim.
-- [ ] AC6: Required environment-variable names, build/runtime placement and Cloudflare Images behavior are documented without secret values.
+- [x] AC1: The repository contains reviewed, version-pinned vinext/Cloudflare dependencies and minimal Workers configuration with no credentials.
+- [x] AC2: Existing Next.js development/build/test commands remain available and pass their relevant regression checks.
+- [x] AC3: The vinext production build succeeds and a local Wrangler Worker serves representative public pages and server routes without an unsupported-runtime crash.
+- [x] AC4: Authentication/session, database-client and Solana signature-verification modules either pass focused Workers-runtime checks or have a concrete documented blocker that prevents completion.
+- [x] AC5: The first staging configuration has no persistent application data/page cache, no global prerender-all pass and no production hostname or production release claim.
+- [x] AC6: Required environment-variable names, build/runtime placement and Cloudflare Images behavior are documented without secret values.
 
 ## Validation plan
 
@@ -84,7 +84,7 @@ Relevant product boundaries are the specification's [architecture](../../../docs
 
 ## Implementation record
 
-Implementation began with user-run vinext initialization before ticket creation. The generated foundation has now been reviewed and normalized, and the production Worker bundle builds successfully. Completion is blocked because the current macOS 13.1 host cannot run the installed Cloudflare `workerd`, which requires macOS 13.5 or newer; therefore the required local Worker route/runtime smoke test cannot run on this machine.
+Implementation began with user-run vinext initialization before ticket creation. The generated foundation was reviewed and normalized, and the production Worker bundle builds successfully. The original macOS 13.1 validation host could not run Cloudflare `workerd`, but the user's upgrade to macOS 27.0 removed that environmental blocker. The built Worker now starts locally and passes representative route, API, image and responsive-browser smokes.
 
 ### Changes and rationale
 
@@ -112,6 +112,7 @@ Implementation began with user-run vinext initialization before ticket creation.
 - 2026-09-23: Changed the initializer's generic Worker name from `movx-club` to `movx-club-staging` so this foundation cannot imply a production target.
 - 2026-09-23: The first vinext build exposed the wallet package's missing `workerd` export condition. The package's explicit Node build is designed for server rendering and returns a non-operational wallet snapshot, so only the vinext RSC/SSR environments now recognize the `node` condition under Workers `nodejs_compat`; no Solana application logic changed.
 - 2026-09-23: The repository-wide browser run found eight failures in pre-existing event/challenge draft controls, saved filters and wallet-modal focus. Those surfaces were not changed by DEV0054; the failure evidence is retained below rather than broadening deployment work into an unrelated interface repair.
+- 2026-09-23: The user upgraded the validation host from macOS 13.1 to macOS 27.0, removing the documented `workerd` operating-system blocker. DEV0054 returned to In progress so the built-Worker request and focused browser smokes can resume on the supported host.
 
 ### Contracts, configuration, and operations
 
@@ -119,31 +120,34 @@ No schema, route, response or database contract changed. The new package/build c
 
 ## Validation results
 
-Validation ran on Node.js 24.21.0 and macOS 13.1.0 with the repository's local `.env.local`; no value was printed or recorded. Generated Worker output remained ignored.
+Initial validation ran on Node.js 24.21.0 and macOS 13.1.0. Completion validation ran on the same Node.js version and macOS 27.0 with the repository's ignored local `.env.local`; no value was printed or recorded. Generated Worker output remained ignored.
 
 | Criterion | Evidence                                                                                                                                                                                                                                                                                                                                                                                    | Result  |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | AC1       | Reviewed `package.json`, lockfile, `vite.config.ts` and `wrangler.jsonc`; direct versions are exact, the Worker is named `movx-club-staging`, and configuration contains no variable values, route or custom domain. `npx vinext check` reported 100% compatibility: 6/6 imports, 1/1 config, 2/2 libraries, 14 supported routes and no issues.                                             | Passed  |
-| AC2       | `npm test` passed 49/49; `npm run lint`, `npm run typecheck` and `npm run format:check` passed. `npx next build --webpack` compiled, type-checked and generated all 13 static pages. The default Turbopack `npm run build` was also attempted but the restricted agent environment denied its helper-process port; webpack proves the unchanged Next.js production path.                    | Passed  |
-| AC3       | `npm run build:vinext` completed all five environments and listed the public/dynamic pages plus nine API routes. `npm run start:vinext` loaded the generated configuration and bindings, but both sandboxed and elevated starts stopped before serving because Cloudflare `workerd` rejects macOS 13.1 and requires 13.5+. No route/runtime smoke could therefore be observed on this host. | Blocked |
-| AC4       | The successful RSC/SSR build includes Supabase session code, Postgres.js and both wallet packages after the targeted export-condition fix. `npm test` passed Auth, database configuration, personal wallet and club-wallet contract tests. Actual Workers requests remain blocked by the same host requirement as AC3.                                                                      | Blocked |
+| AC2       | Completion validation repeated `npm test` (49/49), `npm run lint`, `npm run typecheck` and `npm run format:check`; all passed. `npx --no-install next build --webpack` compiled, type-checked and generated all 13 static pages. The default Turbopack `npm run build` was also repeated but the restricted agent environment still denied its helper-process port; the supported webpack build proves the unchanged Next.js production path. | Passed  |
+| AC3       | `npm run build:vinext` completed all five environments and listed the public/dynamic pages plus nine API routes. On macOS 27.0, `npm run start:vinext` started `workerd` on port 3102. `/`, `/explore`, `/challenges` and `/sign-in` returned branded `200` HTML; `/profile` returned the expected safe sign-in redirect; Auth/session, actor and identity APIs returned their bounded signed-out responses with `private, no-store`; and a rendered `/_next/image` request returned `200 image/*`. | Passed  |
+| AC4       | The successful RSC/SSR build includes Supabase session code, Postgres.js and both wallet packages after the targeted export-condition fix. The running Worker evaluated and served the Auth/session, actor, identity and personal-wallet route modules; a validly shaped wallet-challenge request failed closed as `401 signed-out` with no transaction or signature request. `npm test` passed all Auth, database-configuration, personal-wallet and club-wallet contract checks. Signed-in hosted database and real-wallet integration remain correctly assigned to DEV0056 rather than this runtime foundation. | Passed  |
 | AC5       | Reviewed config retains no cache binding, no pre-render-all option, no route/custom domain and only the staging Worker name.                                                                                                                                                                                                                                                                | Passed  |
 | AC6       | README documents Workers commands, Cloudflare Images, disabled cache/pre-render choices and the four-variable build/runtime boundary without values.                                                                                                                                                                                                                                        | Passed  |
 
 Additional regression evidence: `npm run test:e2e` passed 42/50 tests across desktop and mobile. Both viewports passed Auth, authorization, club entry, discovery/guide, public rendering, profile, responsive redesign and wallet-free guidance. Eight tests failed on unchanged UI contracts: event draft save controls, saved challenge filters, challenge draft save controls and wallet-modal initial focus. The focused `tests/browser/discovery.spec.ts` run passed 10/10 after the terminology update owned by DEV0057.
+
+The completion browser smoke launched installed Chrome against the running Worker at both 1440×1040 and 393×852. Both viewports returned `200` for home and Explore, displayed the MovX Club home link, had no horizontal overflow, followed `/profile` to the intended sign-in screen and reported no browser console or page errors.
 
 ## Risks, limitations, and follow-ups
 
 - vinext is beta; a compatibility failure may require a reviewed OpenNext fallback rather than application behavior workarounds.
 - Cloudflare Images currently has a free transformation allowance but remains an external quota. Staging must verify failure behavior and usage before production planning.
 - Serverless PostgreSQL latency and connection reuse are not solved by this ticket. Hyperdrive is a follow-up only if measured staging behavior warrants it.
-- The built Worker has not served a request locally. Upgrade the validation host to macOS 13.5+ or run the repository in a supported Linux DevContainer (glibc 2.35+), then rerun `npm run start:vinext` and the representative public/protected/API smoke matrix before changing this ticket to Completed.
+- The default Turbopack build cannot create its internal helper-process socket in the restricted agent environment; the supported webpack build succeeds, and this limitation is not reproduced in application or Worker execution.
+- Wrangler emitted two `Network connection lost` messages when the headless Chrome contexts closed with image work in flight. The Worker remained available, the image requests returned `200`, and both browser passes reported zero console/page errors; no application failure was reproduced.
 - The eight pre-existing browser failures need separate interface/test review; they are not evidence of a vinext bundle failure and were not changed under this ticket.
-- Next action: perform the built-Worker smoke test on a supported host, then rerun the relevant browser subset against port 3102 and complete AC3/AC4.
+- Next action: complete DEV0055, then let DEV0056 deploy this reviewed runtime with the staging secrets/domain and perform the signed-in hosted rehearsal.
 
 ## Completion and review references
 
-- Completed: Not completed — blocked on the local Cloudflare runtime's macOS 13.5+ requirement.
-- Commit: Not created.
+- Completed: 2026-09-23 after the macOS 27.0 Worker, API, image and responsive-browser smokes passed.
+- Commit: `008be57` records the reviewed Workers runtime foundation; completion evidence will be committed separately under DEV0054.
 - Review: No pull request or independent review exists.
 - Deployment or release: Not deployed; DEV0056 owns the staging release.
