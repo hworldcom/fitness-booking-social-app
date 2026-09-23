@@ -23,8 +23,11 @@ test("local Supabase enables six-digit email OTP on the canonical route", () => 
     /content_path = "\.\/supabase\/templates\/email-otp\.html"/,
   );
   assert.match(template, /\{\{ \.Token \}\}/);
+  assert.equal(template.match(/\{\{ \.Token \}\}/g)?.length, 1);
   assert.match(config, /Your MovX Club sign-in code/);
   assert.match(template, /Your MovX Club sign-in code/);
+  assert.match(template, /hello@movx\.club/);
+  assert.doesNotMatch(template, /ConfirmationURL|TokenHash/);
   assert.doesNotMatch(template, /RepX Club/);
   assert.match(config, /\[auth\.web3\.solana\]\nenabled = false/);
   assert.doesNotMatch(config, /\[auth\.captcha\]\nenabled = true/);

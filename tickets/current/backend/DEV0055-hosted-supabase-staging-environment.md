@@ -70,7 +70,7 @@ This ticket applies the specification's [database-provider recommendation](../..
 - [x] AC1: One dedicated EU staging project has the repository's complete reviewed migration history and intended idempotent demonstration seed, with no destructive remote reset.
 - [x] AC2: A distinct generated-secret runtime login connects through the transaction pooler and has only the `app_runtime` capabilities required by the application.
 - [ ] AC3: Browser-facing keys cannot access private `app` data directly, and no administrative/service-role/database secret is present in Git or a browser bundle.
-- [ ] AC4: Hosted Auth uses the exact staging origin/redirect contract, MovX Club OTP template and working custom SMTP rather than Supabase's demonstration sender.
+- [x] AC4: Hosted Auth uses the exact staging origin/redirect contract, MovX Club OTP template and working custom SMTP rather than Supabase's demonstration sender.
 - [ ] AC5: The adopted staging access/abuse boundary is implemented and documented before the custom hostname is considered publicly usable.
 - [ ] AC6: Two real staging email accounts can enroll independently, return to the same profiles and sign out without cross-account data access.
 - [ ] AC7: Migration state, runtime restrictions, Auth configuration, recovery/rotation steps and redacted validation evidence are durable in repository documentation and this ticket.
@@ -86,7 +86,7 @@ This ticket applies the specification's [database-provider recommendation](../..
 
 ## Implementation record
 
-Implementation started by reviewing the checked-in hosted-environment contract, then linking the repository to the dedicated `movx-club-staging` project in Frankfurt. The complete checked-in migration history has now been applied without a remote reset, the restricted runtime login has passed the hosted transaction-pooler and privilege checks, and a real custom-SMTP email sign-in has succeeded. Exact template inspection and two-account validation remain in progress.
+Implementation started by reviewing the checked-in hosted-environment contract, then linking the repository to the dedicated `movx-club-staging` project in Frankfurt. The complete checked-in migration history has now been applied without a remote reset, the restricted runtime login has passed the hosted transaction-pooler and privilege checks, and a real custom-SMTP email sign-in has succeeded with the reviewed MovX Club six-digit-code template. Two-account validation remains in progress.
 
 ### Changes and rationale
 
@@ -98,10 +98,12 @@ A hosted-runtime verifier and runbook now define the secret-safe provisioning an
 
 | File or component                            | Change and purpose                                                                                                                                                                                                  |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Supabase staging project                     | Linked `movx-club-staging` in `eu-central-1`, applied all seven checked-in migrations, and provisioned the restricted `movx_staging_runtime_login`. Auth, SMTP and remaining security configuration remain pending. |
+| Supabase staging project                     | Linked `movx-club-staging` in `eu-central-1`, applied all seven checked-in migrations, provisioned the restricted `movx_staging_runtime_login`, and configured the hosted Auth/SMTP contract. Remaining security and two-account checks are pending. |
 | `scripts/verify-hosted-runtime-database.mjs` | Adds a credential-redacting hosted connection and least-privilege verifier with direct macOS Keychain lookup.                                                                                                       |
 | `package.json`                               | Adds `npm run db:verify:hosted-runtime`, loading the ignored staging environment fallback when it exists.                                                                                                           |
-| `supabase/README.md`                         | Records the staging project, Keychain and ignored-file secret flows, custom-login SQL, exact transaction-pooler username rule, validation, rotation and retirement steps.                                           |
+| `supabase/templates/email-otp.html`          | Provides the hosted-ready, code-only MovX Club email using email-safe inline styles and the existing paper, ink and lime palette.                                                                                    |
+| `tests/supabase-auth-config.test.ts`         | Guards the single-token, no-magic-link template contract and MovX Club contact identity.                                                                                                                            |
+| `supabase/README.md`                         | Records the staging project, Keychain and ignored-file secret flows, custom-login SQL, exact transaction-pooler username rule, Auth template application, validation, rotation and retirement steps.                |
 | `.env.example`                               | Unchanged: its existing `DATABASE_URL` contract already covers the hosted runtime URL.                                                                                                                              |
 
 ### Decisions and deviations
@@ -116,6 +118,7 @@ A hosted-runtime verifier and runbook now define the secret-safe provisioning an
 - 2026-09-23: Adopted the checked-in email-OTP contract for hosted staging: site URL `https://staging.movx.club`, exact allowed redirect `https://staging.movx.club/sign-in`, email signup enabled, anonymous/manual-linking disabled, no separate confirmation step, six-digit tokens, one-hour expiry and a 60-second same-address resend interval.
 - 2026-09-23: Selected the existing Porkbun-hosted `hello@movx.club` mailbox for low-volume staging SMTP using `smtp.porkbun.com`, port `587` and STARTTLS. Its mailbox password is an external secret and is never recorded in the repository. Use sender name `MovX Club`, retain the current default IP-based sign-in/verification limits, and cap project-wide Auth emails at 10 per hour while staging remains access-restricted.
 - 2026-09-23: The initial hosted email requests timed out because the SMTP port had been entered as `570`. Correcting it to Porkbun's STARTTLS port `587` made the next request complete successfully and deliver a working sign-in email.
+- 2026-09-23: Kept the hosted email code-only rather than retaining Supabase's default magic link because the application verifies a six-digit token. The template uses email-safe inline styles and text branding rather than a remotely hosted logo. Supabase Free-plan attribution outside the custom content is acceptable and is not treated as a failed staging requirement.
 
 ### Contracts, configuration, and operations
 
@@ -128,22 +131,21 @@ The environment continues to use the existing variable names and schema contract
 | AC1       | `npx supabase migration list --linked` initially showed all seven versions local-only. `npx supabase db push --linked --dry-run` listed those seven files and no seed/roles files. `npx supabase db push --linked` applied all seven without reset. A second migration-list check showed matching local and remote versions from `20260920000100` through `20260922000200`.                                                            | Passed for migrations and the intentional no-seed state |
 | AC2       | The user created `movx_staging_runtime_login` with a generated secret. `npm run db:verify:hosted-runtime` loaded the ignored fallback, connected through the port-6543 transaction pooler and passed all role checks: login plus `app_runtime` inheritance, no superuser/database-create/role-create/replication/RLS-bypass/schema-create/`app_owner` capability, the intended bounded functions, and no direct wallet-binding access. | Passed                                                  |
 | AC3       | The hosted verifier confirmed that `anon`, `authenticated` and `service_role` lack `app` schema usage. Data API settings and the later browser bundle still require inspection.                                                                                                                                                                                                                                                        | Partial                                                 |
-| AC4       | A read-only request to `/auth/v1/settings` returned `200` with the email provider enabled, signup allowed and mailer autoconfirm enabled. The first requests timed out while the SMTP port was incorrectly set to `570`. After correction to `587`, `signInWithOtp` completed in about seven seconds, the message reached the private staging test address, and the user confirmed the sign-in link worked. Exact sender, subject and six-digit-token presentation still require inspection. | Partial                                                 |
+| AC4       | A read-only request to `/auth/v1/settings` returned `200` with the email provider enabled, signup allowed and mailer autoconfirm enabled. The first requests timed out while the SMTP port was incorrectly set to `570`; correction to `587` restored delivery. After applying the reviewed Magic Link/OTP template, a fresh `signInWithOtp` request completed in 2.8 seconds. The user confirmed the received message had the correct MovX Club sender, subject, styled design and six-digit code rather than a sign-in link. | Passed                                                  |
 | AC5       | Access/abuse control not yet adopted.                                                                                                                                                                                                                                                                                                                                                                                                  | Not run                                                 |
 | AC6       | Two-account hosted rehearsal not yet run.                                                                                                                                                                                                                                                                                                                                                                                              | Not run                                                 |
-| AC7       | `npx supabase db lint --linked` connected to the hosted project, linted `app`, `extensions` and `public`, and reported `No schema errors found`. A final `npm run db:verify:hosted-runtime` passed all 20 configuration and permission checks; `git diff --check`, `npm run lint` and `npm run format:check` also passed. The runbook now covers connection verification and credential rotation/retirement; final Auth and recovery evidence remain pending. | Partial                                                 |
+| AC7       | `npx supabase db lint --linked` connected to the hosted project, linted `app`, `extensions` and `public`, and reported `No schema errors found`. A final `npm run db:verify:hosted-runtime` passed all 20 configuration and permission checks; `npm test` passed 49 tests, and `git diff --check`, `npm run lint` and `npm run format:check` also passed. The runbook now covers connection verification and credential rotation/retirement; final Auth and recovery evidence remain pending. | Partial                                                 |
 
 ## Risks, limitations, and follow-ups
 
 - SMTP sending limits, sender verification and DNS propagation can delay Auth validation.
-- The working email proves the Porkbun SMTP transport and Supabase sign-in path, but the exact sender, subject and six-digit-token presentation have not yet been recorded as validation evidence.
 - Supabase's free project availability/backups are insufficient evidence for production readiness.
 - Hosted tests create real non-production Auth/profile rows and require a documented cleanup policy that does not use remote reset.
-- Next action: inspect the delivered message against the MovX Club OTP template, then run the two-account enrollment, returning-login, isolation and sign-out rehearsal.
+- Next action: run the two-account enrollment, returning-login, isolation and sign-out rehearsal.
 
 ## Completion and review references
 
 - Completed: Not completed.
-- Commit: Not created.
+- Commit: `6f42206` records the initial hosted staging foundation; the hosted template update is committed separately under DEV0055.
 - Review: No pull request or independent review exists.
 - Deployment or release: Database migrations are present on Supabase staging, but the environment is not yet accepted; DEV0056 owns integrated release evidence after this ticket completes.

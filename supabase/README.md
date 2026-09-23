@@ -122,6 +122,8 @@ Configure `movx-club-staging` through the Supabase Dashboard. These values inten
 
 Keep CAPTCHA disabled until the browser flow supplies the selected provider's client token. After saving SMTP, send one Dashboard test email before attempting the two-account application rehearsal. Porkbun documents `smtp.porkbun.com:587` with STARTTLS and the full hosted email address as the username.
 
+The hosted **Magic Link** template deliberately contains `{{ .Token }}` and no confirmation URL because the application presents a six-digit code field and verifies that code with Supabase. Paste the complete contents of `supabase/templates/email-otp.html` into that template and save it with the subject shown above. Supabase's Free plan may add provider attribution outside this content; removing that attribution is not a staging acceptance requirement.
+
 ## Hosted changes and recovery
 
 The staging project is linked locally and has the repository's reviewed migration history. Disable the unused Data API integration (or at minimum keep `app` unexposed), and continue to apply hosted migrations only after reviewing `supabase db push --linked --dry-run`. Never run a linked reset against a project containing user, receipt or pending-operation data.
