@@ -1,6 +1,6 @@
 # Ticket DEV0056: Staging release and domain rehearsal
 
-- Status: Draft
+- Status: In progress
 - Created: 2026-09-23
 - Last updated: 2026-09-23
 - Milestone: M0 hosted integration environment
@@ -11,7 +11,7 @@
 
 Deploy the reviewed MovX Club Workers build against the dedicated staging Supabase project, attach the exact hostname `https://staging.movx.club`, and retain evidence that public browsing, email accounts, protected profiles and current wallet behavior operate correctly in the hosted environment.
 
-This is the integration/release peer under [COR0004](../organisatory/COR0004-hosted-staging-deployment.md). It begins only after DEV0054 proves the runtime and DEV0055 proves the hosted data/Auth environment. A successful staging rehearsal does not mean production readiness or completion of later persistent-payment, reservation or blockchain tickets.
+This is the integration/release peer under [COR0004](../organisatory/COR0004-hosted-staging-deployment.md). It begins after DEV0054 proves the runtime and DEV0055 proves the hosted database, restricted runtime login, Auth and SMTP foundation. DEV0055's remaining browser-visible secret review, access boundary and two-account isolation evidence are completed through this deployed integration rather than blocking it. A successful staging rehearsal does not mean production readiness or completion of later persistent-payment, reservation or blockchain tickets.
 
 ## Scope and non-goals
 
@@ -44,7 +44,7 @@ This is the integration/release peer under [COR0004](../organisatory/COR0004-hos
 
 ## Assumptions, decisions, and dependencies
 
-- DEV0054 and DEV0055 must complete before deployment starts. DEV0053 is already committed independently at `7038f2e`, so the eventual deployed revision can identify that interface baseline explicitly.
+- DEV0054 must be complete and DEV0055 must have passed its hosted migration, restricted-runtime, Auth and SMTP foundation before deployment starts. DEV0055 may remain In progress while DEV0056 supplies the exact-origin browser and two-account evidence required to complete both tickets. DEV0053 is already committed independently at `7038f2e`, so the eventual deployed revision can identify that interface baseline explicitly.
 - Cloudflare must be authoritative for the active `movx.club` zone before a Worker Custom Domain can own `staging.movx.club`.
 - Add the hostname through Workers > Settings > Domains & Routes or the equivalent reviewed Wrangler `custom_domain` route; do not create a competing Porkbun or Cloudflare CNAME first. Cloudflare creates the required DNS record and certificate.
 - Preserve Porkbun registration and email service. Only authoritative DNS hosting moves, after every mail record is copied and checked.
@@ -53,15 +53,16 @@ This is the integration/release peer under [COR0004](../organisatory/COR0004-hos
 
 ## Implementation plan
 
-1. Confirm clean, reviewed DEV0054 and DEV0055 inputs and record the exact commit selected for staging.
-2. Create/configure the staging Worker target, build-time public values and runtime secrets. Verify secret names without printing values.
-3. Export/copy Porkbun DNS records to Cloudflare, paying special attention to MX, SPF, DKIM, DMARC and verification records; disable old DNSSEC if required before nameserver change and restore it after Cloudflare becomes authoritative.
-4. Change Porkbun nameservers to the pair assigned by Cloudflare and wait for the zone to become Active without losing mail service.
-5. Deploy the Worker, add `staging.movx.club` as its Custom Domain and verify DNS/TLS/origin behavior.
-6. Apply the adopted staging access control and verify authorized and unauthorized behavior.
-7. Run the hosted smoke matrix at mobile and desktop widths, including two-account Auth/profile isolation and current Phantom states.
-8. Exercise rollback of the Worker version or document a safe dry run if rollback would disrupt the active rehearsal; record database independence and secret-rotation steps.
-9. Update deployment/setup documentation and the ticket with redacted evidence. Do not mark Completed while any acceptance flow remains untested.
+1. Confirm the clean DEV0054 runtime and foundation-ready DEV0055 inputs, then record the exact commit selected for staging.
+2. Verify Cloudflare CLI authentication and account/zone state without deploying or changing DNS.
+3. Create/configure the staging Worker target, build-time public values and runtime secrets. Verify secret names without printing values.
+4. Deploy first to the temporary `workers.dev` hostname and validate Worker startup, public routes, server boundaries and secret placement before any DNS cutover.
+5. Export/copy Porkbun DNS records to Cloudflare, paying special attention to MX, SPF, DKIM, DMARC and verification records; disable old DNSSEC if required before nameserver change and restore it after Cloudflare becomes authoritative.
+6. Change Porkbun nameservers to the pair assigned by Cloudflare and wait for the zone to become Active without losing mail service.
+7. Apply Cloudflare Access, add `staging.movx.club` as the Worker Custom Domain and verify access, DNS, TLS and exact-origin behavior.
+8. Run the hosted smoke matrix at mobile and desktop widths, including two-account Auth/profile isolation and current Phantom states; record the corresponding DEV0055 evidence there as well.
+9. Exercise rollback of the Worker version or document a safe dry run if rollback would disrupt the active rehearsal; record database independence and secret-rotation steps.
+10. Update deployment/setup documentation and the ticket with redacted evidence. Do not mark Completed while any acceptance flow remains untested.
 
 ## Acceptance criteria
 
@@ -87,44 +88,62 @@ This is the integration/release peer under [COR0004](../organisatory/COR0004-hos
 
 ## Implementation record
 
-Pending implementation.
+Implementation began after DEV0054 completed its supported-host Worker validation and DEV0055 passed the hosted migration, restricted-runtime, Auth and SMTP foundation. The first release phase is intentionally read-only: verify Cloudflare authentication and zone state before creating a Worker, adding secrets, deploying or changing DNS.
 
 ### Changes and rationale
 
-No Worker, DNS or domain release is claimed yet.
+Added a guarded staging-release command that validates the expected Worker name, exact staging origin, hosted Supabase project, publishable-key form and restricted transaction-pooler connection before building. It passes only the four approved environment values to Wrangler through a temporary owner-only secrets file, deletes that file even on failure and requires a clean committed worktree for a real deployment. The validation-only and dry-run paths do not create or update a Worker.
+
+No Worker, DNS or domain release is claimed yet. The dependency order now permits an access-restricted integration deployment to supply DEV0055's remaining exact-origin, browser-secret and two-account evidence.
 
 ### Affected files
 
-| File or component                      | Change and purpose                                                |
-| -------------------------------------- | ----------------------------------------------------------------- |
-| Cloudflare staging Worker and secrets  | Pending staging-only release configuration.                       |
-| Cloudflare DNS / `staging.movx.club`   | Pending authoritative zone and Worker Custom Domain.              |
-| Porkbun nameserver and email DNS state | Pending safe delegation with mail preservation.                   |
-| README or focused deployment guide     | Pending reproducible release, rollback and rotation instructions. |
+| File or component                      | Change and purpose                                                                                                                                                                  |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/deploy-staging-worker.mjs`    | Validates the exact staging origin, Supabase project, publishable-key shape, transaction-pooler login and Worker name; builds and supplies only four approved bindings to Wrangler. |
+| `tests/staging-deployment.test.ts`     | Exercises accepted and rejected staging configuration without connecting to Cloudflare or printing values.                                                                          |
+| `package.json`                         | Adds explicit validation, dry-run and clean-commit deployment commands for staging.                                                                                                 |
+| `wrangler.jsonc`                       | Declares the four required binding names without values while retaining the route-free staging-only target.                                                                         |
+| `README.md`                            | Documents the secret-safe commands and the `workers.dev`-before-DNS boundary.                                                                                                       |
+| Cloudflare staging Worker and secrets  | Pending first deployment after local validation, review and commit.                                                                                                                 |
+| Cloudflare DNS / `staging.movx.club`   | Pending authoritative zone and Worker Custom Domain.                                                                                                                                |
+| Porkbun nameserver and email DNS state | Pending safe delegation with mail preservation.                                                                                                                                     |
 
 ### Decisions and deviations
 
 - 2026-09-23: Assigned custom-domain/DNS operations to this release ticket rather than DEV0054 so local runtime compatibility can complete without external mutation.
 - 2026-09-23: Proposed Cloudflare Access for staging; final adoption remains dependent on DEV0055's abuse-control decision.
+- 2026-09-23: With user approval, changed the sequence so DEV0056 starts after DEV0054 completion and DEV0055's foundational database/Auth checks, while DEV0055's remaining browser and account-isolation checks run against the deployed staging origin. The temporary `workers.dev` deployment must pass before any nameserver or custom-domain change.
+- 2026-09-23: Confirmed Wrangler OAuth authentication and that no existing `movx-club-staging` deployment is present. Adopted a filtered temporary `--secrets-file` deployment rather than putting public or private values in Wrangler configuration; the temporary file is owner-only and removed in `finally`, and real deployment refuses an uncommitted worktree.
 
 ### Contracts, configuration, and operations
 
-The release will use `https://staging.movx.club`, the existing four-variable application environment contract, Cloudflare-managed TLS and a staging-only Worker. Actual secret values are never recorded here.
+The release will use `https://staging.movx.club`, the existing four-variable application environment contract, Cloudflare-managed TLS and a staging-only Worker. `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `NEXT_PUBLIC_SITE_URL` are present before the build so vinext can inline the explicitly public values; all four names, including server-only `DATABASE_URL`, are uploaded to the Worker through a temporary filtered secrets file. Actual values are never recorded here.
 
 ## Validation results
 
-Pending validation.
+The local release guard, application checks and Cloudflare upload dry run pass. Commands and output below omit all values, account identifiers and provider credentials.
 
-| Criterion | Evidence                         | Result  |
-| --------- | -------------------------------- | ------- |
-| AC1       | No staging Worker deployed       | Not run |
-| AC2       | Custom domain not configured     | Not run |
-| AC3       | DNS/mail cutover not performed   | Not run |
-| AC4       | Hosted interface smoke not run   | Not run |
-| AC5       | Hosted Auth rehearsal not run    | Not run |
-| AC6       | Hosted Phantom rehearsal not run | Not run |
-| AC7       | Hosted failure paths not run     | Not run |
-| AC8       | Release/rollback record pending  | Not run |
+- `npx --no-install wrangler whoami` — passed; confirmed the intended authenticated Cloudflare session.
+- `npx --no-install wrangler deployments list --name movx-club-staging --json` — passed; confirmed no existing deployment would be overwritten.
+- `npm run deploy:staging:check` — passed against the ignored staging environment file; validated exactly four approved bindings without printing values.
+- `npm run deploy:staging:dry-run` — passed; vinext built all five environments, Wrangler prepared 72 static assets and the Worker bundle, displayed only hidden values for the four approved bindings, and exited in dry-run mode without uploading or creating a Worker.
+- `npm test` — passed, 52 tests including accepted configuration, rejected production-origin configuration and Wrangler binding-boundary coverage.
+- `npm run lint` — passed.
+- `npm run typecheck` — passed.
+- `npm run format:check` — passed.
+- `git diff --check` — passed.
+
+| Criterion | Evidence                                                                                                                                               | Result  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- |
+| AC1       | Staging configuration, binding allowlist, tests and Cloudflare dry run pass; a reviewed commit has not yet been deployed.                              | Partial |
+| AC2       | The exact origin is enforced locally; custom domain, DNS and TLS are not configured.                                                                   | Partial |
+| AC3       | DNS/mail cutover not performed.                                                                                                                        | Not run |
+| AC4       | Automated application tests pass; hosted responsive smoke not run.                                                                                     | Partial |
+| AC5       | Hosted Auth rehearsal not run.                                                                                                                         | Not run |
+| AC6       | Hosted Phantom rehearsal not run.                                                                                                                      | Not run |
+| AC7       | Invalid deployment configuration fails closed in tests; hosted access, origin and session failure paths remain untested.                               | Partial |
+| AC8       | Reproducible check, dry-run and deployment commands plus clean-commit enforcement are documented; deployment and rollback evidence remain outstanding. | Partial |
 
 ## Risks, limitations, and follow-ups
 
@@ -132,7 +151,7 @@ Pending validation.
 - Nameserver mistakes can interrupt business email even when the website deploy succeeds.
 - Cloudflare Workers resource limits, Supabase free-tier availability and cross-region database latency may require measured follow-up work.
 - The `workers.dev` URL can be used for an initial infrastructure smoke test, but exact-origin Auth/wallet behavior is accepted only on `staging.movx.club`.
-- Next action: wait for DEV0054 and DEV0055 acceptance, then review this draft immediately before external deployment.
+- Next action: review and commit the guarded release checkpoint, then run the real deployment to the temporary `workers.dev` hostname and smoke-test it before any DNS change.
 
 ## Completion and review references
 

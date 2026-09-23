@@ -16,11 +16,11 @@ This coordination record does not implement runtime behavior. It separates repos
 
 ## Direct development work
 
-| Implementation part                  | Development ticket                                                                                             | Owned deliverable                                                                                                       | Start condition or dependency                                                                                    |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Cloudflare runtime compatibility     | [DEV0054 — Cloudflare Workers runtime foundation](../../archive/backend/DEV0054-cloudflare-workers-runtime-foundation.md) | Reviewed vinext/Workers dependencies, configuration, scripts and local compatibility validation without deploying       | Completed after the supported-host Worker smoke                                                                  |
-| Hosted data and identity environment | [DEV0055 — Hosted Supabase staging environment](../backend/DEV0055-hosted-supabase-staging-environment.md)     | Dedicated staging project, reviewed schema/runtime role, Auth/SMTP/origin controls and secret-safe operating record     | May proceed in parallel with DEV0054; requires access to the selected Supabase project and mail service          |
-| Integrated staging release           | [DEV0056 — Staging release and domain rehearsal](../backend/DEV0056-staging-release-and-domain-rehearsal.md)   | Staging Worker, runtime/build variables, `staging.movx.club`, preserved Porkbun mail DNS and hosted smoke-test evidence | Starts after DEV0054 and DEV0055 meet their acceptance criteria and the Cloudflare zone can become authoritative |
+| Implementation part                  | Development ticket                                                                                                        | Owned deliverable                                                                                                       | Start condition or dependency                                                                                                             |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Cloudflare runtime compatibility     | [DEV0054 — Cloudflare Workers runtime foundation](../../archive/backend/DEV0054-cloudflare-workers-runtime-foundation.md) | Reviewed vinext/Workers dependencies, configuration, scripts and local compatibility validation without deploying       | Completed after the supported-host Worker smoke                                                                                           |
+| Hosted data and identity environment | [DEV0055 — Hosted Supabase staging environment](../backend/DEV0055-hosted-supabase-staging-environment.md)                | Dedicated staging project, reviewed schema/runtime role, Auth/SMTP/origin controls and secret-safe operating record     | May proceed in parallel with DEV0054; requires access to the selected Supabase project and mail service                                   |
+| Integrated staging release           | [DEV0056 — Staging release and domain rehearsal](../backend/DEV0056-staging-release-and-domain-rehearsal.md)              | Staging Worker, runtime/build variables, `staging.movx.club`, preserved Porkbun mail DNS and hosted smoke-test evidence | Starts after DEV0054 completes and DEV0055 passes its database/runtime/Auth/SMTP foundation; remaining DEV0055 browser evidence runs here |
 
 All required implementation parts have a direct development ticket. These tickets are peers; DEV0056 depends on the outputs of DEV0054 and DEV0055 rather than nesting under either ticket.
 
@@ -36,7 +36,7 @@ All required implementation parts have a direct development ticket. These ticket
 
 1. DEV0054 reviews the initializer output, proves the application builds for Workers and preserves the existing Next.js workflow.
 2. DEV0055 independently creates and verifies a staging-only Supabase database/Auth environment with least-privilege runtime access.
-3. DEV0056 combines only completed outputs, transfers authoritative DNS safely, deploys the staging Worker, binds `staging.movx.club` and performs the hosted rehearsal.
+3. DEV0056 combines completed DEV0054 runtime work with DEV0055's verified hosted foundation, deploys to `workers.dev` first, then transfers authoritative DNS safely, binds `staging.movx.club` behind the access boundary and performs the hosted rehearsal. That rehearsal supplies DEV0055's remaining browser-secret and two-account evidence.
 
 COR0004 completes only when all three direct tickets are Completed or explicitly Cancelled/replaced, no required deliverable is left ownerless, and the integrated hosted validation proves the expected public, authentication, protected-profile and failure paths without exposing secrets or disrupting `hello@movx.club` mail.
 
@@ -50,6 +50,7 @@ COR0004 completes only when all three direct tickets are Completed or explicitly
 - 2026-09-23: The validation host was upgraded to macOS 27.0, removing DEV0054's `workerd` host-version blocker. Local Worker request validation has resumed before DEV0056 begins.
 - 2026-09-23: DEV0054 completed after the rebuilt Worker served representative public, protected, API and image requests and passed focused desktop/mobile Chrome smokes on macOS 27.0. DEV0056 may consume this runtime after DEV0055 completes.
 - 2026-09-23: DEV0055 linked the dedicated Frankfurt staging project, applied and linted all seven reviewed migrations, verified the password-bound least-privilege runtime login through the transaction pooler, and validated the MovX Club six-digit-code template through custom SMTP. The two-account rehearsal remains in progress.
+- 2026-09-23: With user approval, DEV0056 began before DEV0055 completion because the exact-origin browser deployment is required to finish DEV0055's browser-secret, access-boundary and two-account evidence. This does not weaken the release gates: the Worker must pass on `workers.dev`, mail DNS must be copied and verified, and Cloudflare Access must protect the custom hostname before public staging use.
 
 ## Validation results
 
@@ -65,7 +66,7 @@ Pending. Validate link symmetry, direct-ticket statuses and the final cross-prov
 ## Completion and review references
 
 - Completed: Not completed.
-- Direct development tickets: DEV0054 Completed; DEV0055 In progress; DEV0056 Draft.
+- Direct development tickets: DEV0054 Completed; DEV0055 In progress; DEV0056 In progress.
 - Commit: Not applicable — coordination-record IDs are not used in commit subjects.
 - Review: No pull request or independent review exists.
 - Deployment or release: Not deployed.

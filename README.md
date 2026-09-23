@@ -67,6 +67,16 @@ The initial staging configuration uses Cloudflare Images for the existing public
 
 A hosted build requires `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and the exact `NEXT_PUBLIC_SITE_URL` at build time and in the Worker environment. The Worker additionally receives `DATABASE_URL` as a runtime secret. Never put the database URL, migration credentials, Supabase secret/service-role keys or mail credentials in browser-visible variables or committed Wrangler configuration. The current variable contract remains documented in [.env.example](.env.example); hosted Supabase provisioning and the first release belong to DEV0055 and DEV0056.
 
+The guarded staging deployment reads those four values from the ignored, owner-only `.env.staging.local`, validates the exact staging project/origin and transaction-pooler login, and passes only those approved names to Wrangler through a temporary owner-only secrets file that is removed after the command. Validation and dry-run modes do not create a Worker; a real deployment also refuses a dirty worktree so the release always identifies a commit:
+
+```sh
+npm run deploy:staging:check
+npm run deploy:staging:dry-run
+npm run deploy:staging
+```
+
+The first real release targets only the generated `workers.dev` hostname. Do not add a route or Custom Domain to `wrangler.jsonc`; DNS delegation, Cloudflare Access and `staging.movx.club` remain separate gated steps in DEV0056.
+
 ## Local database foundation
 
 Database work is optional for the current frontend preview. To validate the in-progress foundation, start Docker Desktop and run:
