@@ -1,6 +1,6 @@
 # Ticket DEV0056: Staging release and domain rehearsal
 
-- Status: In progress
+- Status: Blocked
 - Created: 2026-09-23
 - Last updated: 2026-09-23
 - Milestone: M0 hosted integration environment
@@ -105,7 +105,7 @@ No Worker, DNS or domain release is claimed yet. The dependency order now permit
 | `package.json`                         | Adds explicit validation, dry-run and clean-commit deployment commands for staging.                                                                                                 |
 | `wrangler.jsonc`                       | Declares the four required binding names without values while retaining the route-free staging-only target.                                                                         |
 | `README.md`                            | Documents the secret-safe commands and the `workers.dev`-before-DNS boundary.                                                                                                       |
-| Cloudflare staging Worker and secrets  | Pending first deployment after local validation, review and commit.                                                                                                                 |
+| Cloudflare staging Worker and secrets  | The first deployment attempt registered the account's `workers.dev` subdomain and uploaded assets, but Cloudflare rejected Worker creation until the account email is verified.     |
 | Cloudflare DNS / `staging.movx.club`   | Pending authoritative zone and Worker Custom Domain.                                                                                                                                |
 | Porkbun nameserver and email DNS state | Pending safe delegation with mail preservation.                                                                                                                                     |
 
@@ -115,6 +115,7 @@ No Worker, DNS or domain release is claimed yet. The dependency order now permit
 - 2026-09-23: Proposed Cloudflare Access for staging; final adoption remains dependent on DEV0055's abuse-control decision.
 - 2026-09-23: With user approval, changed the sequence so DEV0056 starts after DEV0054 completion and DEV0055's foundational database/Auth checks, while DEV0055's remaining browser and account-isolation checks run against the deployed staging origin. The temporary `workers.dev` deployment must pass before any nameserver or custom-domain change.
 - 2026-09-23: Confirmed Wrangler OAuth authentication and that no existing `movx-club-staging` deployment is present. Adopted a filtered temporary `--secrets-file` deployment rather than putting public or private values in Wrangler configuration; the temporary file is owner-only and removed in `finally`, and real deployment refuses an uncommitted worktree.
+- 2026-09-23: Attempted the first real release from commit `ef93a01`. Wrangler registered the account-level `workers.dev` subdomain and uploaded 61 static assets, then Cloudflare rejected Worker creation with error `10034` because the account email was not verified. A subsequent deployment-list query returned an empty list, so no Worker release is claimed. No DNS or custom-domain change occurred.
 
 ### Contracts, configuration, and operations
 
@@ -128,22 +129,24 @@ The local release guard, application checks and Cloudflare upload dry run pass. 
 - `npx --no-install wrangler deployments list --name movx-club-staging --json` — passed; confirmed no existing deployment would be overwritten.
 - `npm run deploy:staging:check` — passed against the ignored staging environment file; validated exactly four approved bindings without printing values.
 - `npm run deploy:staging:dry-run` — passed; vinext built all five environments, Wrangler prepared 72 static assets and the Worker bundle, displayed only hidden values for the four approved bindings, and exited in dry-run mode without uploading or creating a Worker.
+- `npm run deploy:staging` — blocked by Cloudflare after building and uploading 61 assets; all four binding values remained hidden, but Worker creation failed with account-email verification error `10034`.
+- `npx --no-install wrangler deployments list --name movx-club-staging --json` after the failed release — passed and returned an empty list, confirming that no deployable Worker version was created.
 - `npm test` — passed, 52 tests including accepted configuration, rejected production-origin configuration and Wrangler binding-boundary coverage.
 - `npm run lint` — passed.
 - `npm run typecheck` — passed.
 - `npm run format:check` — passed.
 - `git diff --check` — passed.
 
-| Criterion | Evidence                                                                                                                                               | Result  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- |
-| AC1       | Staging configuration, binding allowlist, tests and Cloudflare dry run pass; a reviewed commit has not yet been deployed.                              | Partial |
-| AC2       | The exact origin is enforced locally; custom domain, DNS and TLS are not configured.                                                                   | Partial |
-| AC3       | DNS/mail cutover not performed.                                                                                                                        | Not run |
-| AC4       | Automated application tests pass; hosted responsive smoke not run.                                                                                     | Partial |
-| AC5       | Hosted Auth rehearsal not run.                                                                                                                         | Not run |
-| AC6       | Hosted Phantom rehearsal not run.                                                                                                                      | Not run |
-| AC7       | Invalid deployment configuration fails closed in tests; hosted access, origin and session failure paths remain untested.                               | Partial |
-| AC8       | Reproducible check, dry-run and deployment commands plus clean-commit enforcement are documented; deployment and rollback evidence remain outstanding. | Partial |
+| Criterion | Evidence                                                                                                                                                              | Result  |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| AC1       | Staging configuration, binding allowlist, tests and Cloudflare dry run pass; commit `ef93a01` is reviewed but Cloudflare account verification blocked its deployment. | Partial |
+| AC2       | The exact origin is enforced locally; custom domain, DNS and TLS are not configured.                                                                                  | Partial |
+| AC3       | DNS/mail cutover not performed.                                                                                                                                       | Not run |
+| AC4       | Automated application tests pass; hosted responsive smoke not run.                                                                                                    | Partial |
+| AC5       | Hosted Auth rehearsal not run.                                                                                                                                        | Not run |
+| AC6       | Hosted Phantom rehearsal not run.                                                                                                                                     | Not run |
+| AC7       | Invalid deployment configuration fails closed in tests; hosted access, origin and session failure paths remain untested.                                              | Partial |
+| AC8       | Reproducible check, dry-run and deployment commands plus clean-commit enforcement are documented; deployment and rollback evidence remain outstanding.                | Partial |
 
 ## Risks, limitations, and follow-ups
 
@@ -151,11 +154,12 @@ The local release guard, application checks and Cloudflare upload dry run pass. 
 - Nameserver mistakes can interrupt business email even when the website deploy succeeds.
 - Cloudflare Workers resource limits, Supabase free-tier availability and cross-region database latency may require measured follow-up work.
 - The `workers.dev` URL can be used for an initial infrastructure smoke test, but exact-origin Auth/wallet behavior is accepted only on `staging.movx.club`.
-- Next action: review and commit the guarded release checkpoint, then run the real deployment to the temporary `workers.dev` hostname and smoke-test it before any DNS change.
+- Blocker: Cloudflare requires the account email address to be verified before Workers can be published.
+- Next action: verify the Cloudflare account email, rerun `npm run deploy:staging`, and smoke-test the resulting temporary `workers.dev` hostname before any DNS change.
 
 ## Completion and review references
 
 - Completed: Not completed.
-- Commit: Not created.
+- Commit: `ef93a01` (`[DEV0056] Guard staging Worker deployment`).
 - Review: No pull request or independent review exists.
-- Deployment or release: Not deployed.
+- Deployment or release: The first attempt was rejected with Cloudflare error `10034`; the deployment list remains empty.

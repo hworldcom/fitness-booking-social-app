@@ -51,6 +51,7 @@ COR0004 completes only when all three direct tickets are Completed or explicitly
 - 2026-09-23: DEV0054 completed after the rebuilt Worker served representative public, protected, API and image requests and passed focused desktop/mobile Chrome smokes on macOS 27.0. DEV0056 may consume this runtime after DEV0055 completes.
 - 2026-09-23: DEV0055 linked the dedicated Frankfurt staging project, applied and linted all seven reviewed migrations, verified the password-bound least-privilege runtime login through the transaction pooler, and validated the MovX Club six-digit-code template through custom SMTP. The two-account rehearsal remains in progress.
 - 2026-09-23: With user approval, DEV0056 began before DEV0055 completion because the exact-origin browser deployment is required to finish DEV0055's browser-secret, access-boundary and two-account evidence. This does not weaken the release gates: the Worker must pass on `workers.dev`, mail DNS must be copied and verified, and Cloudflare Access must protect the custom hostname before public staging use.
+- 2026-09-23: The first DEV0056 release attempt registered the account's `workers.dev` subdomain but Cloudflare rejected Worker creation because the account email was not verified. No Worker deployment or DNS change exists; verification and a clean retry are required.
 
 ## Validation results
 
@@ -66,7 +67,7 @@ Pending. Validate link symmetry, direct-ticket statuses and the final cross-prov
 ## Completion and review references
 
 - Completed: Not completed.
-- Direct development tickets: DEV0054 Completed; DEV0055 In progress; DEV0056 In progress.
+- Direct development tickets: DEV0054 Completed; DEV0055 In progress; DEV0056 Blocked pending Cloudflare account email verification.
 - Commit: Not applicable — coordination-record IDs are not used in commit subjects.
 - Review: No pull request or independent review exists.
 - Deployment or release: Not deployed.
