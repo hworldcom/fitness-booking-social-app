@@ -48,17 +48,82 @@ With the Auth stack, runtime role and configured production app already running 
 - `app_runtime` is `NOLOGIN`, cannot bypass row-level security (RLS), and has only the data privileges that forced RLS permits.
 - `anon`, `authenticated` and `service_role` have no `app` schema usage. The `app` schema is absent from the local Data API schema list.
 
-Provision an environment-specific login outside migrations, using a generated secret from the deployment secret manager, then grant it the checked-in group role:
+For local development, `npm run db:runtime` provisions the legacy `repx_runtime_login` described above. Hosted environments use a distinct login outside migrations so a password rotation never rewrites schema history.
 
-```sql
-create role repx_runtime_login login password '<generated-secret>';
-grant app_runtime to repx_runtime_login;
+## Hosted staging runtime login
+
+The hosted staging project is `movx-club-staging` (`qaluvzwudsqrchdwxcsb`) in `eu-central-1`. Store its runtime password in macOS Keychain so local verification does not require a duplicate plaintext environment file.
+
+Generate a 64-character hexadecimal password directly to the clipboard without printing it:
+
+```bash
+openssl rand -hex 32 | tr -d '\n' | pbcopy
 ```
 
-Set the server-only `DATABASE_URL` to that login's connection-pooler URL. Hosted serverless connections require TLS, one application connection per warm instance and prepared statements disabled; `src/server/db/client.ts` enforces those driver settings. Never prefix the variable with `NEXT_PUBLIC_` or commit the populated value.
+Open **Keychain Access**, press **Command-N** to create a password item, and use these exact values:
+
+- Keychain Item Name: `movx-club-staging-database`
+- Account Name: `movx_staging_runtime_login`
+- Password: paste the generated value
+
+Save the item. To copy it later, open the item, select **Show password**, authenticate with the Mac login or Touch ID, and copy the value. Create the database login once in the Supabase SQL editor by replacing only the placeholder below. Run the query without saving it as a reusable dashboard query:
+
+```sql
+create role movx_staging_runtime_login
+  login password '<generated-secret>'
+  nosuperuser nocreatedb nocreaterole inherit noreplication nobypassrls;
+grant app_runtime to movx_staging_runtime_login;
+```
+
+Do not put this SQL in a migration: the password is an environment secret, and rerunning `create role` should fail visibly rather than silently replace an existing credential. In the project's **Connect** dialog, select the shared **Transaction pooler** connection. Keep its exact host, database and port, replace the `postgres` username with `movx_staging_runtime_login`, and include the project-ref suffix required by the shared pooler. The resulting username is `movx_staging_runtime_login.qaluvzwudsqrchdwxcsb`, and the port must be `6543`.
+
+Clear the clipboard after creating the login, then run the secret-safe verification. The command first loads an existing ignored `.env.staging.local` fallback; when that file is absent, macOS may ask whether Terminal or Node may access the Keychain item, in which case choose **Allow Once**:
+
+```bash
+printf '' | pbcopy
+npm run db:verify:hosted-runtime
+```
+
+The verifier reads the URL from the ignored fallback file when present, or otherwise reads the password from Keychain and constructs the pooler URL only in process memory; it never prints either value. It confirms transaction-pooler use, TLS-compatible runtime settings, role attributes, `app_runtime` membership, absence of `app_owner` membership, selected direct-access restrictions and the browser-facing roles' lack of `app` schema usage.
+
+For a non-macOS environment or when Keychain lookup is unavailable, `.env.staging.local` may contain the same two variables shown below. This file matches the repository's `.env.*` ignore rule and must have owner-only permissions:
+
+```dotenv
+DATABASE_URL=postgresql://movx_staging_runtime_login.qaluvzwudsqrchdwxcsb:<generated-secret>@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+EXPECTED_DATABASE_USER=movx_staging_runtime_login
+```
+
+Run `chmod 600 .env.staging.local` before verification. Never pass the populated URL directly in shell history.
+
+After validation, put the assembled `DATABASE_URL` in the Cloudflare staging secret store during DEV0056; never prefix it with `NEXT_PUBLIC_` or commit the populated value. The application connection in `src/server/db/client.ts` already enforces one client connection per warm instance, TLS for non-local hosts and disabled prepared statements.
+
+Rotate the login without changing its grants by running `alter role movx_staging_runtime_login password '<new-generated-secret>';`, updating the deployment secret, redeploying, and rerunning the verifier. Supavisor may cache the previous password briefly, so retry with a bounded delay before treating an immediate authentication failure as persistent. To retire this login, remove it from every deployment first, then run `revoke app_runtime from movx_staging_runtime_login;` and `drop role movx_staging_runtime_login;`.
+
+## Hosted staging Auth and SMTP
+
+Configure `movx-club-staging` through the Supabase Dashboard. These values intentionally mirror the checked-in local OTP contract while keeping the hosted origin exact:
+
+| Dashboard area                                | Setting                                   | Staging value                                                                     |
+| --------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------- |
+| Authentication → URL Configuration            | Site URL                                  | `https://staging.movx.club`                                                       |
+| Authentication → URL Configuration            | Redirect URLs                             | `https://staging.movx.club/sign-in` only                                          |
+| Authentication → Sign In / Providers → Email  | Email provider and signup                 | Enabled                                                                           |
+| Authentication → Sign In / Providers → Email  | Confirm email                             | Disabled; entering the emailed OTP is the verification step                       |
+| Authentication → Sign In / Providers          | Anonymous sign-ins / manual linking       | Disabled                                                                          |
+| Authentication → Email Templates → Magic Link | Subject                                   | `Your MovX Club sign-in code`                                                     |
+| Authentication → Email Templates → Magic Link | Body                                      | Contents of `supabase/templates/email-otp.html`, including `{{ .Token }}`         |
+| Authentication → Email settings               | OTP length / expiry / resend interval     | 6 digits / 3600 seconds / 60 seconds                                              |
+| Authentication → SMTP Settings                | Sender name / address                     | `MovX Club` / `hello@movx.club`                                                   |
+| Authentication → SMTP Settings                | Host / port / encryption                  | `smtp.porkbun.com` / `587` / STARTTLS                                             |
+| Authentication → SMTP Settings                | Username                                  | `hello@movx.club`                                                                 |
+| Authentication → SMTP Settings                | Password                                  | Porkbun mailbox password; never the Porkbun account password                      |
+| Authentication → Rate Limits                  | Auth emails                               | 10 per hour for access-restricted staging                                         |
+| Authentication → Rate Limits                  | Sign-ins/signups / verification / refresh | Keep the current 30 per 5 minutes / 30 per 5 minutes / 150 per 5 minutes defaults |
+
+Keep CAPTCHA disabled until the browser flow supplies the selected provider's client token. After saving SMTP, send one Dashboard test email before attempting the two-account application rehearsal. Porkbun documents `smtp.porkbun.com:587` with STARTTLS and the full hosted email address as the username.
 
 ## Hosted changes and recovery
 
-No hosted project is linked or deployed by DEV0015. When a project is selected, copy its actual connection values from Supabase, disable the unused Data API integration (or at minimum keep `app` unexposed), and apply reviewed migrations with a suitable migration connection. Never run a linked reset against a project containing user, receipt or pending-operation data.
+The staging project is linked locally and has the repository's reviewed migration history. Disable the unused Data API integration (or at minimum keep `app` unexposed), and continue to apply hosted migrations only after reviewing `supabase db push --linked --dry-run`. Never run a linked reset against a project containing user, receipt or pending-operation data.
 
 Do not rewrite an applied migration. Correct or roll forward the schema with a new migration, and document the compatibility and recovery steps in its owning feature ticket. The exact foundation decision and validation record remains in [DEV0015](../tickets/archive/backend/DEV0015-supabase-database-foundation.md).

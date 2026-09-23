@@ -24,6 +24,7 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset --local",
     "db:runtime": "node scripts/prepare-local-runtime-database.mjs",
+    "db:verify:hosted-runtime": "node --env-file-if-exists=.env.staging.local scripts/verify-hosted-runtime-database.mjs",
     "db:seed": "node scripts/seed-local-database.mjs",
     "db:test": "supabase test db --local",
     "db:lint": "supabase db lint --local",

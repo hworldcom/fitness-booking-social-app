@@ -47,6 +47,7 @@ COR0004 completes only when all three direct tickets are Completed or explicitly
 - 2026-09-23: DEV0053 completed independently as commit `7038f2e`; the remaining deployment diff is no longer mixed with that feature implementation.
 - 2026-09-23: Adopted `staging.movx.club` as the staging hostname. Cloudflare Workers is the application origin; Cloudflare should create its custom-domain DNS record and certificate after `movx.club` is an active Cloudflare zone.
 - 2026-09-23: DEV0054 now produces a complete Workers bundle, but its required local request smoke is blocked because Cloudflare `workerd` requires macOS 13.5+ and the current host reports 13.1. Continue that validation on a supported macOS or Linux host before DEV0056 begins.
+- 2026-09-23: DEV0055 linked the dedicated Frankfurt staging project, applied and linted all seven reviewed migrations, verified the password-bound least-privilege runtime login through the transaction pooler, and delivered a working sign-in email through custom SMTP. Template inspection and the two-account rehearsal remain in progress.
 
 ## Validation results
 
@@ -62,7 +63,7 @@ Pending. Validate link symmetry, direct-ticket statuses and the final cross-prov
 ## Completion and review references
 
 - Completed: Not completed.
-- Direct development tickets: DEV0054 Blocked; DEV0055 Ready; DEV0056 Draft.
+- Direct development tickets: DEV0054 Blocked; DEV0055 In progress; DEV0056 Draft.
 - Commit: Not applicable — coordination-record IDs are not used in commit subjects.
 - Review: No pull request or independent review exists.
 - Deployment or release: Not deployed.
