@@ -2,7 +2,7 @@
 
 - Status: In progress
 - Created: 2026-09-23
-- Last updated: 2026-09-23
+- Last updated: 2026-09-24
 - Milestone: M0 hosted integration environment
 - Converted from: Not applicable — created as a coordination record
 - Tracked development tickets: [DEV0054 — Cloudflare Workers runtime foundation](../../archive/backend/DEV0054-cloudflare-workers-runtime-foundation.md), [DEV0055 — Hosted Supabase staging environment](../backend/DEV0055-hosted-supabase-staging-environment.md), and [DEV0056 — Staging release and domain rehearsal](../backend/DEV0056-staging-release-and-domain-rehearsal.md)
@@ -52,6 +52,11 @@ COR0004 completes only when all three direct tickets are Completed or explicitly
 - 2026-09-23: DEV0055 linked the dedicated Frankfurt staging project, applied and linted all seven reviewed migrations, verified the password-bound least-privilege runtime login through the transaction pooler, and validated the MovX Club six-digit-code template through custom SMTP. The two-account rehearsal remains in progress.
 - 2026-09-23: With user approval, DEV0056 began before DEV0055 completion because the exact-origin browser deployment is required to finish DEV0055's browser-secret, access-boundary and two-account evidence. This does not weaken the release gates: the Worker must pass on `workers.dev`, mail DNS must be copied and verified, and Cloudflare Access must protect the custom hostname before public staging use.
 - 2026-09-23: The first DEV0056 release attempt registered the account's `workers.dev` subdomain but Cloudflare rejected Worker creation because the account email was not verified. No Worker deployment or DNS change exists; verification and a clean retry are required.
+- 2026-09-23: After account email verification, DEV0056 deployed clean commit `60e2cfe` to the temporary `workers.dev` hostname. Representative public and signed-out server-boundary HTTP checks passed; responsive browser, access, DNS/mail and exact-origin rehearsals remain.
+- 2026-09-23: DEV0056 enabled Worker-level Cloudflare Access for all traffic. Unauthenticated website and API requests now redirect to Access before reaching the Worker; authorized-browser confirmation and DNS/mail cutover remain.
+- 2026-09-23: Cloudflare became authoritative for the imported `movx.club` zone with the Porkbun website and mail records preserved. DEV0056 added `staging.movx.club` as a Worker Custom Domain; DNS resolution, TLS verification and its unauthenticated Access redirect pass. Authorized exact-origin browser rehearsal remains.
+- 2026-09-23: The user completed the allowlisted Cloudflare Access flow and confirmed that MovX Club loads at `https://staging.movx.club`. Hosted Supabase account isolation and Phantom rehearsals remain.
+- 2026-09-24: The user selected public access for the stable staging site. Worker-level Access was narrowed to temporary previews, while DEV0055's bounded Supabase Auth email and request limits remain the low-volume abuse boundary. A fresh unauthenticated request to `https://staging.movx.club` returned the application directly with valid TLS.
 
 ## Validation results
 
@@ -67,7 +72,7 @@ Pending. Validate link symmetry, direct-ticket statuses and the final cross-prov
 ## Completion and review references
 
 - Completed: Not completed.
-- Direct development tickets: DEV0054 Completed; DEV0055 In progress; DEV0056 Blocked pending Cloudflare account email verification.
+- Direct development tickets: DEV0054 Completed; DEV0055 In progress; DEV0056 In progress with its Worker release available through the public `staging.movx.club` Custom Domain and temporary previews protected by Access.
 - Commit: Not applicable — coordination-record IDs are not used in commit subjects.
 - Review: No pull request or independent review exists.
 - Deployment or release: Not deployed.
