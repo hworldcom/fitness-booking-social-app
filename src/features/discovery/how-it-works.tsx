@@ -1,406 +1,330 @@
 import Link from "next/link";
 import {
+  ArrowDown,
   ArrowRight,
-  BadgeCheck,
   Building2,
-  CalendarDays,
+  CalendarCheck,
+  Check,
+  CircleDollarSign,
   Compass,
-  Dumbbell,
+  Mail,
+  RefreshCw,
   ShieldCheck,
   UserRound,
-  Users,
   WalletCards,
 } from "lucide-react";
 
+const journey = [
+  {
+    number: "01",
+    title: "Discover",
+    description: "Find local gyms, classes and events.",
+    Icon: Compass,
+    featured: false,
+  },
+  {
+    number: "02",
+    title: "Get access",
+    description: "Choose a membership, pass or event ticket.",
+    Icon: WalletCards,
+    featured: false,
+  },
+  {
+    number: "03",
+    title: "Show up",
+    description: "Use your access and optionally share participation.",
+    Icon: CalendarCheck,
+    featured: false,
+  },
+  {
+    number: "04",
+    title: "Keep it flexible",
+    description: "Transfer eligible remaining access when plans change.",
+    Icon: RefreshCw,
+    featured: true,
+  },
+] as const;
+
+const peopleBenefits = [
+  "Memberships, passes and events in one place",
+  "Transfer eligible access when plans change",
+  "Meet people through activities and participation",
+  "Community based on actually showing up",
+];
+
+const businessBenefits = [
+  "Publish memberships, passes and sponsored events",
+  "Define transfer eligibility and access rules",
+  "Reach new customers through discovery and community",
+  "Predictable pricing without hidden MovX surcharges",
+];
+
+const rails = [
+  { number: "1", title: "Email-first", detail: "Account", Icon: Mail },
+  {
+    number: "2",
+    title: "EURC",
+    detail: "Payment",
+    Icon: CircleDollarSign,
+  },
+  {
+    number: "3",
+    title: "Programmable",
+    detail: "Access",
+    Icon: ShieldCheck,
+  },
+  {
+    number: "4",
+    title: "Verifiable",
+    detail: "Transfer",
+    Icon: RefreshCw,
+  },
+] as const;
+
 export function HowItWorksScreen() {
   return (
-    <div className="how-it-works">
-      <section className="guide-hero" aria-labelledby="guide-title">
-        <div className="guide-hero-copy">
+    <div className="how-it-works how-it-works-redesign">
+      <section className="hiw-hero" aria-labelledby="guide-title">
+        <div className="hiw-hero-copy">
           <span className="eyebrow">
             FLEXIBLE FITNESS ACCESS · BUILT AROUND PEOPLE
           </span>
           <h1 id="guide-title">
-            Flexible for members. Built to grow with fitness businesses.
+            Fitness access that doesn&apos;t lose <span>its value.</span>
           </h1>
           <p>
-            MovX Club connects flexible fitness access with real
-            communities—giving members more freedom and businesses a direct way
-            to grow.
+            Discover gyms, memberships and events in one place. Use your access,
+            connect through the activities you attend, and transfer eligible
+            memberships when your plans change.
           </p>
           <div className="discovery-links">
             <Link className="button lime" href="/explore">
-              Explore activities <ArrowRight size={17} aria-hidden="true" />
+              Explore MovX <ArrowRight size={17} aria-hidden="true" />
             </Link>
-            <Link className="button guide-ghost-button" href="#access-journey">
-              See how it works
+            <Link className="button hiw-ghost-button" href="#access-journey">
+              See how it works <ArrowDown size={16} aria-hidden="true" />
             </Link>
           </div>
         </div>
-        <aside className="guide-hero-summary" aria-label="MovX Club in brief">
-          <span>ONE PLACE TO</span>
-          <strong>Discover</strong>
-          <strong>Choose</strong>
-          <strong>Show up</strong>
-          <p>Access first. Community follows.</p>
-        </aside>
+
+        <div className="hiw-membership-wrap">
+          <article
+            className="hiw-membership-card"
+            aria-label="Example transferable membership"
+          >
+            <div className="hiw-membership-head">
+              <span>NORTHSIDE STRENGTH</span>
+              <strong>3 Month Membership</strong>
+            </div>
+            <div className="hiw-membership-status">
+              <span>
+                <Check size={12} strokeWidth={3} aria-hidden="true" />
+                TRANSFERABLE
+              </span>
+              <strong>42 days remaining</strong>
+            </div>
+            <div
+              className="hiw-membership-progress"
+              role="progressbar"
+              aria-label="Membership time remaining"
+              aria-valuemin={0}
+              aria-valuemax={90}
+              aria-valuenow={42}
+            >
+              <span />
+            </div>
+            <strong className="hiw-membership-price">€69 / month</strong>
+            <p>Access: strength floor + open gym</p>
+            <div className="hiw-membership-transfer">
+              <span>Plans changed?</span>
+              <strong>
+                Transfer remaining access <ArrowRight size={15} />
+              </strong>
+            </div>
+          </article>
+          <small>Product concept · Solana Devnet demo</small>
+        </div>
       </section>
 
-      <nav className="guide-audiences" aria-label="Choose your MovX Club guide">
-        <Link href="#for-people" className="guide-audience people">
-          <UserRound size={27} strokeWidth={1.5} aria-hidden="true" />
-          <span>
-            <small>FOR PEOPLE</small>
-            <strong>Keep access useful. Find your people.</strong>
-            <p>
-              Choose what fits, transfer eligible memberships and connect by
-              showing up.
-            </p>
-          </span>
-          <ArrowRight size={20} aria-hidden="true" />
-        </Link>
-        <Link href="#for-clubs" className="guide-audience clubs">
-          <Building2 size={27} strokeWidth={1.5} aria-hidden="true" />
-          <span>
-            <small>FOR FITNESS BUSINESSES</small>
-            <strong>Grow community, not overhead</strong>
-            <p>
-              Offer flexible access with minimal fees and no surprise MovX
-              transaction charges.
-            </p>
-          </span>
-          <ArrowRight size={20} aria-hidden="true" />
-        </Link>
-      </nav>
-
       <section
-        className="guide-journey"
+        className="hiw-journey"
         id="access-journey"
         aria-labelledby="access-journey-title"
       >
-        <div className="guide-section-heading">
+        <div className="hiw-section-heading">
           <span className="eyebrow">THE SIMPLE VERSION</span>
-          <h2 id="access-journey-title">From discovery to showing up.</h2>
-          <p>
-            Start with the activity. Pick the access option that makes sense for
-            you. The product should make that choice easy to understand.
-          </p>
+          <h2 id="access-journey-title">From discovery to flexible access.</h2>
+          <p>See the full fitness-access journey at a glance.</p>
         </div>
-        <ol className="guide-journey-steps">
-          <li>
-            <span className="guide-step-number">01</span>
-            <Compass size={22} aria-hidden="true" />
-            <h3>Discover</h3>
-            <p>
-              Browse places, activities and events without needing an account.
-            </p>
-          </li>
-          <li>
-            <span className="guide-step-number">02</span>
-            <WalletCards size={22} aria-hidden="true" />
-            <h3>Choose access</h3>
-            <p>
-              Compare a membership, a pass or an event ticket before paying.
-            </p>
-          </li>
-          <li>
-            <span className="guide-step-number">03</span>
-            <CalendarDays size={22} aria-hidden="true" />
-            <h3>Show up</h3>
-            <p>Use your access for the place, session or event you selected.</p>
-          </li>
-          <li>
-            <span className="guide-step-number">04</span>
-            <Users size={22} aria-hidden="true" />
-            <h3>Stay connected</h3>
-            <p>
-              See useful activity from the fitness communities you belong to.
-            </p>
-          </li>
-        </ol>
-      </section>
-
-      <section className="guide-people" id="for-people">
-        <div className="guide-section-heading guide-section-heading-wide">
-          <div>
-            <span className="eyebrow">FOR PEOPLE</span>
-            <h2>Access that can keep working for you.</h2>
-          </div>
-          <p>
-            Choose what fits today, keep eligible access useful when plans
-            change and meet people through the activities you actually attend.
-          </p>
-        </div>
-
-        <div className="guide-benefit-grid" aria-label="Benefits for people">
-          <article>
-            <WalletCards size={23} aria-hidden="true" />
-            <div>
-              <span className="guide-product-kicker">KEEP ACCESS USEFUL</span>
-              <h3>Transfer an eligible membership</h3>
-              <p>
-                If a business marks a membership transferable, its remaining
-                access can move to another eligible person under clear terms.
-              </p>
-            </div>
-          </article>
-          <article>
-            <Users size={23} aria-hidden="true" />
-            <div>
-              <span className="guide-product-kicker">
-                COMMUNITY THAT IS REAL
+        <ol className="hiw-journey-grid">
+          {journey.map(({ number, title, description, Icon, featured }) => (
+            <li className={featured ? "featured" : undefined} key={number}>
+              <span className="hiw-step-number">{number}</span>
+              <span className="hiw-step-icon">
+                <Icon size={18} aria-hidden="true" />
               </span>
-              <h3>Connect by taking part</h3>
-              <p>
-                Discover shared sessions and useful participation updates—built
-                around showing up, not popularity mechanics.
-              </p>
-            </div>
-          </article>
-        </div>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </li>
+          ))}
+        </ol>
 
-        <div className="guide-product-heading">
-          <span className="eyebrow">CHOOSE YOUR ACCESS</span>
-          <h3>Membership, pass or event?</h3>
-        </div>
-
-        <div className="guide-access-grid">
-          <article className="membership">
-            <div className="guide-product-icon">
-              <WalletCards size={23} aria-hidden="true" />
-            </div>
-            <span className="guide-product-kicker">ONGOING ACCESS</span>
-            <h3>Memberships</h3>
-            <p>
-              Recurring access to a fitness business, with the duration,
-              included activities, transfer eligibility and renewal terms shown
-              up front.
-            </p>
-            <strong>Best for a regular routine</strong>
-          </article>
-          <article className="pass">
-            <div className="guide-product-icon">
-              <Dumbbell size={23} aria-hidden="true" />
-            </div>
-            <span className="guide-product-kicker">FLEXIBLE ACCESS</span>
-            <h3>Passes</h3>
-            <p>
-              Access for one class or a limited number of visits, without the
-              commitment of an ongoing membership.
-            </p>
-            <strong>Best for trying something or mixing it up</strong>
-          </article>
-          <article className="event">
-            <div className="guide-product-icon">
-              <CalendarDays size={23} aria-hidden="true" />
-            </div>
-            <span className="guide-product-kicker">DATED EXPERIENCE</span>
-            <h3>Events</h3>
-            <p>
-              A ticket for a specific fitness or community experience, with the
-              date, location and what is included made clear.
-            </p>
-            <strong>Best for a shared moment</strong>
-          </article>
-        </div>
-
-        <div className="guide-sponsored-event">
-          <div className="guide-sponsored-icon">
-            <BadgeCheck size={24} aria-hidden="true" />
+        <div className="hiw-transfer" aria-label="Example membership transfer">
+          <span className="hiw-transfer-label">THE MEMORABLE MOMENT</span>
+          <div className="hiw-transfer-person">
+            <strong>Alex</strong>
+            <small>42 days remaining</small>
           </div>
-          <div>
-            <span className="eyebrow">SPONSORED EVENTS</span>
-            <h3>A business can help cover the cost of showing up.</h3>
-            <p>
-              A sponsor funds all or part of an event so people can attend for
-              free or at a lower price. It is still an event—not a contest,
-              prize pool or vote.
-            </p>
+          <ArrowRight className="hiw-transfer-arrow" aria-hidden="true" />
+          <div className="hiw-transfer-terms">
+            <strong className="hiw-transfer-badge">ELIGIBLE TRANSFER</strong>
+            <span className="hiw-transfer-fee">
+              <CircleDollarSign size={12} aria-hidden="true" />
+              Small transfer fee paid to the gym
+            </span>
           </div>
-        </div>
-
-        <div className="discovery-links">
-          <Link className="button dark" href="/explore">
-            Explore activities <ArrowRight size={17} aria-hidden="true" />
-          </Link>
+          <ArrowRight className="hiw-transfer-arrow" aria-hidden="true" />
+          <div className="hiw-transfer-person">
+            <strong>Sam</strong>
+            <small>receives remaining access</small>
+          </div>
         </div>
       </section>
 
-      <section
-        className="guide-community-loop"
-        aria-labelledby="community-loop-title"
-      >
-        <div>
-          <span className="eyebrow">WHERE COMMUNITY FITS</span>
-          <h2 id="community-loop-title">
-            Access gets you through the door. Showing up builds the community.
+      <section className="hiw-value" aria-labelledby="hiw-value-title">
+        <div className="hiw-section-heading">
+          <span className="eyebrow">TWO SIDES. ONE PRODUCT.</span>
+          <h2 id="hiw-value-title">
+            Better for members. Better for businesses.
           </h2>
         </div>
-        <div className="guide-loop-steps">
-          <span>
-            <Building2 size={21} aria-hidden="true" />A business offers access
-          </span>
-          <ArrowRight size={18} aria-hidden="true" />
-          <span>
-            <UserRound size={21} aria-hidden="true" />A person chooses what fits
-          </span>
-          <ArrowRight size={18} aria-hidden="true" />
-          <span>
-            <Users size={21} aria-hidden="true" />
-            Participation creates connection
-          </span>
+        <div className="hiw-value-grid">
+          <article className="hiw-value-card people" id="for-people">
+            <span className="hiw-card-label">
+              <UserRound size={14} aria-hidden="true" /> FOR PEOPLE
+            </span>
+            <h3>Your access stays useful.</h3>
+            <p>
+              Choose what fits today without assuming your plans will never
+              change.
+            </p>
+            <ul>
+              {peopleBenefits.map((benefit) => (
+                <li key={benefit}>
+                  <Check size={13} strokeWidth={3} aria-hidden="true" />
+                  {benefit}
+                </li>
+              ))}
+            </ul>
+          </article>
+
+          <article className="hiw-value-card business" id="for-clubs">
+            <span className="hiw-card-label">
+              <Building2 size={14} aria-hidden="true" /> FOR FITNESS BUSINESSES
+            </span>
+            <h3>Grow without another transaction tax.</h3>
+            <p>
+              MovX provides distribution, programmable access and community
+              infrastructure without making percentage transaction fees the core
+              business model.
+            </p>
+            <ul>
+              {businessBenefits.map((benefit) => (
+                <li key={benefit}>
+                  <Check size={13} strokeWidth={3} aria-hidden="true" />
+                  {benefit}
+                </li>
+              ))}
+            </ul>
+            <Link href="/clubs/sign-in" className="hiw-card-link">
+              Manage a fitness business <ArrowRight size={15} />
+            </Link>
+          </article>
         </div>
-        <p>
-          The shared activity view will stay intentionally small: useful updates
-          about real participation, without engagement mechanics.
+        <p className="hiw-fee-note">
+          MovX platform pricing is separate from payment, network and account
+          costs. Every unavoidable cost is shown before approval.
         </p>
       </section>
 
-      <section className="guide-clubs" id="for-clubs">
-        <div className="guide-section-heading guide-section-heading-wide">
-          <div>
-            <span className="eyebrow">FOR FITNESS BUSINESSES</span>
-            <h2>Grow your community—not your overhead.</h2>
-          </div>
+      <section className="hiw-solana" aria-labelledby="hiw-solana-title">
+        <div className="hiw-solana-heading">
+          <span className="eyebrow">WEB2 UX. WEB3 RAILS.</span>
+          <h2 id="hiw-solana-title">
+            Solana stays underneath the fitness experience.
+          </h2>
           <p>
-            Reach people through clear access products while keeping platform
-            costs minimal, predictable and visible before anything is approved.
+            People can browse and create a MovX account without first
+            understanding wallets. A wallet is connected only when a
+            wallet-backed action needs it.
           </p>
         </div>
-        <div className="guide-club-grid">
-          <article>
-            <Compass size={22} aria-hidden="true" />
-            <h3>Reach more people</h3>
-            <p>
-              Put memberships, passes and events in one discovery experience
-              that gives newcomers a clear first step.
-            </p>
-          </article>
-          <article>
-            <BadgeCheck size={22} aria-hidden="true" />
-            <h3>Keep platform fees minimal</h3>
-            <p>
-              MovX is designed around light, predictable platform pricing so
-              more of each sale stays with the business.
-            </p>
-          </article>
-          <article>
-            <ShieldCheck size={22} aria-hidden="true" />
-            <h3>No transaction surprises</h3>
-            <p>
-              MovX adds no per-transaction platform surcharge or hidden charge.
-              Any unavoidable network cost is shown before approval.
-            </p>
-          </article>
-        </div>
-        <div className="guide-club-future">
-          <ShieldCheck size={21} aria-hidden="true" />
-          <p>
-            Business pricing and payments are not live yet. Solana
-            network/account costs still exist; future screens must show the
-            exact cost and who pays it before approval.
-          </p>
-        </div>
-        <div className="discovery-links">
-          <Link className="button lime" href="/clubs/sign-in">
-            Manage a club <ArrowRight size={17} aria-hidden="true" />
-          </Link>
-          <Link className="button secondary" href="/explore">
-            See public discovery
-          </Link>
-        </div>
-      </section>
-
-      <section className="guide-now" aria-labelledby="guide-now-title">
-        <div className="guide-section-heading">
-          <span className="eyebrow">AN HONEST PREVIEW</span>
-          <h2 id="guide-now-title">What works today—and what comes next.</h2>
-        </div>
-        <div className="guide-now-grid">
-          <article>
-            <span className="guide-now-label available">YOU CAN TRY NOW</span>
-            <h3>Explore the product direction</h3>
-            <ul>
-              <li>Browse demonstration activities and places</li>
-              <li>Open event and class details</li>
-              <li>Preview checkout and club access screens</li>
-              <li>Sign in and connect a wallet without moving funds</li>
-            </ul>
-          </article>
-          <article>
-            <span className="guide-now-label planned">PLANNED NEXT</span>
-            <h3>Use real access products</h3>
-            <ul>
-              <li>Buy and manage memberships or passes</li>
-              <li>Purchase event tickets</li>
-              <li>Transfer eligible access when terms permit it</li>
-              <li>Publish business inventory and sponsored events</li>
-              <li>See every platform and network cost before approval</li>
-            </ul>
-          </article>
-        </div>
-        <p className="guide-fixture-note">
-          Everything currently shown is demonstration data. No membership, pass,
-          ticket or sponsorship purchase is live, and no real funds move.
+        <ol className="hiw-rails">
+          {rails.map(({ number, title, detail, Icon }, index) => (
+            <li key={number}>
+              <div className="hiw-rail-node">
+                <span>{number}</span>
+                <Icon size={18} aria-hidden="true" />
+                <strong>{title}</strong>
+                <small>{detail}</small>
+              </div>
+              {index < rails.length - 1 && (
+                <ArrowRight className="hiw-rail-arrow" aria-hidden="true" />
+              )}
+            </li>
+          ))}
+        </ol>
+        <p className="hiw-technical-note">
+          MovX uses Solana for test-EURC settlement and programmable access
+          state. Membership state can be controlled by a Solana program using
+          program-derived addresses (PDAs); NFTs are not required.
         </p>
       </section>
 
-      <section className="guide-faq">
+      <section className="hiw-demo" aria-labelledby="hiw-demo-title">
+        <div>
+          <span className="eyebrow">BUILT FOR THE HACKATHON</span>
+          <h2 id="hiw-demo-title">Be first to try MovX.</h2>
+          <p>
+            Discover → Sign in → Connect wallet → Buy access → Use access →
+            Transfer an eligible membership
+          </p>
+          <span className="hiw-demo-status">
+            <i /> Solana Devnet · Test EURC · No real funds
+          </span>
+        </div>
+        <div className="hiw-demo-actions">
+          <Link className="button dark" href="/coming-soon">
+            Join the waitlist <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+
+      <section className="hiw-faq" aria-labelledby="hiw-faq-title">
         <span className="eyebrow">GOOD TO KNOW</span>
-        <h2>A few common questions.</h2>
-        <details>
-          <summary>Can I browse without an account?</summary>
-          <p>
-            Yes. Public discovery is open. An account will be needed for
-            personal actions such as managing access, tickets and transfers.
-          </p>
-        </details>
-        <details>
-          <summary>Do I need a wallet?</summary>
-          <p>
-            Not to browse or sign in. A wallet may support future test payments
-            and transfers, but connecting one does not approve a transaction.
-            Each payment will need its own clear confirmation.
-          </p>
-        </details>
-        <details>
-          <summary>What can be transferred?</summary>
-          <p>
-            Only access marked as transferable by the fitness business. Its
-            rules, timing and any limits must be visible before a transfer.
-            Transfer capability is planned and is not live in this preview.
-          </p>
-        </details>
-        <details>
-          <summary>What is a sponsored event?</summary>
-          <p>
-            It is a normal event whose cost is partly or fully covered by a
-            sponsor. People attend the experience; there is no winner, voting
-            process or prize pool.
-          </p>
-        </details>
-        <details>
-          <summary>What does MovX cost a fitness business?</summary>
-          <p>
-            MovX is designed for minimal, predictable platform fees, with no
-            MovX per-transaction surcharge or hidden charge. Solana
-            network/account costs still exist and must be shown before approval.
-            Exact pricing and payments are not live in this preview.
-          </p>
-        </details>
-      </section>
-
-      <section className="guide-preview">
-        <span className="eyebrow">START WITH DISCOVERY</span>
-        <h2>See what moving with MovX Club could feel like.</h2>
-        <p>
-          Browse the demonstration catalogue and compare the kinds of fitness
-          experiences the access model is designed to support.
-        </p>
-        <div className="discovery-links">
-          <Link className="button lime" href="/explore">
-            Explore activities <ArrowRight size={17} aria-hidden="true" />
-          </Link>
+        <h2 id="hiw-faq-title">Three quick answers.</h2>
+        <div className="hiw-faq-grid">
+          <details>
+            <summary>Do I need a wallet?</summary>
+            <p>
+              Not to browse or create your account. A wallet enters only for a
+              wallet-backed action such as a test-EURC payment or transfer.
+            </p>
+          </details>
+          <details>
+            <summary>What can be transferred?</summary>
+            <p>
+              Eligible remaining membership access, when the fitness business
+              allows it and the recipient meets its stated rules.
+            </p>
+          </details>
+          <details>
+            <summary>Is this using real money?</summary>
+            <p>
+              No. The hackathon experience targets Solana Devnet and test EURC,
+              so the demonstration does not move real funds.
+            </p>
+          </details>
         </div>
       </section>
     </div>

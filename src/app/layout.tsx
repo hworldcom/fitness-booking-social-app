@@ -3,6 +3,8 @@ import "@fontsource-variable/manrope";
 import "@fontsource-variable/bricolage-grotesque";
 import "./globals.css";
 import "./club-theme.css";
+import "./how-it-works.css";
+import "./coming-soon.css";
 import { ActorProvider } from "@/auth/client/actor-provider";
 import { AuthSessionProvider } from "@/auth/client/session-provider";
 import { PreviewShell } from "@/features/preview/preview-shell";

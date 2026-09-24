@@ -12,106 +12,96 @@ test("public guide is reachable by keyboard and explains the access model clearl
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/how-it-works$/);
 
-  const peopleAudience = page.locator('.guide-audiences a[href="#for-people"]');
-  const clubAudience = page.locator('.guide-audiences a[href="#for-clubs"]');
-  await expect(peopleAudience).toContainText("FOR PEOPLE");
-  await expect(peopleAudience).toContainText(
-    "Keep access useful. Find your people.",
-  );
-  await expect(peopleAudience).toContainText("transfer eligible memberships");
-  await expect(clubAudience).toContainText("FOR FITNESS BUSINESSES");
-  await expect(clubAudience).toContainText("Grow community, not overhead");
-  await expect(clubAudience).toContainText(
-    "no surprise MovX transaction charges",
-  );
-
   await expect(
     page.getByRole("heading", {
-      name: "Flexible for members. Built to grow with fitness businesses.",
+      name: "Fitness access that doesn't lose its value.",
     }),
   ).toBeVisible();
-  await expect(page.locator(".guide-hero-copy > p")).toHaveText(
-    "MovX Club connects flexible fitness access with real communities—giving members more freedom and businesses a direct way to grow.",
+  await expect(page.locator(".hiw-hero-copy > p")).toContainText(
+    "transfer eligible memberships when your plans change",
   );
+  const membership = page.getByRole("article", {
+    name: "Example transferable membership",
+  });
+  await expect(membership).toContainText("3 Month Membership");
+  await expect(membership).toContainText("TRANSFERABLE");
+  await expect(membership).toContainText("42 days remaining");
+  await expect(membership).toContainText("€69 / month");
+  await expect(membership).toContainText("Transfer remaining access");
   await expect(
-    page.getByRole("heading", { name: "From discovery to showing up." }),
+    page.getByText("Product concept · Solana Devnet demo"),
   ).toBeVisible();
-  for (const name of ["Discover", "Choose access", "Show up", "Stay connected"])
+
+  const journeyLink = page.getByRole("link", {
+    name: "See how it works",
+    exact: true,
+  });
+  await journeyLink.focus();
+  await expect(journeyLink).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/how-it-works#access-journey$/);
+  await expect(
+    page.getByRole("heading", {
+      name: "From discovery to flexible access.",
+    }),
+  ).toBeVisible();
+  for (const name of ["Discover", "Get access", "Show up", "Keep it flexible"])
     await expect(
       page.getByRole("heading", { name, exact: true }),
     ).toBeVisible();
+  await expect(page.locator(".hiw-journey-grid li.featured")).toContainText(
+    "Transfer eligible remaining access",
+  );
 
-  const audienceSections = page.locator("#for-people, #for-clubs");
-  await expect(audienceSections).toHaveCount(2);
-  await peopleAudience.focus();
-  await expect(peopleAudience).toBeFocused();
-  await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/\/how-it-works#for-people$/);
+  const transfer = page.locator(".hiw-transfer");
+  await expect(transfer).toContainText("Alex");
+  await expect(transfer).toContainText("ELIGIBLE TRANSFER");
+  await expect(transfer).toContainText("Small transfer fee paid to the gym");
+  await expect(transfer).toContainText("Sam");
 
   const peopleSection = page.locator("#for-people");
   await expect(
     peopleSection.getByRole("heading", {
-      name: "Access that can keep working for you.",
-    }),
-  ).toBeVisible();
-  await expect(
-    peopleSection.getByRole("heading", {
-      name: "Transfer an eligible membership",
-    }),
-  ).toBeVisible();
-  await expect(
-    peopleSection.getByRole("heading", { name: "Connect by taking part" }),
-  ).toBeVisible();
-  await expect(peopleSection).toContainText("under clear terms");
-  for (const name of ["Memberships", "Passes", "Events"]) {
-    await expect(
-      peopleSection.getByRole("heading", { name, exact: true }),
-    ).toBeVisible();
-  }
-  await expect(
-    peopleSection.getByRole("heading", {
-      name: "A business can help cover the cost of showing up.",
+      name: "Your access stays useful.",
     }),
   ).toBeVisible();
   await expect(peopleSection).toContainText(
-    "not a contest, prize pool or vote",
+    "Transfer eligible access when plans change",
+  );
+  await expect(peopleSection).toContainText(
+    "Community based on actually showing up",
   );
 
-  await clubAudience.focus();
-  await expect(clubAudience).toBeFocused();
-  await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/\/how-it-works#for-clubs$/);
+  const clubSection = page.locator("#for-clubs");
   await expect(
-    page.getByRole("heading", {
-      name: "Grow your community—not your overhead.",
+    clubSection.getByRole("heading", {
+      name: "Grow without another transaction tax.",
     }),
   ).toBeVisible();
+  await expect(clubSection).toContainText(
+    "Publish memberships, passes and sponsored events",
+  );
+  await expect(clubSection).toContainText(
+    "Predictable pricing without hidden MovX surcharges",
+  );
   await expect(
     page.getByRole("heading", {
-      name: "Access gets you through the door. Showing up builds the community.",
+      name: "Solana stays underneath the fitness experience.",
     }),
   ).toBeVisible();
-
-  for (const name of [
-    "Reach more people",
-    "Keep platform fees minimal",
-    "No transaction surprises",
-  ])
+  for (const rail of ["Email-first", "EURC", "Programmable", "Verifiable"])
     await expect(
-      page.getByRole("heading", { name, exact: true }),
+      page.locator(".hiw-rail-node").filter({ hasText: rail }),
     ).toBeVisible();
-  await expect(clubAudience).toContainText("minimal fees");
-  await expect(page.locator("#for-clubs")).toContainText(
-    "no per-transaction platform surcharge or hidden charge",
-  );
-  await expect(page.locator("#for-clubs")).toContainText(
-    "network/account costs still exist",
+  await expect(page.locator(".hiw-solana")).toContainText(
+    "program-derived addresses (PDAs); NFTs are not required",
   );
   await expect(
-    page.getByRole("heading", {
-      name: "What works today—and what comes next.",
-    }),
+    page.getByRole("heading", { name: "Be first to try MovX." }),
   ).toBeVisible();
+  await expect(page.locator(".hiw-demo-status")).toHaveText(
+    "Solana Devnet · Test EURC · No real funds",
+  );
   const guide = page.locator(".how-it-works");
   await expect(guide).not.toContainText(/challenge/i);
   await expect(guide).not.toContainText(/reaction/i);
@@ -120,24 +110,15 @@ test("public guide is reachable by keyboard and explains the access model clearl
   await walletQuestion.focus();
   await page.keyboard.press("Enter");
   await expect(
-    page.getByText(/connecting one does not approve a transaction/),
+    page.getByText(/A wallet enters only for a wallet-backed action/),
   ).toBeVisible();
-  const sponsoredQuestion = page.getByText("What is a sponsored event?", {
+  const realMoneyQuestion = page.getByText("Is this using real money?", {
     exact: true,
   });
-  await sponsoredQuestion.focus();
+  await realMoneyQuestion.focus();
   await page.keyboard.press("Enter");
   await expect(
-    page.getByText(/cost is partly or fully covered by a sponsor/),
-  ).toBeVisible();
-  const businessCostQuestion = page.getByText(
-    "What does MovX cost a fitness business?",
-    { exact: true },
-  );
-  await businessCostQuestion.focus();
-  await page.keyboard.press("Enter");
-  await expect(
-    page.getByText(/Exact pricing and payments are not live/),
+    page.getByText(/demonstration does not move real funds/),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -171,10 +152,9 @@ test("public guide is reachable by keyboard and explains the access model clearl
     });
   }
   await page
-    .getByRole("link", { name: "Explore activities", exact: true })
-    .first()
+    .getByRole("link", { name: "Join the waitlist", exact: true })
     .click();
-  await expect(page).toHaveURL(/\/explore$/);
+  await expect(page).toHaveURL(/\/coming-soon$/);
 });
 
 test("direct catalogue search includes supported products and handles empty or malformed queries", async ({

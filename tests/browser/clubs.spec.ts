@@ -7,32 +7,23 @@ test("club value proposition leads to the bounded club access page", async ({
   const clubSection = page.locator("#for-clubs");
   await expect(
     clubSection.getByRole("heading", {
-      name: "Grow your community—not your overhead.",
+      name: "Grow without another transaction tax.",
     }),
   ).toBeVisible();
-  for (const heading of [
-    "Reach more people",
-    "Keep platform fees minimal",
-    "No transaction surprises",
-  ]) {
-    await expect(
-      clubSection.getByRole("heading", { name: heading, exact: true }),
-    ).toBeVisible();
-  }
-  await expect(
-    clubSection.getByText(/Business pricing and payments are not live yet/),
-  ).toBeVisible();
   await expect(clubSection).toContainText(
-    "no per-transaction platform surcharge or hidden charge",
+    "Predictable pricing without hidden MovX surcharges",
   );
-  await expect(clubSection).toContainText("network/account costs still exist");
+  await expect(clubSection).toContainText("sponsored events");
+  await expect(page.locator(".hiw-fee-note")).toContainText(
+    "payment, network and account costs",
+  );
   await page.screenshot({
     path: testInfo.outputPath("club-value-proposition.png"),
     fullPage: true,
   });
 
   const manageClub = clubSection.getByRole("link", {
-    name: "Manage a club",
+    name: "Manage a fitness business",
     exact: true,
   });
   await manageClub.focus();
