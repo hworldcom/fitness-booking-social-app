@@ -19,7 +19,7 @@ test("home discovery links preserve usable catalogue destinations", async ({
   });
   const explore = page
     .locator(".club-hero")
-    .getByRole("link", { name: "Explore classes" });
+    .getByRole("link", { name: "Explore activities" });
   await explore.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/explore$/);
@@ -30,10 +30,9 @@ test("home discovery links preserve usable catalogue destinations", async ({
   await page.goto("/");
   await page
     .locator(".club-hero")
-    .getByRole("link", { name: "Find a challenge" })
+    .getByRole("link", { name: "How it works" })
     .click();
-  await expect(page).toHaveURL(/\/challenges$/);
-  await expect(page.locator(".challenge-card")).toHaveCount(3);
+  await expect(page).toHaveURL(/\/how-it-works$/);
   for (const studio of ["Fabrik Training", "Kru Tiger"]) {
     await page.goto("/");
     await page.locator(".club-studio-card").filter({ hasText: studio }).click();
@@ -87,21 +86,10 @@ test("club layout remains usable at narrow and intermediate widths", async ({
     ).toBe(true);
     const button = page
       .locator(".club-hero")
-      .getByRole("link", { name: "Explore classes" });
+      .getByRole("link", { name: "Explore activities" });
     await button.focus();
     await expect(button).toBeFocused();
     await expect(button).toBeInViewport();
-    expect(
-      await page.locator(".challenge-card-facts dd").evaluateAll((nodes) =>
-        nodes.every((node) => {
-          const card = node.closest(".challenge-card")!;
-          return (
-            node.getBoundingClientRect().right <=
-            card.getBoundingClientRect().right
-          );
-        }),
-      ),
-    ).toBe(true);
     await page.locator(".club-studio-card").last().scrollIntoViewIfNeeded();
     await expect
       .poll(() =>
@@ -128,6 +116,8 @@ test("simplified navigation keeps destinations and nested selection without head
   page,
 }, testInfo) => {
   await page.goto("/");
+  const configuredGuest =
+    (await page.request.get("/api/auth/actor")).status() === 401;
   const nav = page.getByRole("navigation", {
     name:
       testInfo.project.name === "mobile"
@@ -135,23 +125,32 @@ test("simplified navigation keeps destinations and nested selection without head
         : "Main navigation",
     exact: true,
   });
+  await expect(
+    page.getByRole("link", { name: "Create a challenge", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    nav.getByRole("link", { name: "Challenges", exact: true }),
+  ).toHaveCount(0);
   for (const [label, route] of [
     ["Explore", "/explore"],
-    ["Challenges", "/challenges"],
+    ["My Access", "/my-access"],
     ["Profile", "/profile"],
-    ["Feed", "/"],
+    ["Home", "/"],
   ]) {
     const link = nav.getByRole("link", { name: label, exact: true });
     await link.focus();
     await page.keyboard.press("Enter");
-    await page.waitForURL((url) =>
-      label === "Profile"
-        ? url.pathname === "/profile" || url.pathname === "/sign-in"
+    const privateGuestRoute =
+      configuredGuest && ["My Access", "Profile"].includes(label);
+    await expect(page).toHaveURL((url) =>
+      privateGuestRoute
+        ? url.pathname === "/sign-in" &&
+          url.searchParams.get("returnTo") === route
         : url.pathname === route,
     );
     const destination = new URL(page.url());
-    if (label === "Profile" && destination.pathname === "/sign-in") {
-      expect(destination.searchParams.get("returnTo")).toBe("/profile");
+    if (destination.pathname === "/sign-in") {
+      expect(destination.searchParams.get("returnTo")).toBe(route);
     } else {
       await expect(link).toHaveAttribute("aria-current", "page");
     }

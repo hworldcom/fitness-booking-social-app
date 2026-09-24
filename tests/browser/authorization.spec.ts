@@ -23,7 +23,6 @@ test("configured guests keep public routes and are redirected from private pages
   for (const path of [
     "/",
     "/explore",
-    "/challenges",
     "/classes/muay-thai",
     "/events/run-and-coffee",
     "/sign-in",
@@ -35,10 +34,9 @@ test("configured guests keep public routes and are redirected from private pages
 
   for (const path of [
     "/profile",
+    "/my-access",
     "/users/max",
-    "/challenges/new",
     "/events/new",
-    "/challenges/draft-00000000-0000-4000-8000-000000000001",
     "/events/event-draft-00000000-0000-4000-8000-000000000001",
   ]) {
     await page.goto(path);
@@ -52,22 +50,19 @@ test("configured guest actions request sign-in without changing preview state", 
   page,
 }) => {
   await requireConfiguredGuest(page);
-  await page.goto("/challenges");
+  await page.goto("/explore?view=events");
   await page.evaluate(() => localStorage.removeItem("repx-club-preview-v1"));
 
-  await page
-    .getByRole("button", { name: "Save The show-up club", exact: true })
-    .click();
-  let destination = new URL(page.url());
+  await page.getByRole("link", { name: "Create event", exact: true }).click();
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === "/sign-in" &&
+      url.searchParams.get("returnTo") === "/events/new",
+  );
+  const destination = new URL(page.url());
   expect(destination.pathname).toBe("/sign-in");
-  expect(destination.searchParams.get("returnTo")).toBe("/challenges");
+  expect(destination.searchParams.get("returnTo")).toBe("/events/new");
   expect(
     await page.evaluate(() => localStorage.getItem("repx-club-preview-v1")),
   ).toBeNull();
-
-  await page.goto("/challenges");
-  await page.getByRole("button", { name: "My drafts", exact: true }).click();
-  destination = new URL(page.url());
-  expect(destination.pathname).toBe("/sign-in");
-  expect(destination.searchParams.get("returnTo")).toBe("/challenges");
 });

@@ -1,12 +1,26 @@
 import { test, expect } from "@playwright/test";
 
-test("event discovery, ticket preview and winner rules stay distinct", async ({
+async function requirePreviewMode(page: import("@playwright/test").Page) {
+  const response = await page.request.get("/api/auth/actor");
+  const actor: unknown = await response.json();
+  test.skip(
+    !(
+      response.status() === 200 &&
+      typeof actor === "object" &&
+      actor !== null &&
+      "status" in actor &&
+      actor.status === "preview"
+    ),
+    "Event-draft browser persistence requires preview mode.",
+  );
+}
+
+test("event discovery and ticket preview stay honest", async ({
   page,
 }, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/challenges");
-  await page.getByRole("link", { name: "Explore events", exact: true }).click();
+  await page.goto("/explore?view=events");
   const eventsTab = page.getByRole("tab", { name: "Events", exact: true });
   await expect(eventsTab).toHaveAttribute("aria-selected", "true");
   await page
@@ -86,19 +100,6 @@ test("event discovery, ticket preview and winner rules stay distinct", async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.goto("/challenges/show-up-club");
-  const award = page.getByRole("region", { name: "Winner and prize" });
-  await expect(award).toContainText("One winner · 10 test EURC");
-  await expect(award).toContainText("Most gym-confirmed visits");
-  await expect(award).toContainText(
-    "Fabrik Training chooses one winner within 24 hours",
-  );
-  await expect(award).toContainText("If nobody qualifies");
-  await expect(award).toContainText("No winner has been selected");
-  await page.screenshot({
-    path: testInfo.outputPath("winner-example.png"),
-    fullPage: true,
-  });
   await page.goto("/events/missing");
   await expect(
     page.getByRole("heading", { name: "A little off the beaten track." }),
@@ -109,6 +110,7 @@ test("event discovery, ticket preview and winner rules stay distinct", async ({
 test("event drafts validate, persist privately, reload and delete", async ({
   page,
 }, testInfo) => {
+  await requirePreviewMode(page);
   await page.goto("/explore?view=events");
   await page.getByRole("link", { name: "Create event", exact: true }).click();
   await page.getByRole("button", { name: "Save event draft" }).click();
@@ -176,7 +178,9 @@ test("event drafts validate, persist privately, reload and delete", async ({
     JSON.parse(localStorage.getItem("repx-club-preview-v1") || "{}"),
   );
   expect(state.eventDrafts).toEqual([]);
-  expect(state.drafts).toEqual([]);
+  expect(state.version).toBe(2);
+  expect(state.drafts).toBeUndefined();
+  expect(state.saved).toBeUndefined();
   expect(state.bookings).toBeUndefined();
   await page.goto(url);
   await expect(

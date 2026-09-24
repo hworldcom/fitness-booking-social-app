@@ -6,16 +6,12 @@ import {
   ArrowUpRight,
   X,
   ArrowRight,
-  Bookmark,
-  Users,
   Timer,
   Zap,
   Flame,
   Flower2,
   Footprints,
 } from "lucide-react";
-import type { ClubChallenge } from "@/domain/catalogue";
-import { challengeDate, formatEurc } from "./format";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -129,100 +125,6 @@ export function Artwork({
       </span>
       <span className="graphic-meta">MOVX CLUB / MOVEMENT FOR EVERYONE</span>
     </div>
-  );
-}
-export function ChallengeCard({
-  challenge,
-  saved,
-  onToggleSaved,
-}: {
-  challenge: ClubChallenge;
-  saved: boolean;
-  onToggleSaved: () => void;
-}) {
-  return (
-    <article className="challenge-card">
-      <div className="challenge-art">
-        <Link
-          href={`/challenges/${challenge.id}`}
-          aria-label={`View ${challenge.title}`}
-        >
-          <Artwork kind={challenge.artwork} />
-          <span className="art-pill">
-            <Pill tone={challenge.mode === "sponsored" ? "lime" : "white"}>
-              {challenge.mode === "sponsored" ? (
-                <Zap size={12} />
-              ) : (
-                <Users size={12} />
-              )}
-              {challenge.mode === "sponsored" ? "Sponsored" : "Community"}
-            </Pill>
-          </span>
-        </Link>
-        <button
-          className={`save-button ${saved ? "selected" : ""}`}
-          aria-label={`${saved ? "Unsave" : "Save"} ${challenge.title}`}
-          aria-pressed={saved}
-          onClick={onToggleSaved}
-        >
-          <Bookmark size={17} fill={saved ? "currentColor" : "none"} />
-        </button>
-      </div>
-      <div className="challenge-content">
-        <div className="eyebrow muted">
-          {challenge.discipline} <span>·</span> {challenge.duration}
-        </div>
-        <Link href={`/challenges/${challenge.id}`}>
-          <h3>{challenge.title}</h3>
-        </Link>
-        <p>{challenge.organizer}</p>
-        <dl className="challenge-card-facts">
-          <div>
-            <dt>Example entry</dt>
-            <dd>
-              {challenge.entry
-                ? `${formatEurc(challenge.entry)} test EURC`
-                : "Free · proposed"}
-            </dd>
-          </div>
-          <div>
-            <dt>Starts</dt>
-            <dd>
-              <time dateTime={challenge.startDate}>
-                {challengeDate(challenge.startDate)}
-              </time>
-            </dd>
-          </div>
-          <div>
-            <dt>Decision</dt>
-            <dd>
-              {challenge.mode === "community"
-                ? "Participants vote"
-                : "Organizer chooses"}
-            </dd>
-          </div>
-        </dl>
-        <span className="challenge-preview-label">
-          Preview · Not open for entry
-        </span>
-        {challenge.award && (
-          <p className="challenge-award-summary">{challenge.award.summary}</p>
-        )}
-        <div className="challenge-bottom">
-          <span>
-            <strong>{formatEurc(challenge.prize)}</strong>
-            <small>test EURC pool · fixture</small>
-          </span>
-          <Link
-            className="circle-link"
-            href={`/challenges/${challenge.id}`}
-            aria-label={`Open ${challenge.title}`}
-          >
-            <ArrowUpRight size={21} />
-          </Link>
-        </div>
-      </div>
-    </article>
   );
 }
 export function Modal({

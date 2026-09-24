@@ -6,7 +6,6 @@ import {
   ArrowLeft,
   BadgeCheck,
   Check,
-  Flag,
   Footprints,
   RotateCcw,
   UserRound,
@@ -14,15 +13,8 @@ import {
 import { useActor } from "@/auth/client/actor-provider";
 import { profileInitials } from "@/auth/profile-presentation";
 import { signInHref } from "@/auth/return-to";
-import {
-  Avatar,
-  ChallengeCard,
-  Empty,
-  Modal,
-  Pill,
-  SectionTitle,
-} from "@/components/ui";
-import { challenges, people } from "@/features/preview/catalogue";
+import { Avatar, Empty, Modal, Pill } from "@/components/ui";
+import { people } from "@/features/preview/catalogue";
 import { useDemo } from "@/features/preview/store";
 
 type DemoPerson = (typeof people)[number];
@@ -75,21 +67,10 @@ function PublicDemoProfile({ person }: { person: DemoPerson }) {
         <Footprints size={24} />
         <h2>Movement is better with company.</h2>
         <p>
-          Follow {person.name.split(" ")[0]} to see their demo class joins and
-          challenges in your Following feed.
+          Follow {person.name.split(" ")[0]} to see explicitly shared demo
+          participation in your Following feed.
         </p>
       </section>
-      <SectionTitle title="Something to try together" href="/challenges" />
-      <div className="challenge-grid">
-        {challenges.slice(0, 2).map((challenge) => (
-          <ChallengeCard
-            key={challenge.id}
-            challenge={challenge}
-            saved={state.saved.includes(challenge.id)}
-            onToggleSaved={() => dispatch({ type: "save", id: challenge.id })}
-          />
-        ))}
-      </div>
     </>
   );
 }
@@ -168,10 +149,6 @@ function OwnerProfile() {
           </p>
           <Pill>Account profile</Pill>
         </div>
-        <Link href="/challenges/new" className="button dark">
-          <Flag size={16} />
-          Start a challenge
-        </Link>
       </div>
       <section className="profile-public-note account-profile-note">
         <BadgeCheck size={24} />
@@ -236,8 +213,8 @@ function ResetPreviewButton({
       {open && (
         <Modal title="Start with a clean slate?" onClose={() => setOpen(false)}>
           <p className="dialog-copy">
-            This clears browser-only drafts, saved challenges and follows. It
-            does not change your account, funds or blockchain records.
+            This clears browser-only event drafts and follows. It does not
+            change your account, funds or blockchain records.
           </p>
           <div className="button-row">
             <button

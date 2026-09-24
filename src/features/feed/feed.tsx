@@ -7,18 +7,14 @@ import {
   ArrowRight,
   Check,
   CalendarDays,
-  Users,
-  Flag,
   Footprints,
   Coffee,
 } from "lucide-react";
-import { challenges, people, studios } from "@/features/preview/catalogue";
+import { people, studios } from "@/features/preview/catalogue";
 import { useDemo } from "@/features/preview/store";
 import {
   Avatar,
   AvatarStack,
-  Artwork,
-  ChallengeCard,
   Empty,
   Pill,
   SectionTitle,
@@ -42,15 +38,15 @@ export function Feed() {
             <span>MOVE TOGETHER.</span>
           </h1>
           <p>
-            Discover local gyms and studios, join classes, and take on
-            challenges together.
+            Discover local gyms and studios, choose flexible access, and keep
+            showing up together.
           </p>
           <div className="club-hero-actions">
             <Link href="/explore" className="button lime">
-              Explore classes <ArrowRight size={18} />
+              Explore activities <ArrowRight size={18} />
             </Link>
-            <Link href="/challenges" className="button secondary">
-              Find a challenge <ArrowUpRight size={18} />
+            <Link href="/how-it-works" className="button secondary">
+              How it works <ArrowUpRight size={18} />
             </Link>
           </div>
           <ShoeDoodle className="club-shoe" />
@@ -101,40 +97,39 @@ export function Feed() {
                       <Link href="/users/daniel">
                         <strong>Daniel Park</strong>
                       </Link>{" "}
-                      created a challenge
+                      is joining an event
                     </p>
                     <small>2 hours ago · Demo activity</small>
                   </div>
                   <Pill tone="subtle">
-                    <Flag size={12} />
-                    Community
+                    <CalendarDays size={12} />
+                    Event
                   </Pill>
                 </div>
-                <p className="activity-caption big">
-                  “The best kind of morning starts with a run and ends with
-                  coffee. Who’s in?”
-                </p>
-                <Link
-                  href="/challenges/before-coffee"
-                  className="feed-challenge"
-                >
-                  <div className="feed-challenge-thumb">
-                    <Artwork kind="run" />
-                  </div>
+                <div className="activity-session">
+                  <span className="session-icon">
+                    <Coffee size={25} />
+                  </span>
                   <div>
-                    <span className="eyebrow">RUNNING · 7 DAYS</span>
-                    <h3>The 5K before coffee</h3>
-                    <span className="meta-line">
-                      <Users size={14} />5 of 10 spots · €2.00 test EURC entry
-                    </span>
+                    <h3>Run &amp; Coffee</h3>
+                    <p>Sunday Coffee · Sun, 27 Sep · 09:00</p>
                   </div>
-                  <ArrowUpRight size={22} />
-                </Link>
+                  <Link
+                    href="/events/run-and-coffee"
+                    className="circle-link"
+                    aria-label="View Run & Coffee"
+                  >
+                    <ArrowUpRight size={20} />
+                  </Link>
+                </div>
+                <p className="activity-caption">
+                  A social 5K, a coffee and a few familiar faces.
+                </p>
                 <div className="activity-footer">
                   <AvatarStack />
                   <span>Good company is part of the plan.</span>
-                  <Link className="text-link" href="/challenges/before-coffee">
-                    Take a look <ArrowRight size={15} />
+                  <Link className="text-link" href="/events/run-and-coffee">
+                    View event <ArrowRight size={15} />
                   </Link>
                 </div>
               </article>
@@ -189,19 +184,6 @@ export function Feed() {
                 action="Explore activities"
               />
             )}
-          </div>
-          <SectionTitle title="A little extra motivation" href="/challenges" />
-          <div className="two-card-grid">
-            {challenges.slice(1).map((challenge) => (
-              <ChallengeCard
-                key={challenge.id}
-                challenge={challenge}
-                saved={state.saved.includes(challenge.id)}
-                onToggleSaved={() =>
-                  dispatch({ type: "save", id: challenge.id })
-                }
-              />
-            ))}
           </div>
         </div>
         <aside className="feed-rail">

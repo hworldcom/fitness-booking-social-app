@@ -10,7 +10,7 @@ export type ClassFilters = {
 };
 
 export type DiscoveryItem = {
-  kind: "Class" | "Studio" | "Event" | "Challenge";
+  kind: "Class" | "Studio" | "Event";
   title: string;
   detail: string;
   href: string;

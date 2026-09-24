@@ -4,8 +4,8 @@
 - Created: 2026-09-24
 - Last updated: 2026-09-24
 - Milestone: MVP product pivot and public presentation
-- Coordination: [COR0005 — Fitness-access product pivot](../../current/organisatory/COR0005-fitness-access-product-pivot.md)
-- Related records: depends on completed [DEV0058 — Adopt the fitness-access MVP contract](../organisatory/DEV0058-fitness-access-mvp-contract.md); revises the delivered presentation from [DEV0020](DEV0020-discovery-and-how-it-works.md), [DEV0051](DEV0051-club-value-proposition-and-sign-in-entry.md), and [DEV0053](DEV0053-distinct-personal-and-club-guide.md); integrates with [DEV0060](../../current/frontend/DEV0060-replace-challenge-surfaces-with-access-navigation.md)
+- Coordination: [COR0005 — Fitness-access product pivot](../organisatory/COR0005-fitness-access-product-pivot.md)
+- Related records: depends on completed [DEV0058 — Adopt the fitness-access MVP contract](../organisatory/DEV0058-fitness-access-mvp-contract.md); revises the delivered presentation from [DEV0020](DEV0020-discovery-and-how-it-works.md), [DEV0051](DEV0051-club-value-proposition-and-sign-in-entry.md), and [DEV0053](DEV0053-distinct-personal-and-club-guide.md); integrates with completed [DEV0060](DEV0060-replace-challenge-surfaces-with-access-navigation.md)
 
 ## Objective and context
 

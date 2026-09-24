@@ -1,6 +1,6 @@
-import { challengeDate } from "@/components/format";
+import { eventDate } from "@/components/format";
 import type { DiscoveryItem } from "@/domain/discovery";
-import { challenges, classes, events, studios } from "./catalogue";
+import { classes, events, studios } from "./catalogue";
 
 // Only the public, labelled fixture catalogue is indexed. Browser drafts are private.
 export const previewDiscoveryCatalogue: DiscoveryItem[] = [
@@ -23,16 +23,8 @@ export const previewDiscoveryCatalogue: DiscoveryItem[] = [
   ...events.map((item): DiscoveryItem => ({
     kind: "Event",
     title: item.title,
-    detail: `${item.host} · ${item.location} · ${challengeDate(item.dateISO)}`,
+    detail: `${item.host} · ${item.location} · ${eventDate(item.dateISO)}`,
     href: `/events/${item.id}`,
     activity: item.discipline,
-  })),
-  ...challenges.map((item): DiscoveryItem => ({
-    kind: "Challenge",
-    title: item.title,
-    detail: `${item.organizer} · ${item.date} · ${item.mode === "community" ? "Participants vote" : "Organizer chooses"}`,
-    href: `/challenges/${item.id}`,
-    activity: item.discipline,
-    venueId: item.venueId,
   })),
 ];

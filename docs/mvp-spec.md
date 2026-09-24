@@ -4,7 +4,7 @@ Last updated: 24 September 2026.
 
 **Current product direction:** MovX Club connects flexible fitness access with lightweight community. People discover fitness businesses and experiences, purchase memberships, passes and event tickets, participate in person, and may explicitly share verified activity. Fitness businesses publish access products and events, including events whose attendee access is funded or subsidized by a sponsor.
 
-**Implementation status:** the responsive Next.js preview, local database/authentication foundation, protected actor context, email one-time-passcode accounts, optional wallet-linking work, club-wallet authority work and staging foundation exist. The public description and **How it works** guide now present the access-focused direction, while challenge routes, fixtures and primary navigation from the superseded direction remain for DEV0060 to replace. The preview has no persistent product catalogue, usable membership, paid access, sponsored-event settlement, confirmed reservation, real EURC payment or deployed membership program. [COR0005](../tickets/current/organisatory/COR0005-fitness-access-product-pivot.md) coordinates the remaining public-interface transition.
+**Implementation status:** the responsive Next.js preview, local database/authentication foundation, protected actor context, email one-time-passcode accounts, optional wallet-linking work, club-wallet authority work and staging foundation exist. The public description, **How it works** guide and Home/Explore/My Access/Profile navigation now present the access-focused direction; retired product-challenge routes, fixtures and local actions are removed. My Access remains an explicit empty preview. The preview has no persistent product catalogue, usable membership, paid access, sponsored-event settlement, confirmed reservation, real EURC payment or deployed membership program.
 
 **Brand:** MovX Club. Public positioning leads with fitness, people and access. Solana, Phantom and EURC are enabling infrastructure, not the opening product explanation. The existing visual identity remains the baseline; DEV0059 delivered the access-first public-guide hierarchy without replacing that identity.
 
@@ -48,10 +48,11 @@ Confirmed requirements and proposed defaults remain distinct. Do not turn a prop
 | C22 | Challenges removed                               | Challenge creation, funding, entry, voting, winner selection, prize pools, claims and challenge progress are outside the current MVP. Wallet-authentication challenges are unrelated security nonces and remain.                                                       |
 | C23 | Sponsored events are events                      | A sponsored event is an ordinary event where a sponsor covers some or all attendee access. It has no winner, vote, prize pool or merit judgment.                                                                                                                       |
 | C24 | Product family                                   | Memberships provide ongoing access; passes provide bounded class/visit access; events provide dated experiences; sponsorship is a funding variant of an event rather than a separate competition product.                                                              |
+| C25 | Predictable business costs                       | MovX uses minimal, predictable platform pricing with no MovX per-transaction surcharge or hidden charge. Unavoidable payment, network and account costs remain distinct and must be shown with the fee payer before approval.                                          |
 
 ### Superseded decision history
 
-Earlier C02–C06 made challenge creation and settlement central; earlier C09 excluded memberships; earlier C19 included Cheers. The user replaced those decisions on 24 September 2026. Historical tickets may still cite them, but current implementation must follow C09 and C19–C24 above.
+Earlier C02–C06 made challenge creation and settlement central; earlier C09 excluded memberships; earlier C19 included Cheers. The user replaced those decisions on 24 September 2026. Historical tickets may still cite them, but current implementation must follow C09 and C19–C25 above.
 
 ### Proposed defaults to resolve
 
@@ -65,6 +66,7 @@ Earlier C02–C06 made challenge creation and settlement central; earlier C09 ex
 | P10 | Partial-use transfer                  | Remaining validity and remaining visits move together; prior redemptions remain immutable. Transfer and redemption serialize so neither can double-use the entitlement.                                            | Proposed.                                    |
 | P11 | Membership cancellation/refund/freeze | Business cancellation and paid-but-unfulfilled access require a recoverable return; customer cancellation, freezes and transfer fees are not yet resolved.                                                         | Blocks final membership terms and copy.      |
 | P12 | Sponsored-event funding               | Sponsor prepays a fixed test-EURC budget or directly funds the host; supported ticket quantity/discount and unused-fund behavior are frozen before publication.                                                    | Architecture and refund rules unresolved.    |
+| P13 | Platform price and network fee payer  | No MovX per-transaction surcharge; choose the minimal recurring/fixed platform price and state who covers each Solana network/account cost. Every amount and payer appears before approval.                         | Resolve before live business pricing.        |
 
 P02–P05 were challenge rules and are retired with C22. Changing a current choice requires updating this specification and its owning development ticket, not creating a competing product document.
 
@@ -76,18 +78,19 @@ The hypothesis is that transparent, programmable transferability creates value w
 - when partial use, recipient eligibility, fees, freezes, cancellation and refunds are acceptable;
 - whether sponsor-funded event access improves acquisition for hosts and sponsors;
 - whether the minimal activity layer helps discovery/retention without becoming a generic social network.
+- whether the minimal fixed/recurring platform price is sustainable and materially clearer for businesses than per-transaction pricing.
 
 <a id="visual-design-direction--21-september-2026"></a>
 
 ### Visual design direction
 
-Keep the established MovX identity and accessible responsive foundation. Public pages should use concrete product language, strong hierarchy and fewer competing cards/status labels. How it works must establish the proposition before implementation caveats. Technology and test-fund details remain visible but secondary.
+Keep the established MovX identity and accessible responsive foundation. Public pages should use concrete product language, strong hierarchy and fewer competing cards/status labels. How it works must establish the proposition and audience benefits before implementation caveats: transferable eligible access and participation-based community for people; minimal predictable platform fees, no MovX transaction surcharge and no hidden charges for businesses. Technology and test-fund details remain visible but secondary, and public copy must not erase unavoidable network/account costs.
 
 <a id="discovery-and-how-it-works"></a>
 
 ### Discovery and How it works
 
-DEV0059 delivered the new public narrative in this order: concise proposition; `Discover → Choose access → Show up → Stay connected`; membership/pass/event comparison; sponsored access; value for businesses; honest preview status and short frequently asked questions. DEV0060 owns the remaining challenge-led navigation and product surfaces.
+DEV0059 delivered the new public narrative in this order: concise proposition; `Discover → Choose access → Show up → Stay connected`; membership/pass/event comparison; sponsored access; value for businesses; honest preview status and short frequently asked questions. DEV0060 removed the remaining challenge-led navigation and product surfaces and added the honest My Access empty state.
 
 <a id="public-browsing-and-sign-in-boundaries"></a>
 
@@ -206,7 +209,7 @@ Use additive forward migrations, reproducible fixtures and separate migration/ru
 
 ### Next implementation order and decisions
 
-Complete the current identity/staging work without expanding its authority. Then deliver COR0005's contract/public transition, freeze P09–P12, prepare bounded membership/program and sponsored-event tickets, and revise DEV0017/DEV0018/DEV0023 against those contracts. Do not implement future runtime scope under COR0005 itself.
+Complete the current identity/staging work without expanding its authority. COR0005's contract/public transition is complete; next freeze P09–P12, prepare bounded membership/program and sponsored-event tickets, and revise DEV0017/DEV0018/DEV0023 against those contracts. Do not implement future runtime scope under the completed COR0005 record.
 
 <a id="security-boundary"></a>
 
@@ -335,7 +338,7 @@ Persist the visibility choice before asynchronous publication and use stable sou
 
 ### M0 — Foundation and frozen product contracts
 
-Complete account/profile, personal/club wallet proof, protected context, hosted staging, public access-product terms and COR0005's interface transition. Resolve P01, P07 and enough of P09–P12 to prepare implementation tickets.
+Complete account/profile, personal/club wallet proof, protected context and hosted staging. COR0005's public access-product terms and interface transition are complete. Resolve P01, P07 and enough of P09–P12 to prepare implementation tickets.
 
 **Exit:** two isolated accounts; real wallet connect/proof lifecycle; public access catalogue/guide; no challenge/reaction current promise; reviewed membership, pass, event and sponsorship boundaries.
 
@@ -414,4 +417,4 @@ The confirmed core is the bounded membership purchase/transfer lifecycle, paid p
 
 Also defer production identity/recovery/fraud/dispute operations, fiat custody/conversion, bank/card rails, fee sponsorship, unattended signing, multiple personal wallets, large-scale reconciliation, real-money balances and production legal/compliance claims. Before a real-money or live-partner pilot, separately resolve target market, business agreements, consumer cancellation/refund rights, sponsor/host obligations, privacy, disputes, fraud and applicable payment/resale requirements.
 
-The current frontend has an access-focused public guide but remains partially superseded until DEV0060 removes the challenge-oriented navigation and product surfaces. Documentation and presentation of target behavior are not evidence of delivered membership, payment, sponsorship or program functionality.
+The current frontend has an access-focused public guide, navigation and honest My Access empty state. Documentation and presentation of target behavior are not evidence of delivered membership, payment, sponsorship or program functionality.

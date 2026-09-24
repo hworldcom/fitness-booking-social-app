@@ -80,13 +80,11 @@ h1 {
 }
 .activity-card,
 .rail-card,
-.challenge-card,
 .class-card,
 .event-card,
 .studio-card {
   box-shadow: 0 3px 14px #28251c03;
 }
-.challenge-card:hover,
 .class-card:hover,
 .event-card:hover,
 .studio-card:hover {
@@ -103,20 +101,11 @@ h1 {
 .activity-person small {
   font-size: 11px;
 }
-.activity-caption,
-.activity-caption.big {
+.activity-caption {
   font-size: 13px;
 }
 .activity-person .pill {
   font-size: 10px;
-}
-.feed-challenge {
-  background: #f0eaf8;
-  border-color: #e6ddf2;
-  border-radius: 14px;
-}
-.feed-challenge h3 {
-  font-size: 20px;
 }
 .activity-session {
   border-radius: 14px;
@@ -463,9 +452,6 @@ h1 {
   .activity-card {
     padding: 18px;
   }
-  .feed-challenge h3 {
-    font-size: 18px;
-  }
   .feed-rail {
     grid-template-columns: 1fr;
   }
@@ -538,16 +524,6 @@ h1 {
   }
   .club-hero-photo {
     min-height: 190px;
-  }
-  .feed-challenge {
-    gap: 9px;
-  }
-  .feed-challenge-thumb {
-    width: 58px;
-    height: 72px;
-  }
-  .feed-challenge > svg {
-    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -37,9 +37,6 @@ test("wallet-free visitors get safe Phantom guidance without losing public acces
   await expect(
     page.getByRole("heading", { name: "Find your next move." }),
   ).toBeVisible();
-  await page
-    .getByRole("link", { name: "Challenges", exact: true })
-    .last()
-    .click();
-  await expect(page).toHaveURL(/\/challenges$/);
+  await page.getByRole("link", { name: "Home", exact: true }).last().click();
+  await expect(page).toHaveURL(/\/$/);
 });

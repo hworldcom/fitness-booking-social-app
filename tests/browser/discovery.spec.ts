@@ -15,15 +15,24 @@ test("public guide is reachable by keyboard and explains the access model clearl
   const peopleAudience = page.locator('.guide-audiences a[href="#for-people"]');
   const clubAudience = page.locator('.guide-audiences a[href="#for-clubs"]');
   await expect(peopleAudience).toContainText("FOR PEOPLE");
-  await expect(peopleAudience).toContainText("Find flexible access");
+  await expect(peopleAudience).toContainText(
+    "Keep access useful. Find your people.",
+  );
+  await expect(peopleAudience).toContainText("transfer eligible memberships");
   await expect(clubAudience).toContainText("FOR FITNESS BUSINESSES");
-  await expect(clubAudience).toContainText("Offer access people can use");
+  await expect(clubAudience).toContainText("Grow community, not overhead");
+  await expect(clubAudience).toContainText(
+    "no surprise MovX transaction charges",
+  );
 
   await expect(
     page.getByRole("heading", {
-      name: "Find how you want to move. Choose access that fits.",
+      name: "Flexible for members. Built to grow with fitness businesses.",
     }),
   ).toBeVisible();
+  await expect(page.locator(".guide-hero-copy > p")).toHaveText(
+    "MovX Club connects flexible fitness access with real communities—giving members more freedom and businesses a direct way to grow.",
+  );
   await expect(
     page.getByRole("heading", { name: "From discovery to showing up." }),
   ).toBeVisible();
@@ -42,9 +51,18 @@ test("public guide is reachable by keyboard and explains the access model clearl
   const peopleSection = page.locator("#for-people");
   await expect(
     peopleSection.getByRole("heading", {
-      name: "Three clear ways to take part.",
+      name: "Access that can keep working for you.",
     }),
   ).toBeVisible();
+  await expect(
+    peopleSection.getByRole("heading", {
+      name: "Transfer an eligible membership",
+    }),
+  ).toBeVisible();
+  await expect(
+    peopleSection.getByRole("heading", { name: "Connect by taking part" }),
+  ).toBeVisible();
+  await expect(peopleSection).toContainText("under clear terms");
   for (const name of ["Memberships", "Passes", "Events"]) {
     await expect(
       peopleSection.getByRole("heading", { name, exact: true }),
@@ -65,7 +83,7 @@ test("public guide is reachable by keyboard and explains the access model clearl
   await expect(page).toHaveURL(/\/how-it-works#for-clubs$/);
   await expect(
     page.getByRole("heading", {
-      name: "Make it easier for people to say yes.",
+      name: "Grow your community—not your overhead.",
     }),
   ).toBeVisible();
   await expect(
@@ -75,13 +93,20 @@ test("public guide is reachable by keyboard and explains the access model clearl
   ).toBeVisible();
 
   for (const name of [
-    "Publish access",
-    "Welcome new people",
-    "Sponsor attendance",
+    "Reach more people",
+    "Keep platform fees minimal",
+    "No transaction surprises",
   ])
     await expect(
       page.getByRole("heading", { name, exact: true }),
     ).toBeVisible();
+  await expect(clubAudience).toContainText("minimal fees");
+  await expect(page.locator("#for-clubs")).toContainText(
+    "no per-transaction platform surcharge or hidden charge",
+  );
+  await expect(page.locator("#for-clubs")).toContainText(
+    "network/account costs still exist",
+  );
   await expect(
     page.getByRole("heading", {
       name: "What works today—and what comes next.",
@@ -104,6 +129,15 @@ test("public guide is reachable by keyboard and explains the access model clearl
   await page.keyboard.press("Enter");
   await expect(
     page.getByText(/cost is partly or fully covered by a sponsor/),
+  ).toBeVisible();
+  const businessCostQuestion = page.getByText(
+    "What does MovX cost a fitness business?",
+    { exact: true },
+  );
+  await businessCostQuestion.focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    page.getByText(/Exact pricing and payments are not live/),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -143,34 +177,7 @@ test("public guide is reachable by keyboard and explains the access model clearl
   await expect(page).toHaveURL(/\/explore$/);
 });
 
-test("challenge comparison filters, chronology and reset work together", async ({
-  page,
-}, testInfo) => {
-  await page.goto("/challenges");
-  const cards = page.locator(".challenge-card");
-  await expect(cards).toHaveCount(3);
-  await expect(cards.first()).toContainText("22 Sept 2026");
-  await expect(cards.first()).toContainText("Participants vote");
-  await page.getByLabel("Sort by", { exact: true }).selectOption("newest");
-  await expect(cards.first()).toContainText("The show-up club");
-  await page.getByLabel("Search challenges", { exact: true }).fill("coffee");
-  await expect(cards).toHaveCount(1);
-  await page.getByLabel("Activities", { exact: true }).selectOption("Yoga");
-  await expect(
-    page.getByRole("heading", { name: "No challenges match yet." }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Reset filters", exact: true })
-    .click();
-  await expect(cards).toHaveCount(3);
-  await expect(page.getByLabel("Sort by")).toHaveValue("starting");
-  await page.screenshot({
-    path: testInfo.outputPath("challenge-discovery.png"),
-    fullPage: true,
-  });
-});
-
-test("direct catalogue search includes events and challenges and handles empty/malformed queries", async ({
+test("direct catalogue search includes supported products and handles empty or malformed queries", async ({
   page,
 }, testInfo) => {
   await page.goto("/search");
@@ -178,17 +185,13 @@ test("direct catalogue search includes events and challenges and handles empty/m
     .getByRole("textbox", { name: "Search the public catalogue", exact: true })
     .fill("coffee");
   await page.getByRole("button", { name: "Search", exact: true }).click();
-  await expect(page.locator(".discovery-result")).toHaveCount(2);
+  await expect(page.locator(".discovery-result")).toHaveCount(1);
   await expect(
     page
       .locator(".search-group")
       .getByRole("heading", { name: "Events", exact: true }),
   ).toBeVisible();
-  await expect(
-    page
-      .locator(".search-group")
-      .getByRole("heading", { name: "Challenges", exact: true }),
-  ).toBeVisible();
+  await expect(page.locator(".search-group")).toHaveCount(1);
   await page.screenshot({
     path: testInfo.outputPath("search.png"),
     fullPage: true,
@@ -209,7 +212,7 @@ test("direct catalogue search includes events and challenges and handles empty/m
   ).toBeVisible();
 });
 
-test("rules, preview next step, public sharing and clipboard failure stay honest", async ({
+test("public event sharing and clipboard failure stay honest", async ({
   page,
 }, testInfo) => {
   await page.addInitScript(() => {
@@ -222,32 +225,6 @@ test("rules, preview next step, public sharing and clipboard failure stay honest
       },
     });
   });
-  await page.goto("/challenges/show-up-club?private-query=discard-me");
-  await expect(
-    page.getByRole("heading", { name: "Your challenge at a glance" }),
-  ).toBeVisible();
-  await expect(page.locator(".rules-summary")).toContainText("within 24 hours");
-  await expect(page.locator(".entry-next-step")).toContainText(
-    "Entry not open",
-  );
-  await page.getByRole("button", { name: "Copy link", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Link copied", exact: true }),
-  ).toBeVisible();
-  expect(
-    await page.evaluate(
-      () => (window as Window & { copiedLink?: string }).copiedLink,
-    ),
-  ).toBe("http://127.0.0.1:3101/challenges/show-up-club");
-  await page.screenshot({
-    path: testInfo.outputPath("challenge-detail.png"),
-    fullPage: true,
-  });
-  await page
-    .locator(".related-activities")
-    .getByRole("link", { name: /Strength, together/ })
-    .click();
-  await expect(page).toHaveURL(/\/classes\/strength$/);
   await page.goto("/events/run-and-coffee");
   await page.evaluate(() => {
     Object.defineProperty(navigator, "clipboard", {
@@ -279,13 +256,17 @@ test("rules, preview next step, public sharing and clipboard failure stay honest
     path: testInfo.outputPath("share-fallback.png"),
     fullPage: true,
   });
-  await page
-    .locator(".related-activities")
-    .getByRole("link", { name: /The 5K before coffee/ })
-    .click();
-  await expect(page.locator(".rules-summary")).toContainText(
-    "24-hour voting window is proposed",
-  );
+});
+
+test("retired product challenge URLs return not found", async ({ page }) => {
+  for (const path of [
+    "/challenges",
+    "/challenges/show-up-club",
+    "/challenges/new",
+  ]) {
+    const response = await page.goto(path);
+    expect(response?.status(), path).toBe(404);
+  }
 });
 
 test("public discovery helpers fit narrow screens and expose no console errors", async ({
@@ -297,8 +278,7 @@ test("public discovery helpers fit narrow screens and expose no console errors",
   for (const path of [
     "/how-it-works",
     "/search?q=Fabrik",
-    "/challenges",
-    "/challenges/show-up-club",
+    "/my-access",
     "/events/run-and-coffee",
   ]) {
     await page.goto(path);

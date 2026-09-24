@@ -4,8 +4,8 @@
 - Created: 2026-09-24
 - Last updated: 2026-09-24
 - Milestone: MVP product pivot and public presentation
-- Coordination: [COR0005 — Fitness-access product pivot](../../current/organisatory/COR0005-fitness-access-product-pivot.md)
-- Related records: revises completed [DEV0005](DEV0005-consolidate-community-fitness-mvp.md), [DEV0007](../blockchain/DEV0007-eurc-only-wallet-contract.md), [DEV0022](../backend/DEV0022-social-contract-and-delivery-plan.md), and [DEV0048](../backend/DEV0048-remove-gym-membership-access.md); updates current [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018](../../current/backend/DEV0018-class-pass-reservations-and-confirmed-visits.md), [DEV0023](../../current/backend/DEV0023-minimal-shared-activity-feed.md), and cancelled [DEV0024](../blockchain/DEV0024-verified-challenge-activity.md); precedes completed [DEV0059](../frontend/DEV0059-rewrite-public-positioning-and-guide.md) and current [DEV0060](../../current/frontend/DEV0060-replace-challenge-surfaces-with-access-navigation.md)
+- Coordination: [COR0005 — Fitness-access product pivot](COR0005-fitness-access-product-pivot.md)
+- Related records: revises completed [DEV0005](DEV0005-consolidate-community-fitness-mvp.md), [DEV0007](../blockchain/DEV0007-eurc-only-wallet-contract.md), [DEV0022](../backend/DEV0022-social-contract-and-delivery-plan.md), and [DEV0048](../backend/DEV0048-remove-gym-membership-access.md); updates current [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018](../../current/backend/DEV0018-class-pass-reservations-and-confirmed-visits.md), [DEV0023](../../current/backend/DEV0023-minimal-shared-activity-feed.md), and cancelled [DEV0024](../blockchain/DEV0024-verified-challenge-activity.md); precedes completed [DEV0059](../frontend/DEV0059-rewrite-public-positioning-and-guide.md) and [DEV0060](../frontend/DEV0060-replace-challenge-surfaces-with-access-navigation.md)
 
 ## Objective and context
 
@@ -75,7 +75,7 @@ Revised the unimplemented DEV0017 catalogue/draft plan, DEV0018 pass boundary an
 | `tickets/current/backend/DEV0017*`, `DEV0018*`, renamed `DEV0023*` | Reconcile public catalogue, pass and minimal social plans without silently implementing memberships or sponsorship.                                  |
 | `tickets/archive/blockchain/DEV0024*`                              | Preserve and cancel the unimplemented challenge-activity plan.                                                                                       |
 | `tickets/current/frontend/DEV0059*`, `DEV0060*`                    | Prepare the website narrative/design and interface-retirement slices requested by the user.                                                          |
-| `tickets/README.md`, `tickets/current/organisatory/COR0005*`       | Register the pivot work map, lifecycle/status changes and next identifiers.                                                                          |
+| `tickets/README.md`, `tickets/archive/organisatory/COR0005*`       | Register the completed pivot work map, lifecycle/status changes and next identifiers.                                                                |
 | Affected archived/current links                                    | Keep renamed/moved ticket references and historical architecture/plan records navigable without rewriting their original implementation conclusions. |
 
 ### Decisions and deviations

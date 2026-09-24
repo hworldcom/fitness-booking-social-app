@@ -13,7 +13,7 @@ export function SearchScreen({ query }: { query: string }) {
           <h1>
             Find your people<span className="lime-text">.</span>
           </h1>
-          <p>Classes, studios, events and challenges, all in one place.</p>
+          <p>Classes, studios and events, all in one place.</p>
         </div>
       </div>
       <form
@@ -49,7 +49,7 @@ export function SearchScreen({ query }: { query: string }) {
               Clear search
             </Link>
           </div>
-          {(["Class", "Studio", "Event", "Challenge"] as const).map((kind) => {
+          {(["Class", "Studio", "Event"] as const).map((kind) => {
             const group = results.filter((item) => item.kind === kind);
             if (!group.length) return null;
             return (
@@ -104,8 +104,8 @@ export function SearchScreen({ query }: { query: string }) {
         <Link className="button secondary" href="/explore">
           Explore activities
         </Link>
-        <Link className="button secondary" href="/challenges">
-          Browse challenges
+        <Link className="button secondary" href="/how-it-works">
+          How access works
         </Link>
       </div>
     </>

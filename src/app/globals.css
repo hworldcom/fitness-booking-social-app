@@ -247,11 +247,6 @@ button {
   flex-wrap: wrap;
   margin-top: 24px;
 }
-.create-nav {
-  margin-top: 26px;
-  font-size: 11px;
-  padding: 12px 8px;
-}
 .sidebar-bottom {
   margin-top: auto;
   padding-top: 30px;
@@ -682,35 +677,6 @@ h1 {
   font-size: 10px;
   line-height: 1.8;
 }
-.activity-caption.big {
-  color: #545d4d;
-  font-size: 12px;
-}
-.feed-challenge {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #f6f7f2;
-  border: 1px solid #e9ece1;
-  border-radius: 9px;
-  padding: 10px;
-}
-.feed-challenge > svg {
-  margin-left: auto;
-  margin-right: 5px;
-}
-.feed-challenge-thumb {
-  width: 86px;
-  height: 79px;
-  border-radius: 6px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.feed-challenge h3 {
-  margin: 5px 0 7px;
-  font-size: 14px;
-  letter-spacing: -0.3px;
-}
 .meta-line {
   display: inline-flex;
   align-items: center;
@@ -1025,18 +991,14 @@ h1 {
   color: #626c56;
   line-height: 1;
 }
-.two-card-grid,
-.challenge-grid,
 .class-grid {
   display: grid;
   gap: 20px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.challenge-grid,
 .class-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.challenge-card,
 .class-card,
 .event-card {
   background: white;
@@ -1046,69 +1008,14 @@ h1 {
   min-width: 0;
   transition: box-shadow 0.2s;
 }
-.challenge-card:hover,
 .class-card:hover,
 .event-card:hover {
   box-shadow: 0 8px 25px #273a1008;
-}
-.challenge-art {
-  height: 170px;
-  position: relative;
-}
-.challenge-art > a {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 .art-pill {
   position: absolute;
   left: 15px;
   top: 14px;
-}
-.save-button {
-  position: absolute;
-  right: 13px;
-  top: 13px;
-  background: #ffffffdd;
-  width: 29px;
-  height: 29px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.save-button.selected {
-  background: var(--lime);
-}
-.challenge-content {
-  padding: 19px;
-}
-.challenge-content h3 {
-  font-size: 17px;
-  letter-spacing: -0.5px;
-  margin: 7px 0;
-}
-.challenge-content > p {
-  color: #626c56;
-  font-size: 11px;
-}
-.challenge-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid #eef0e8;
-  margin-top: 15px;
-  padding-top: 14px;
-}
-.challenge-bottom strong {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.8px;
-  display: block;
-}
-.challenge-bottom small {
-  color: #626c56;
-  font-size: 10px;
 }
 .graphic {
   background: #dce5c6;
@@ -1240,19 +1147,6 @@ h1 {
 .event-discovery-link p {
   flex: 1;
   min-width: 180px;
-}
-.challenge-content .challenge-award-summary {
-  font-weight: 700;
-  color: #4f6337;
-  font-size: 12px;
-  margin-top: 12px;
-}
-.challenge-award h2 {
-  margin-top: 18px;
-}
-.challenge-award h3 {
-  font-size: 15px;
-  margin: 22px 0 8px;
 }
 .event-card .class-art {
   height: 200px;
@@ -1578,32 +1472,6 @@ h1 {
   font-size: 11px;
   color: #626c56;
   margin: 30px 0 0;
-}
-.challenge-intro {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  border: 1px solid var(--line);
-  background: #fcfdf8;
-  border-radius: 11px;
-  padding: 20px 23px;
-  margin: 25px 0;
-}
-.challenge-intro > div {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
-.challenge-intro strong {
-  font-size: 12px;
-  line-height: 1.6;
-}
-.challenge-intro > span:not(.pill) {
-  font-size: 10px;
-  color: #626c56;
-}
-.challenge-intro > .pill {
-  margin-left: auto;
 }
 .creator-callout {
   display: flex;
@@ -2155,6 +2023,62 @@ h1 {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 24px;
+}
+.my-access {
+  max-width: 980px;
+  margin: 0 auto;
+}
+.my-access .page-heading {
+  max-width: 760px;
+}
+.access-empty-card {
+  padding: clamp(24px, 5vw, 54px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+}
+.access-empty-card > h2 {
+  margin: 10px 0 8px;
+  font-size: clamp(24px, 3vw, 36px);
+}
+.access-empty-card > p {
+  max-width: 66ch;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.access-kind-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 30px 0;
+}
+.access-kind {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #f8faf4;
+}
+.access-kind svg {
+  color: #526538;
+}
+.access-kind h3 {
+  margin: 14px 0 6px;
+  font-size: 15px;
+}
+.access-kind p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+@media (max-width: 600px) {
+  .access-kind-grid {
+    grid-template-columns: 1fr;
+  }
 }
 .text-button {
   margin-top: 8px;
@@ -2779,7 +2703,6 @@ legend > span {
   .activity-card {
     padding: 17px;
   }
-  .challenge-grid,
   .class-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2850,9 +2773,6 @@ legend > span {
     display: none;
   }
 
-  .challenge-intro > span:not(.pill) {
-    display: none;
-  }
   .creator-callout {
     flex-wrap: wrap;
   }
@@ -2945,19 +2865,6 @@ legend > span {
   .segment button {
     padding: 5px 9px;
   }
-  .feed-challenge {
-    gap: 11px;
-  }
-  .feed-challenge-thumb {
-    width: 73px;
-    height: 75px;
-  }
-  .feed-challenge h3 {
-    font-size: 13px;
-  }
-  .feed-challenge .meta-line {
-    font-size: 10px;
-  }
   .activity-footer > span {
     display: inline;
   }
@@ -2967,28 +2874,12 @@ legend > span {
   .activity-session h3 {
     font-size: 12px;
   }
-  .two-card-grid {
-    gap: 14px;
-  }
-  .challenge-art {
-    height: 150px;
-  }
-  .challenge-content {
-    padding: 16px;
-  }
-  .challenge-content h3 {
-    font-size: 16px;
-  }
-  .challenge-bottom strong {
-    font-size: 18px;
-  }
   .graphic-word {
     font-size: 28px;
   }
   .graphic-meta {
     font-size: 4px;
   }
-  .challenge-grid,
   .class-grid {
     gap: 15px;
   }
@@ -3088,10 +2979,6 @@ legend > span {
     grid-column: 2;
     margin: 0;
     justify-self: start;
-  }
-  .challenge-intro {
-    padding: 18px;
-    gap: 12px;
   }
   .detail-art {
     height: 270px;
@@ -3236,46 +3123,11 @@ legend > span {
   .activity-person p {
     font-size: 10px;
   }
-  .challenge-grid,
   .class-grid {
     grid-template-columns: 1fr;
   }
   .class-art {
     height: 210px;
-  }
-  .challenge-grid .challenge-art {
-    height: 200px;
-  }
-  .two-card-grid .challenge-content h3 {
-    font-size: 14px;
-  }
-  .two-card-grid .challenge-content {
-    padding: 13px;
-  }
-  .two-card-grid .art-pill {
-    left: 10px;
-    top: 10px;
-  }
-  .two-card-grid .save-button {
-    right: 8px;
-    top: 9px;
-    width: 25px;
-    height: 25px;
-  }
-  .two-card-grid .graphic-word {
-    font-size: 24px;
-    left: 14px;
-  }
-  .two-card-grid .graphic-meta {
-    left: 15px;
-    font-size: 3.5px;
-  }
-  .two-card-grid .challenge-bottom small {
-    font-size: 9px;
-  }
-  .two-card-grid .circle-link {
-    width: 27px;
-    height: 27px;
   }
   .rail-title h2 {
     font-size: 11px;
@@ -3386,9 +3238,7 @@ legend > span {
 }
 
 /* Public discovery and guidance. */
-.how-it-works-link,
-.entry-help,
-.challenge-intro-compact a {
+.how-it-works-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -3399,101 +3249,11 @@ legend > span {
 .how-it-works-link {
   min-height: 40px;
 }
-.challenge-intro-compact {
-  font-size: 13px;
-  color: #626c56;
-  margin: -6px 0 22px;
-  line-height: 1.8;
-}
-.challenge-intro-compact a {
-  margin-left: 8px;
-  color: #253821;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.challenge-query {
-  flex: 1;
-  min-width: 190px;
-}
-.challenge-query input {
-  width: 100%;
-  min-width: 0;
-}
-.challenge-card-facts {
-  margin: 15px 0;
-  display: grid;
-  gap: 7px;
-}
-.challenge-card-facts > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 11px;
-}
-.challenge-card-facts dt {
-  color: #626c56;
-}
-.challenge-card-facts dd {
-  margin: 0;
-  text-align: right;
-  font-weight: 650;
-}
-.challenge-preview-label {
-  display: block;
-  color: #626c56;
-  font-size: 10px;
-  margin-bottom: 12px;
-}
-.rules-summary {
-  margin-top: 16px;
-}
-.rules-summary > div {
-  padding: 16px 0;
-  border-bottom: 1px solid #e4e7df;
-}
-.rules-summary dt {
-  font-size: 13px;
-  font-weight: 750;
-  margin-bottom: 6px;
-}
-.rules-summary dd {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.85;
-  color: #59634f;
-}
-.extended-rules summary,
 .guide-faq summary {
   cursor: pointer;
   font-weight: 700;
   font-size: 14px;
   padding: 12px 0;
-}
-.extended-rules .rule-item:first-of-type {
-  margin-top: 18px;
-}
-.entry-next-step {
-  margin-bottom: 20px;
-}
-.entry-next-step > strong {
-  display: block;
-  margin-top: 14px;
-  font-size: 14px;
-}
-.entry-next-step p,
-.entry-next-step ol {
-  font-size: 11px;
-  line-height: 1.8;
-  color: #626c56;
-}
-.entry-next-step ol {
-  padding-left: 18px;
-  margin: 10px 0;
-}
-.entry-help {
-  justify-content: center;
-  width: 100%;
-  margin-top: 12px;
 }
 .copy-link-control {
   margin-top: 10px;
@@ -4080,6 +3840,7 @@ legend > span {
   font-size: 17px;
 }
 .guide-journey-steps p,
+.guide-benefit-grid p,
 .guide-access-grid p,
 .guide-sponsored-event p,
 .guide-club-grid p,
@@ -4095,6 +3856,42 @@ legend > span {
   margin: 0 0 28px;
   border-radius: 22px;
   padding: clamp(26px, 5vw, 48px);
+}
+.guide-benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 34px;
+}
+.guide-benefit-grid article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 17px;
+  border: 1px solid #d9d0e2;
+  border-radius: 15px;
+  background: #ebe4f0;
+  padding: 22px;
+}
+.guide-benefit-grid article:nth-child(2) {
+  border-color: #d6dfc9;
+  background: #edf3e5;
+}
+.guide-benefit-grid article > svg {
+  color: #745e83;
+}
+.guide-benefit-grid article:nth-child(2) > svg {
+  color: #58703f;
+}
+.guide-benefit-grid h3 {
+  margin: 6px 0 7px;
+  font-size: 18px;
+}
+.guide-product-heading {
+  margin-bottom: 15px;
+}
+.guide-product-heading h3 {
+  margin-top: 6px;
+  font-size: 19px;
 }
 .guide-access-grid {
   display: grid;
@@ -4544,18 +4341,6 @@ legend > span {
   .auth-explainer {
     padding: 20px;
   }
-  .challenge-discovery-filters {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .challenge-query {
-    grid-column: 1 / -1;
-    min-width: 0;
-  }
-  .challenge-card-facts > div {
-    font-size: 12px;
-  }
   .guide-choice-grid {
     grid-template-columns: 1fr;
   }
@@ -4717,6 +4502,9 @@ legend > span {
   }
   .guide-access-grid article {
     padding: 22px;
+  }
+  .guide-benefit-grid {
+    grid-template-columns: 1fr;
   }
   .guide-sponsored-event {
     grid-template-columns: 1fr;

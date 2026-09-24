@@ -21,12 +21,12 @@ export function HowItWorksScreen() {
             FLEXIBLE FITNESS ACCESS · BUILT AROUND PEOPLE
           </span>
           <h1 id="guide-title">
-            Find how you want to move. Choose access that fits.
+            Flexible for members. Built to grow with fitness businesses.
           </h1>
           <p>
-            MovX Club brings memberships, passes and events into one place, so
-            it is easier to discover a fitness community and take part on your
-            terms.
+            MovX Club connects flexible fitness access with real
+            communities—giving members more freedom and businesses a direct way
+            to grow.
           </p>
           <div className="discovery-links">
             <Link className="button lime" href="/explore">
@@ -51,8 +51,11 @@ export function HowItWorksScreen() {
           <UserRound size={27} strokeWidth={1.5} aria-hidden="true" />
           <span>
             <small>FOR PEOPLE</small>
-            <strong>Find flexible access</strong>
-            <p>Compare ways to join, then choose what fits your routine.</p>
+            <strong>Keep access useful. Find your people.</strong>
+            <p>
+              Choose what fits, transfer eligible memberships and connect by
+              showing up.
+            </p>
           </span>
           <ArrowRight size={20} aria-hidden="true" />
         </Link>
@@ -60,8 +63,11 @@ export function HowItWorksScreen() {
           <Building2 size={27} strokeWidth={1.5} aria-hidden="true" />
           <span>
             <small>FOR FITNESS BUSINESSES</small>
-            <strong>Offer access people can use</strong>
-            <p>Publish clear options, welcome newcomers and fill activities.</p>
+            <strong>Grow community, not overhead</strong>
+            <p>
+              Offer flexible access with minimal fees and no surprise MovX
+              transaction charges.
+            </p>
           </span>
           <ArrowRight size={20} aria-hidden="true" />
         </Link>
@@ -118,12 +124,44 @@ export function HowItWorksScreen() {
         <div className="guide-section-heading guide-section-heading-wide">
           <div>
             <span className="eyebrow">FOR PEOPLE</span>
-            <h2>Three clear ways to take part.</h2>
+            <h2>Access that can keep working for you.</h2>
           </div>
           <p>
-            Choose ongoing access, a smaller commitment or a dated experience.
-            The important details should be visible before you decide.
+            Choose what fits today, keep eligible access useful when plans
+            change and meet people through the activities you actually attend.
           </p>
+        </div>
+
+        <div className="guide-benefit-grid" aria-label="Benefits for people">
+          <article>
+            <WalletCards size={23} aria-hidden="true" />
+            <div>
+              <span className="guide-product-kicker">KEEP ACCESS USEFUL</span>
+              <h3>Transfer an eligible membership</h3>
+              <p>
+                If a business marks a membership transferable, its remaining
+                access can move to another eligible person under clear terms.
+              </p>
+            </div>
+          </article>
+          <article>
+            <Users size={23} aria-hidden="true" />
+            <div>
+              <span className="guide-product-kicker">
+                COMMUNITY THAT IS REAL
+              </span>
+              <h3>Connect by taking part</h3>
+              <p>
+                Discover shared sessions and useful participation updates—built
+                around showing up, not popularity mechanics.
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <div className="guide-product-heading">
+          <span className="eyebrow">CHOOSE YOUR ACCESS</span>
+          <h3>Membership, pass or event?</h3>
         </div>
 
         <div className="guide-access-grid">
@@ -135,7 +173,8 @@ export function HowItWorksScreen() {
             <h3>Memberships</h3>
             <p>
               Recurring access to a fitness business, with the duration,
-              included activities and renewal terms shown up front.
+              included activities, transfer eligibility and renewal terms shown
+              up front.
             </p>
             <strong>Best for a regular routine</strong>
           </article>
@@ -221,45 +260,45 @@ export function HowItWorksScreen() {
         <div className="guide-section-heading guide-section-heading-wide">
           <div>
             <span className="eyebrow">FOR FITNESS BUSINESSES</span>
-            <h2>Make it easier for people to say yes.</h2>
+            <h2>Grow your community—not your overhead.</h2>
           </div>
           <p>
-            Present your access options clearly, reach people looking for their
-            next activity and use events to bring your community together.
+            Reach people through clear access products while keeping platform
+            costs minimal, predictable and visible before anything is approved.
           </p>
         </div>
         <div className="guide-club-grid">
           <article>
             <Compass size={22} aria-hidden="true" />
-            <h3>Publish access</h3>
+            <h3>Reach more people</h3>
             <p>
-              List memberships, passes and events together, with the terms a
-              person needs to choose confidently.
-            </p>
-          </article>
-          <article>
-            <CalendarDays size={22} aria-hidden="true" />
-            <h3>Welcome new people</h3>
-            <p>
-              Use flexible passes and dated events to create a low-commitment
-              first step into your business.
+              Put memberships, passes and events in one discovery experience
+              that gives newcomers a clear first step.
             </p>
           </article>
           <article>
             <BadgeCheck size={22} aria-hidden="true" />
-            <h3>Sponsor attendance</h3>
+            <h3>Keep platform fees minimal</h3>
             <p>
-              Fund or subsidize an event to make participation more accessible
-              and connect your brand to a real experience.
+              MovX is designed around light, predictable platform pricing so
+              more of each sale stays with the business.
+            </p>
+          </article>
+          <article>
+            <ShieldCheck size={22} aria-hidden="true" />
+            <h3>No transaction surprises</h3>
+            <p>
+              MovX adds no per-transaction platform surcharge or hidden charge.
+              Any unavoidable network cost is shown before approval.
             </p>
           </article>
         </div>
         <div className="guide-club-future">
           <ShieldCheck size={21} aria-hidden="true" />
           <p>
-            Business tools, live inventory and payments are not live yet. The
-            current club area demonstrates the planned access and authority
-            model using fixture data only.
+            Business pricing and payments are not live yet. Solana
+            network/account costs still exist; future screens must show the
+            exact cost and who pays it before approval.
           </p>
         </div>
         <div className="discovery-links">
@@ -296,6 +335,7 @@ export function HowItWorksScreen() {
               <li>Purchase event tickets</li>
               <li>Transfer eligible access when terms permit it</li>
               <li>Publish business inventory and sponsored events</li>
+              <li>See every platform and network cost before approval</li>
             </ul>
           </article>
         </div>
@@ -337,6 +377,15 @@ export function HowItWorksScreen() {
             It is a normal event whose cost is partly or fully covered by a
             sponsor. People attend the experience; there is no winner, voting
             process or prize pool.
+          </p>
+        </details>
+        <details>
+          <summary>What does MovX cost a fitness business?</summary>
+          <p>
+            MovX is designed for minimal, predictable platform fees, with no
+            MovX per-transaction surcharge or hidden charge. Solana
+            network/account costs still exist and must be shown before approval.
+            Exact pricing and payments are not live in this preview.
           </p>
         </details>
       </section>

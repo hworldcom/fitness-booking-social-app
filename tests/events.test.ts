@@ -56,7 +56,7 @@ test("event drafts require a benefit, valid schedule, capacity and positive boun
   );
 });
 
-test("event drafts persist without creating challenge entries, deduplicate and delete", () => {
+test("event drafts persist, deduplicate and delete", () => {
   const draft = {
     ...input,
     id: "event-draft-example",
@@ -77,7 +77,6 @@ test("event drafts persist without creating challenge entries, deduplicate and d
   assert.equal(again.eventDrafts.length, 1);
   assert.equal(again.eventDrafts[0].title, "Updated run & coffee");
   assert.deepEqual(parseDemo(JSON.stringify(again)), again);
-  assert.deepEqual(saved.drafts, []);
   assert.equal(
     reduceDemo(saved, { type: "delete-event-draft", id: draft.id }).eventDrafts
       .length,
@@ -86,9 +85,15 @@ test("event drafts persist without creating challenge entries, deduplicate and d
   assert.deepEqual(reduceDemo(saved, { type: "reset" }), INITIAL_STATE);
 });
 
-test("old local stores migrate and malformed event drafts preserve other choices", () => {
+test("old local stores migrate and malformed event drafts preserve follows", () => {
   const followed = reduceDemo(INITIAL_STATE, { type: "follow", id: "lea" });
-  const old = { ...followed, eventDrafts: undefined };
+  const old = {
+    version: 1,
+    following: followed.following,
+    saved: ["obsolete"],
+    drafts: [{ id: "obsolete" }],
+    eventDrafts: undefined,
+  };
   assert.deepEqual(parseDemo(JSON.stringify(old)), followed);
   for (const eventDrafts of [
     null,

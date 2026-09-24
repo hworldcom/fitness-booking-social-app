@@ -5,9 +5,8 @@ import { useState, type ReactNode } from "react";
 import {
   House,
   Dumbbell,
-  Trophy,
+  WalletCards,
   UserRound,
-  Plus,
   MapPin,
   ArrowUpRight,
   Info,
@@ -25,9 +24,9 @@ import {
 import { ClubWalletAuthorityGuard } from "@/solana/client/club-wallet-authority";
 
 const navigation = [
-  { label: "Feed", href: "/", Icon: House },
+  { label: "Home", href: "/", Icon: House },
   { label: "Explore", href: "/explore", Icon: Dumbbell },
-  { label: "Challenges", href: "/challenges", Icon: Trophy },
+  { label: "My Access", href: "/my-access", Icon: WalletCards },
   { label: "Profile", href: "/profile", Icon: UserRound },
 ];
 export function Shell({
@@ -80,10 +79,6 @@ export function Shell({
             </Link>
           ))}
         </nav>
-        <Link href="/challenges/new" className="button lime create-nav">
-          <Plus size={18} />
-          Create a challenge
-        </Link>
         <div className="sidebar-bottom">
           <div className="club-note">
             <span className="little-spark">✳</span>

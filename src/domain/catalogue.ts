@@ -1,32 +1,4 @@
 export type Discipline = "Running" | "Strength" | "Muay Thai" | "Yoga";
-export type ChallengeMode = "community" | "sponsored";
-
-export type ClubChallenge = {
-  id: string;
-  title: string;
-  description: string;
-  discipline: Discipline;
-  mode: ChallengeMode;
-  organizer: string;
-  entry: number;
-  prize: number;
-  participants: number;
-  capacity: number;
-  date: string;
-  startDate: string;
-  endDate: string;
-  createdAt: string;
-  venueId?: string;
-  duration: string;
-  artwork: "run" | "strength" | "flow";
-  rules: string;
-  award?: {
-    summary: string;
-    criteria: string;
-    selection: string;
-    prize: string;
-  };
-};
 
 export type ClubClass = {
   id: string;

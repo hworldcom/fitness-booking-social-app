@@ -1,11 +1,28 @@
 import { test, expect } from "@playwright/test";
 
+async function requirePreviewMode(page: import("@playwright/test").Page) {
+  const response = await page.request.get("/api/auth/actor");
+  const actor: unknown = await response.json();
+  test.skip(
+    !(
+      response.status() === 200 &&
+      typeof actor === "object" &&
+      actor !== null &&
+      "status" in actor &&
+      actor.status === "preview"
+    ),
+    "This browser-local interaction check requires preview mode.",
+  );
+}
+
 test("four surfaces render without browser errors or horizontal overflow", async ({
   page,
 }, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
+  const configuredGuest =
+    (await page.request.get("/api/auth/actor")).status() === 401;
   await expect(
     page.getByRole("heading", { name: /FIND YOUR PEOPLE.*MOVE TOGETHER/ }),
   ).toBeVisible();
@@ -20,17 +37,32 @@ test("four surfaces render without browser errors or horizontal overflow", async
         : "Main navigation",
     exact: true,
   });
-  for (const label of ["Explore", "Challenges", "Profile", "Feed"]) {
+  for (const [label, route] of [
+    ["Explore", "/explore"],
+    ["My Access", "/my-access"],
+    ["Profile", "/profile"],
+    ["Home", "/"],
+  ]) {
     await nav.getByRole("link", { name: label, exact: true }).click();
-    await expect(
-      nav.getByRole("link", { name: label, exact: true }),
-    ).toHaveAttribute("aria-current", "page");
+    const privateGuestRoute =
+      configuredGuest && ["My Access", "Profile"].includes(label);
+    await expect(page).toHaveURL((url) =>
+      privateGuestRoute
+        ? url.pathname === "/sign-in" &&
+          url.searchParams.get("returnTo") === route
+        : url.pathname === route,
+    );
+    if (!privateGuestRoute) {
+      await expect(
+        nav.getByRole("link", { name: label, exact: true }),
+      ).toHaveAttribute("aria-current", "page");
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,
       ),
     ).toBe(true);
-    if (label !== "Feed") {
+    if (label !== "Home") {
       await page.screenshot({
         path: testInfo.outputPath(`${label.toLowerCase()}.png`),
         fullPage: true,
@@ -44,9 +76,8 @@ test("four surfaces render without browser errors or horizontal overflow", async
   expect(errors).toEqual([]);
 });
 
-test("search, activity filters, saved challenges and following persist", async ({
-  page,
-}) => {
+test("search, activity filters and following persist", async ({ page }) => {
+  await requirePreviewMode(page);
   await page.goto("/explore?q=Fabrik");
   await expect(page.locator(".class-card")).toHaveCount(1);
   await expect(
@@ -67,15 +98,6 @@ test("search, activity filters, saved challenges and following persist", async (
   await expect(
     page.getByRole("heading", { name: "A little change of pace?" }),
   ).toBeVisible();
-  await page.goto("/challenges");
-  await page.getByRole("button", { name: "Sponsored", exact: true }).click();
-  await expect(page.locator(".challenge-card")).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "Save The show-up club", exact: true })
-    .click();
-  await page.reload();
-  await page.getByRole("button", { name: "Saved", exact: true }).click();
-  await expect(page.locator(".challenge-card")).toHaveCount(1);
   await page.goto("/users/max");
   await expect(page.getByText("Available test EURC")).toHaveCount(0);
   await page.getByRole("button", { name: "Follow", exact: true }).click();
@@ -192,50 +214,7 @@ test("Explore separates class dates/times from studio activity and links to clas
   ).toBeVisible();
 });
 
-test("draft validation, sponsor mode, reload and delete work without funding", async ({
-  page,
-}, testInfo) => {
-  await page.goto("/challenges/new");
-  await page.getByRole("button", { name: "Save challenge draft" }).click();
-  await expect(page.locator("#title")).toBeFocused();
-  await expect(page.locator("#title-error")).toBeVisible();
-  await page.getByLabel("Sponsored challenge", { exact: false }).check();
-  await page.getByLabel("Challenge name").fill("The lunch break club");
-  await page
-    .getByLabel("What’s the challenge?")
-    .fill("Meet at the studio for three friendly lunchtime sessions.");
-  await page.getByLabel("Your sponsored prize").fill("10");
-  await page.getByLabel("Ends", { exact: true }).fill("2026-09-21");
-  await page.getByRole("button", { name: "Save challenge draft" }).click();
-  await expect(page.locator("#end-error")).toBeVisible();
-  await page.getByLabel("Ends", { exact: true }).fill("2026-09-29");
-  await page.screenshot({
-    path: testInfo.outputPath("create-challenge.png"),
-    fullPage: true,
-  });
-  await page.getByRole("button", { name: "Save challenge draft" }).click();
-  await expect(page).toHaveURL(/challenges\/draft-/);
-  await expect(
-    page.getByRole("heading", { name: "The lunch break club" }),
-  ).toBeVisible();
-  await expect(page.getByText("Saved locally · Not published")).toBeVisible();
-  await page.reload();
-  await expect(
-    page.getByRole("heading", { name: "The lunch break club" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Delete draft", exact: true }).click();
-  await page
-    .getByRole("dialog")
-    .getByRole("button", { name: "Delete draft", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/challenges$/);
-  await page.getByRole("button", { name: "My drafts", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Every club starts with an idea." }),
-  ).toBeVisible();
-});
-
-test("class-pass and challenge previews never create reservations or funded state", async ({
+test("class-pass previews never create reservations or paid access", async ({
   page,
 }) => {
   await page.goto("/classes/muay-thai");
@@ -247,11 +226,6 @@ test("class-pass and challenge previews never create reservations or funded stat
     "Checkout isn’t connected yet.",
   );
   await page.keyboard.press("Escape");
-  await page.goto("/challenges/before-coffee");
-  await page.getByRole("button", { name: "Preview entry" }).click();
-  await expect(page.getByRole("dialog")).toContainText(
-    "You haven’t registered or paid.",
-  );
   expect(
     await page.evaluate(() => localStorage.getItem("repx-club-preview-v1")),
   ).toEqual(before);
@@ -293,7 +267,7 @@ test("keyboard dialog focus and blocked/corrupt storage recover gracefully", asy
   ).toBeFocused();
   await page.keyboard.press("Shift+Tab");
   await expect(
-    page.getByRole("link", { name: "Get Phantom from the official site" }),
+    page.getByRole("link", { name: "Sign in with email" }),
   ).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(wallet).toBeFocused();
@@ -315,11 +289,8 @@ test("keyboard dialog focus and blocked/corrupt storage recover gracefully", asy
   await expect(page.getByRole("status")).toContainText(
     "Browser storage is unavailable",
   );
-  await page.goto("/challenges");
-  await page
-    .getByRole("button", { name: "Save The show-up club", exact: true })
-    .click();
+  await page.goto("/explore");
   await expect(
-    page.getByRole("button", { name: "Unsave The show-up club", exact: true }),
+    page.getByRole("heading", { name: "Find your next move." }),
   ).toBeVisible();
 });

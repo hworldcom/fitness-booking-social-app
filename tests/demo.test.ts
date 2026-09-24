@@ -5,94 +5,71 @@ import {
   parseDemo,
   reduceDemo,
 } from "../src/features/preview/state";
-import { validateDraft, type DraftInput } from "../src/domain/challenges";
 
-const input: DraftInput = {
-  title: "Lunch break movement",
-  description: "Meet for a walk together every lunchtime.",
-  mode: "community",
-  discipline: "Running",
-  amount: "2.50",
-  start: "2026-09-22",
-  end: "2026-09-29",
-};
-const now = "2026-09-19T12:00:00Z";
-
-test("drafts validate dates and bounded decimal amounts for both funding modes", () => {
-  assert.deepEqual(validateDraft(input), {});
-  assert.deepEqual(
-    validateDraft({ ...input, mode: "sponsored", amount: "1000" }),
-    {},
-  );
-  for (const amount of ["0", "-2", "1000.01", "2.001", "1e2", "NaN", ""]) {
-    assert.ok(validateDraft({ ...input, amount }).amount, amount);
-  }
-  assert.ok(validateDraft({ ...input, start: "2026-02-30" }).start);
-  assert.ok(validateDraft({ ...input, end: input.start }).end);
-  assert.ok(validateDraft({ ...input, end: "2026-09-21" }).end);
-  assert.ok(
-    validateDraft({ ...input, title: " ", description: "short" }).title,
-  );
-});
-
-test("invalid drafts cannot enter persisted state; valid drafts can be removed", () => {
-  const draft = { ...input, id: "draft-example", createdAt: now };
-  assert.equal(
-    reduceDemo(INITIAL_STATE, {
-      type: "draft",
-      draft: { ...draft, amount: "0" },
-    }),
-    INITIAL_STATE,
-  );
-  const saved = reduceDemo(INITIAL_STATE, { type: "draft", draft });
-  assert.equal(saved.drafts.length, 1);
-  assert.deepEqual(parseDemo(JSON.stringify(saved)), saved);
-  assert.equal(
-    reduceDemo(saved, { type: "delete-draft", id: draft.id }).drafts.length,
-    0,
-  );
-});
-
-test("obsolete local membership bookings are discarded without losing other choices", () => {
+test("legacy challenge fields are discarded while supported choices survive", () => {
   const legacy = {
-    ...reduceDemo(INITIAL_STATE, { type: "follow", id: "lea" }),
-    bookings: [
-      {
-        classId: "muay-thai",
-        status: "booked",
-        shared: true,
-        hidden: false,
-        createdAt: now,
-      },
-    ],
-  };
-  assert.deepEqual(parseDemo(JSON.stringify(legacy)), {
-    ...INITIAL_STATE,
+    version: 1,
     following: ["daniel", "lea"],
+    saved: ["show-up-club"],
+    drafts: [{ id: "obsolete-challenge-draft" }],
+    reactions: { "obsolete-activity": "cheer" },
+    eventDrafts: [],
+  };
+
+  assert.deepEqual(parseDemo(JSON.stringify(legacy)), {
+    version: 2,
+    following: ["daniel", "lea"],
+    eventDrafts: [],
   });
 });
 
-test("corrupt, incompatible and invalid persisted state recover without crashing", () => {
+test("older stores without event drafts preserve follows during migration", () => {
+  assert.deepEqual(
+    parseDemo(
+      JSON.stringify({
+        version: 1,
+        following: ["daniel", "max"],
+        saved: [],
+        drafts: [],
+      }),
+    ),
+    { version: 2, following: ["daniel", "max"], eventDrafts: [] },
+  );
+});
+
+test("malformed event drafts are dropped without erasing supported follows", () => {
+  const parsed = parseDemo(
+    JSON.stringify({
+      version: 1,
+      following: ["daniel", "lea"],
+      saved: ["obsolete"],
+      drafts: [null],
+      eventDrafts: [{ id: "broken" }],
+    }),
+  );
+  assert.deepEqual(parsed, {
+    version: 2,
+    following: ["daniel", "lea"],
+    eventDrafts: [],
+  });
+});
+
+test("corrupt and incompatible persisted state recover without crashing", () => {
   for (const raw of [
     null,
     "{broken",
     "null",
     "42",
-    JSON.stringify({ ...INITIAL_STATE, version: 2 }),
-    JSON.stringify({ ...INITIAL_STATE, drafts: [null] }),
+    JSON.stringify({ ...INITIAL_STATE, version: 3 }),
     JSON.stringify({ ...INITIAL_STATE, following: [3] }),
   ]) {
     assert.equal(parseDemo(raw), INITIAL_STATE);
   }
 });
 
-test("reset clears local choices without mutating the original snapshot", () => {
-  const state = reduceDemo(
-    reduceDemo(INITIAL_STATE, { type: "follow", id: "lea" }),
-    { type: "save", id: "show-up-club" },
-  );
-  assert.equal(state.following.length, 2);
-  assert.equal(state.saved.length, 1);
-  assert.deepEqual(reduceDemo(state, { type: "reset" }), INITIAL_STATE);
-  assert.equal(INITIAL_STATE.following.length, 1);
+test("follow and reset keep the version 2 preview shape", () => {
+  const followed = reduceDemo(INITIAL_STATE, { type: "follow", id: "lea" });
+  assert.deepEqual(followed.following, ["daniel", "lea"]);
+  assert.deepEqual(reduceDemo(followed, { type: "reset" }), INITIAL_STATE);
+  assert.equal(INITIAL_STATE.version, 2);
 });
