@@ -5,7 +5,7 @@
 - Last updated: 2026-09-24
 - Milestone: M4 minimal community loop
 - Coordination: None — independent development ticket
-- Related records: planned by completed [DEV0022 — Social contract and delivery plan](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md), then materially narrowed by completed [DEV0058 — Adopt the fitness-access MVP contract](../../archive/organisatory/DEV0058-fitness-access-mvp-contract.md); depends on [DEV0017](DEV0017-persistent-catalogue-and-drafts.md), [DEV0018](DEV0018-class-pass-reservations-and-confirmed-visits.md), completed identity/protected-context work and future verified membership/event sources
+- Related records: planned by completed [DEV0022 — Social contract and delivery plan](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md), then materially narrowed by completed [DEV0058 — Adopt the fitness-access MVP contract](../../archive/organisatory/DEV0058-fitness-access-mvp-contract.md); depends on catalogue coordination [COR0006](../organisatory/COR0006-persistent-access-catalogue.md), [DEV0018](DEV0018-class-pass-reservations-and-confirmed-visits.md), completed identity/protected-context work, [DEV0066 — Freeze membership product rules](../../archive/organisatory/DEV0066-freeze-membership-product-rules.md), and future verified membership/event sources
 
 ## Objective and context
 
@@ -28,7 +28,7 @@ Guest, cross-dataset, revoked and hidden access reveal no personal activity or p
 
 ## Assumptions, decisions, and dependencies
 
-The current browser preview has no secure shared feed. DEV0017 supplies profiles/follows and catalogue sources; DEV0018 supplies pass/visit sources. Future membership/event tickets must expose durable verified source IDs and sharing choices before this ticket can consume them. No Supabase Realtime dependency is required; ordinary revalidation is sufficient for the MVP.
+The current browser preview has no secure shared feed. A future direct ticket under COR0006 must supply profiles/follows and catalogue sources; DEV0018 supplies pass/visit sources. Future membership/event tickets must expose durable verified source IDs and sharing choices before this ticket can consume them. No Supabase Realtime dependency is required; ordinary revalidation is sufficient for the MVP.
 
 The pivot deliberately removes reactions rather than merely hiding their controls. Do not create a reaction table/API or return placeholder counts.
 
@@ -78,7 +78,7 @@ Not run — no implementation. Planning/link checks do not satisfy AC1–AC5.
 
 ## Risks, limitations, and follow-ups
 
-This ticket cannot invent source truth. It stays Draft until at least one real access/attendance source and DEV0017's profile/follow boundary exist. Completing it does not implement memberships, payments, reservations or sponsored events.
+This ticket cannot invent source truth. It stays Draft until at least one real access/attendance source and COR0006's separately ticketed profile/follow boundary exist. Completing it does not implement memberships, payments, reservations or sponsored events.
 
 ## Completion and review references
 

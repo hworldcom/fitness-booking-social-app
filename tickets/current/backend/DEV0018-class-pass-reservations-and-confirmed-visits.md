@@ -5,7 +5,7 @@
 - Last updated: 2026-09-24
 - Milestone: M3 class-pass access / M4 shared class activity
 - Coordination: None — independent development ticket
-- Related records: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md), [DEV0017](DEV0017-persistent-catalogue-and-drafts.md), and a not-yet-created verified class-pass payment ticket; revised by completed [DEV0048 — Remove gym membership access](../../archive/backend/DEV0048-remove-gym-membership-access.md) and [DEV0058 — Adopt the fitness-access MVP contract](../../archive/organisatory/DEV0058-fitness-access-mvp-contract.md)
+- Related records: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md), catalogue coordination [COR0006](../organisatory/COR0006-persistent-access-catalogue.md), and a not-yet-created verified class-pass payment ticket; revised by completed [DEV0048 — Remove gym membership access](../../archive/backend/DEV0048-remove-gym-membership-access.md), [DEV0058 — Adopt the fitness-access MVP contract](../../archive/organisatory/DEV0058-fitness-access-mvp-contract.md), and [DEV0066 — Freeze membership product rules](../../archive/organisatory/DEV0066-freeze-membership-product-rules.md)
 
 ## Objective and context
 
@@ -24,9 +24,9 @@ Only staff assigned to the class venue and dataset may redeem valid access. An a
 
 ## Assumptions, decisions, and dependencies
 
-DEV0015, DEV0040 and DEV0017 provide base mappings, verified users/roles and shared screens. A separate future ticket must own payment intent, wallet transaction, server verification and refund obligations before this ticket can become Ready. This ticket owns the repositories and services for the reservation/access/check-in/visit/activity tables it introduces. **P07 remains proposed:** decide daily visit deduplication and the check-in window before freezing schema indexes/check-in rules. Class schedules and venue operators are hackathon fixtures; authorization and database transitions are real.
+DEV0015 and DEV0040 provide base mappings and verified users/roles; COR0006 coordinates the separately ticketed catalogue sources and screens. A separate future ticket must own payment intent, wallet transaction, server verification and refund obligations before this ticket can become Ready. This ticket owns the repositories and services for the reservation/access/check-in/visit/activity tables it introduces. **P07 remains proposed:** decide daily visit deduplication and the check-in window before freezing schema indexes/check-in rules. Class schedules and venue operators are hackathon fixtures; authorization and database transitions are real.
 
-`demo_run_participants` remains an internal record meaning that a profile participates in one isolated application dataset. It is not a consumer membership, class subscription or proof of class access. This ticket may not recreate the removed entitlement table, eligibility flag or no-payment preview branch. A future verified membership source must use its own reviewed contract before DEV0018 can consume it.
+`demo_run_participants` remains an internal record meaning that a profile participates in one isolated application dataset. It is not a consumer membership, class subscription or proof of class access. This ticket may not recreate the removed entitlement table, eligibility flag or no-payment preview branch. DEV0066 supplies the product rules, but future membership program/payment/projection tickets must create a verified entitlement source before DEV0018 can consume membership access.
 
 ## Implementation plan
 

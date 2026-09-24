@@ -188,3 +188,111 @@ values
   ('50000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000006', 'strength', 'Strength, together', 'A small-group strength session built around good technique.', 'Strength', 'Europe/Berlin', 'EURC', '2030-09-25T15:30:00Z', '2030-09-25T16:20:00Z', 6, 18000000, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z'),
   ('50000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000003', 'sunday-flow', 'Sunday reset flow', 'Gentle movement, spacious breathing and a long stretch.', 'Yoga', 'Europe/Berlin', 'EURC', '2030-09-29T08:00:00Z', '2030-09-29T09:15:00Z', 8, 15000000, 'scheduled', 'fixture', '2026-09-20T00:00:00Z', '2026-09-20T00:00:00Z')
 on conflict do nothing;
+
+insert into app.membership_products (
+  id,
+  run_id,
+  organization_id,
+  slug,
+  status,
+  record_source,
+  created_by_profile_id,
+  created_at,
+  updated_at
+)
+values
+  (
+    '60000000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000002',
+    'annual-unlimited',
+    'active',
+    'fixture',
+    null,
+    '2026-09-24T00:00:00Z',
+    '2026-09-24T00:00:00Z'
+  ),
+  (
+    '60000000-0000-4000-8000-000000000002',
+    '20000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000002',
+    'six-month-flex-12',
+    'active',
+    'fixture',
+    null,
+    '2026-09-24T00:00:00Z',
+    '2026-09-24T00:00:00Z'
+  )
+on conflict do nothing;
+
+insert into app.membership_product_versions (
+  id,
+  run_id,
+  product_id,
+  version_number,
+  name,
+  description,
+  currency_code,
+  price_base_units,
+  duration_seconds,
+  access_model,
+  initial_entry_allowance,
+  transferable,
+  transfer_fee_base_units,
+  minimum_hold_seconds,
+  minimum_remaining_transfer_seconds,
+  status,
+  published_at,
+  retired_at,
+  created_by_profile_id,
+  created_at,
+  updated_at
+)
+values
+  (
+    '61000000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000001',
+    '60000000-0000-4000-8000-000000000001',
+    1,
+    'Annual Unlimited',
+    'Twelve months of unlimited genuine entries at Fabrik Training.',
+    'EURC',
+    null,
+    31536000,
+    'unlimited',
+    null,
+    true,
+    10000000,
+    2592000,
+    2592000,
+    'draft',
+    null,
+    null,
+    null,
+    '2026-09-24T00:00:00Z',
+    '2026-09-24T00:00:00Z'
+  ),
+  (
+    '61000000-0000-4000-8000-000000000002',
+    '20000000-0000-4000-8000-000000000001',
+    '60000000-0000-4000-8000-000000000002',
+    1,
+    'Six-Month Flex 12',
+    'Six months of access with twelve genuine entries at Fabrik Training.',
+    'EURC',
+    null,
+    15811200,
+    'entry_limited',
+    12,
+    true,
+    10000000,
+    2592000,
+    2592000,
+    'draft',
+    null,
+    null,
+    null,
+    '2026-09-24T00:00:00Z',
+    '2026-09-24T00:00:00Z'
+  )
+on conflict do nothing;

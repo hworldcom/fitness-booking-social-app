@@ -5,7 +5,7 @@
 - Last updated: 2026-09-22
 - Milestone: M0 identity and interface integrity
 - Coordination: None — independent development ticket
-- Related records: consumes completed [DEV0046 — Email OTP registration and application profiles](../backend/DEV0046-email-otp-registration-and-application-profiles.md) and [DEV0040 — Protected access and database context](../backend/DEV0040-protected-access-and-database-context.md); completes before [DEV0017 — Persistent catalogue and private drafts](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), which owns richer persistent profile, draft, follow and bookmark data
+- Related records: consumes completed [DEV0046 — Email OTP registration and application profiles](../backend/DEV0046-email-otp-registration-and-application-profiles.md) and [DEV0040 — Protected access and database context](../backend/DEV0040-protected-access-and-database-context.md); completes before [COR0006 — Persistent access catalogue](../../current/organisatory/COR0006-persistent-access-catalogue.md), converted from retired DEV0017, which coordinates richer persistent profile, draft, follow and bookmark data
 
 ## Objective and context
 

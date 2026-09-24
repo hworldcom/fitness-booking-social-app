@@ -5,7 +5,7 @@
 - Last updated: 2026-09-19
 - Milestone: M0 public frontend refinement; M2 state-aware actions remain dependent on backend
 - Coordination: None — independent development ticket
-- Related tickets: [DEV0008](DEV0008-repx-club-frontend.md), [DEV0019](DEV0019-public-discovery-access.md), [COR0002](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016; [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md)
+- Related tickets: [DEV0008](DEV0008-repx-club-frontend.md), [DEV0019](DEV0019-public-discovery-access.md), [COR0002](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016; [COR0006](../../current/organisatory/COR0006-persistent-access-catalogue.md), converted from retired DEV0017
 
 ## Objective and context
 
@@ -64,7 +64,7 @@ Every challenge has a five-question summary, the sponsored example retains its d
 | [Styles](../../../src/app/globals.css)                                                                                                                                                                                      | Responsive guide/search/cards/summary layouts, narrow header controls, focus-compatible disclosure and live-region helper.                         |
 | [Domain tests](../../../tests/discovery.test.ts), [browser tests](../../../tests/browser/discovery.spec.ts)                                                                                                                 | Filter intersections, chronology, search types, related links, keyboard guide, share success/failure, clean URL, public routes and narrow layouts. |
 | [Specification](../../../docs/mvp-spec.md#discovery-and-how-it-works), [README](../../../README.md), [index](../../README.md)                                                                                               | C18, implemented screen behavior, A56–A57, navigation and delivery status.                                                                         |
-| [COR0002](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016; [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md)                                  | Future public helper-route access, private search boundaries and preservation of discovery behavior during backend integration.                    |
+| [COR0002](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016; [COR0006](../../current/organisatory/COR0006-persistent-access-catalogue.md), converted from retired DEV0017 | Future public helper-route access, private search boundaries and preservation of discovery behavior during backend integration.                    |
 
 ### Decisions and deviations
 
