@@ -105,7 +105,7 @@ The Worker is deployed at its temporary `workers.dev` hostname and at the Cloudf
 | `package.json`                         | Adds explicit validation, dry-run and clean-commit deployment commands for staging.                                                                                                 |
 | `wrangler.jsonc`                       | Declares the four required binding names without values while retaining the route-free staging-only target.                                                                         |
 | `README.md`                            | Documents the secret-safe commands and the `workers.dev`-before-DNS boundary.                                                                                                       |
-| Cloudflare staging Worker and secrets  | Deployed commit `60e2cfe` to the staging-only Worker after account email verification; all four approved binding values remained hidden.                                            |
+| Cloudflare staging Worker and secrets  | Latest release deploys commit `b2ff5b7` as Worker version `5469b9a0-0123-4929-94bd-d948ed14ca16`; all four approved binding values remained hidden.                                 |
 | Cloudflare DNS / `staging.movx.club`   | Cloudflare is authoritative and the public Worker Custom Domain resolves through Cloudflare with a valid certificate and direct `200` application response.                         |
 | Porkbun nameserver and email DNS state | Nameserver delegation was submitted after the imported website and mail records were compared; the Cloudflare authorities preserve the expected mail records.                       |
 
@@ -119,6 +119,7 @@ The Worker is deployed at its temporary `workers.dev` hostname and at the Cloudf
 - 2026-09-23: After the user verified the Cloudflare account email, the clean retry deployed commit `60e2cfe` successfully to `https://movx-club-staging.movx-club.workers.dev`. Wrangler reported a 25 ms Worker startup time and hid all four binding values. No `movx.club` DNS or Custom Domain change occurred.
 - 2026-09-23: Added `staging.movx.club` through the Worker's Custom Domain interface with Production and Preview enabled. Cloudflare created the specific hostname record and certificate; no competing manual record was created. The specific Worker hostname takes precedence over the retained Porkbun wildcard record.
 - 2026-09-24: At the user's request, narrowed Worker-level Cloudflare Access from All traffic to Previews only. The stable `staging.movx.club` deployment is public without an extra Cloudflare login; temporary preview deployments retain the configured authentication policies. DEV0055's bounded Supabase Auth email and request limits remain the staging abuse boundary.
+- 2026-09-24: At the user's request, released the completed DEV0063/DEV0064 product-guide and waitlist revision from clean commit `b2ff5b7`. The guarded deployment retained the existing Worker/custom-domain configuration and uploaded only changed assets plus the new `/coming-soon` application route.
 
 ### Contracts, configuration, and operations
 
@@ -146,6 +147,9 @@ The local release guard, application checks and Cloudflare upload dry run pass. 
 - Worker Custom Domain — `staging.movx.club` resolves to Cloudflare anycast addresses, an HTTPS request verifies the certificate successfully and returns the expected `302` redirect to the Cloudflare Access login. No CNAME is exposed for the hostname because Cloudflare manages the Worker routing directly. Authenticated Access and application-flow checks remain manual.
 - Authorized custom-origin load — the user completed Cloudflare Access authentication at `https://staging.movx.club` and confirmed that the deployed MovX Club application loads. Supabase account, protected-profile and Phantom flows remain to be rehearsed at this origin.
 - Public custom-origin load — after changing Worker Access from All traffic to Previews only, a fresh unauthenticated HTTPS request to `https://staging.movx.club` returned `200` directly with successful certificate verification and no redirect. The user independently confirmed the site loads without the Cloudflare login. Temporary previews remain protected.
+- 2026-09-24 release validation — `npm run deploy:staging:check` passed without printing values; `npm run deploy:staging:dry-run` built all five vinext environments, included `/coming-soon`, prepared 71 assets and exited without upload; the sandbox prevented Wrangler from writing its optional local debug log but did not affect the successful dry run.
+- 2026-09-24 release — `npm run deploy:staging` passed from clean commit `b2ff5b7fbe53`; Wrangler uploaded 37 changed assets, reported a 21 ms Worker startup time and deployed version `5469b9a0-0123-4929-94bd-d948ed14ca16`. All four approved binding values remained hidden.
+- 2026-09-24 public release smoke — `/`, `/how-it-works` and `/coming-soon` each returned final HTTP `200` from `https://staging.movx.club`. The rendered guide contained `Fitness access that`, `Small transfer fee paid to the gym` and `Join the waitlist`; the Coming Soon document contained `Flexible fitness access is getting ready to move`, `Save your place` and the explicit no-storage disclosure.
 - `npm test` — passed, 52 tests including accepted configuration, rejected production-origin configuration and Wrangler binding-boundary coverage.
 - `npm run lint` — passed.
 - `npm run typecheck` — passed.
@@ -154,10 +158,10 @@ The local release guard, application checks and Cloudflare upload dry run pass. 
 
 | Criterion | Evidence                                                                                                                                                                                                                                                   | Result  |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| AC1       | Reviewed commit `60e2cfe` is deployed to the staging-only Worker; the allowlist and hidden bindings pass, and private database markers are absent from 50 browser files.                                                                                   | Passed  |
+| AC1       | Reviewed commit `b2ff5b7` is deployed as Worker version `5469b9a0-0123-4929-94bd-d948ed14ca16`; the allowlist and hidden bindings pass, and prior browser-secret inspection remains applicable.                                                            | Passed  |
 | AC2       | The exact origin is enforced locally; `staging.movx.club` resolves through Cloudflare, HTTPS certificate verification succeeds and the application loads after authorized Access authentication. Authenticated mutation checks remain.                     | Partial |
 | AC3       | Porkbun and Cloudflare record lists match; MX, SPF, DKIM and DMARC remain public during pending delegation. Post-cutover DNS plus send/receive checks remain.                                                                                              | Partial |
-| AC4       | Automated tests plus desktop/mobile hosted Chrome checks pass for four public routes, navigation, images and overflow; honest preview-label review remains.                                                                                                | Partial |
+| AC4       | Automated tests plus prior desktop/mobile hosted Chrome checks pass for public navigation, images and overflow; the latest root, guide and Coming Soon routes return `200` with expected release content. Honest preview-label review remains.             | Partial |
 | AC5       | Hosted Auth rehearsal not run.                                                                                                                                                                                                                             | Not run |
 | AC6       | Hosted Phantom rehearsal not run.                                                                                                                                                                                                                          | Not run |
 | AC7       | Invalid deployment configuration fails closed in tests; hosted signed-out protected reads return `401`, a wrong-origin mutation returns `403`, and public discovery returns `200` without granting application identity. Temporary previews retain Access. | Passed  |
@@ -174,6 +178,6 @@ The local release guard, application checks and Cloudflare upload dry run pass. 
 ## Completion and review references
 
 - Completed: Not completed.
-- Commit: `60e2cfe` deployed; it contains `ef93a01` (`[DEV0056] Guard staging Worker deployment`) and the documented account-verification blocker.
+- Commit: latest deployed application commit `b2ff5b7`; DEV0056 deployment tooling remains based on `ef93a01` (`[DEV0056] Guard staging Worker deployment`).
 - Review: No pull request or independent review exists.
-- Deployment or release: commit `60e2cfe` is deployed at the public `https://staging.movx.club` Custom Domain with successful DNS, TLS and direct-response checks. Cloudflare Access protects temporary preview deployments only.
+- Deployment or release: commit `b2ff5b7` is deployed as Worker version `5469b9a0-0123-4929-94bd-d948ed14ca16` at the public `https://staging.movx.club` Custom Domain with successful direct `200` checks for the root, redesigned guide and new Coming Soon page. Cloudflare Access protects temporary preview deployments only.
