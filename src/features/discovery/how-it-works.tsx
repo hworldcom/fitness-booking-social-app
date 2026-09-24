@@ -5,186 +5,184 @@ import {
   Building2,
   CalendarDays,
   Compass,
-  Users,
-  Flag,
-  Coffee,
   Dumbbell,
   ShieldCheck,
   UserRound,
+  Users,
   WalletCards,
 } from "lucide-react";
 
 export function HowItWorksScreen() {
   return (
     <div className="how-it-works">
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">WELCOME TO MOVX CLUB</span>
-          <h1>
-            A little plan.
-            <br />A little more together<span className="lime-text">.</span>
+      <section className="guide-hero" aria-labelledby="guide-title">
+        <div className="guide-hero-copy">
+          <span className="eyebrow">
+            FLEXIBLE FITNESS ACCESS · BUILT AROUND PEOPLE
+          </span>
+          <h1 id="guide-title">
+            Find how you want to move. Choose access that fits.
           </h1>
           <p>
-            Find an activity, bring your people and give each other a reason to
-            show up.
+            MovX Club brings memberships, passes and events into one place, so
+            it is easier to discover a fitness community and take part on your
+            terms.
           </p>
+          <div className="discovery-links">
+            <Link className="button lime" href="/explore">
+              Explore activities <ArrowRight size={17} aria-hidden="true" />
+            </Link>
+            <Link className="button guide-ghost-button" href="#access-journey">
+              See how it works
+            </Link>
+          </div>
         </div>
-      </div>
-      <nav className="guide-audiences" aria-label="Choose how MovX Club helps">
+        <aside className="guide-hero-summary" aria-label="MovX Club in brief">
+          <span>ONE PLACE TO</span>
+          <strong>Discover</strong>
+          <strong>Choose</strong>
+          <strong>Show up</strong>
+          <p>Access first. Community follows.</p>
+        </aside>
+      </section>
+
+      <nav className="guide-audiences" aria-label="Choose your MovX Club guide">
         <Link href="#for-people" className="guide-audience people">
           <UserRound size={27} strokeWidth={1.5} aria-hidden="true" />
           <span>
             <small>FOR PEOPLE</small>
-            <strong>The social layer</strong>
-            <p>
-              Discover activities, create with your people and make real
-              progress worth sharing.
-            </p>
+            <strong>Find flexible access</strong>
+            <p>Compare ways to join, then choose what fits your routine.</p>
           </span>
           <ArrowRight size={20} aria-hidden="true" />
         </Link>
         <Link href="#for-clubs" className="guide-audience clubs">
           <Building2 size={27} strokeWidth={1.5} aria-hidden="true" />
           <span>
-            <small>FOR FITNESS AND SPORTS CLUBS</small>
-            <strong>The community channel</strong>
-            <p>
-              Reach participants, shape experiences and manage accountable club
-              authority.
-            </p>
+            <small>FOR FITNESS BUSINESSES</small>
+            <strong>Offer access people can use</strong>
+            <p>Publish clear options, welcome newcomers and fill activities.</p>
           </span>
           <ArrowRight size={20} aria-hidden="true" />
         </Link>
       </nav>
 
+      <section
+        className="guide-journey"
+        id="access-journey"
+        aria-labelledby="access-journey-title"
+      >
+        <div className="guide-section-heading">
+          <span className="eyebrow">THE SIMPLE VERSION</span>
+          <h2 id="access-journey-title">From discovery to showing up.</h2>
+          <p>
+            Start with the activity. Pick the access option that makes sense for
+            you. The product should make that choice easy to understand.
+          </p>
+        </div>
+        <ol className="guide-journey-steps">
+          <li>
+            <span className="guide-step-number">01</span>
+            <Compass size={22} aria-hidden="true" />
+            <h3>Discover</h3>
+            <p>
+              Browse places, activities and events without needing an account.
+            </p>
+          </li>
+          <li>
+            <span className="guide-step-number">02</span>
+            <WalletCards size={22} aria-hidden="true" />
+            <h3>Choose access</h3>
+            <p>
+              Compare a membership, a pass or an event ticket before paying.
+            </p>
+          </li>
+          <li>
+            <span className="guide-step-number">03</span>
+            <CalendarDays size={22} aria-hidden="true" />
+            <h3>Show up</h3>
+            <p>Use your access for the place, session or event you selected.</p>
+          </li>
+          <li>
+            <span className="guide-step-number">04</span>
+            <Users size={22} aria-hidden="true" />
+            <h3>Stay connected</h3>
+            <p>
+              See useful activity from the fitness communities you belong to.
+            </p>
+          </li>
+        </ol>
+      </section>
+
       <section className="guide-people" id="for-people">
-        <div className="guide-people-heading">
+        <div className="guide-section-heading guide-section-heading-wide">
           <div>
-            <span className="eyebrow">FOR PEOPLE · THE SOCIAL LAYER</span>
-            <h2>Turn showing up into something you share.</h2>
+            <span className="eyebrow">FOR PEOPLE</span>
+            <h2>Three clear ways to take part.</h2>
+          </div>
+          <p>
+            Choose ongoing access, a smaller commitment or a dated experience.
+            The important details should be visible before you decide.
+          </p>
+        </div>
+
+        <div className="guide-access-grid">
+          <article className="membership">
+            <div className="guide-product-icon">
+              <WalletCards size={23} aria-hidden="true" />
+            </div>
+            <span className="guide-product-kicker">ONGOING ACCESS</span>
+            <h3>Memberships</h3>
             <p>
-              Find a reason to move, bring your people and build a visible
-              rhythm around real participation rather than empty engagement.
+              Recurring access to a fitness business, with the duration,
+              included activities and renewal terms shown up front.
+            </p>
+            <strong>Best for a regular routine</strong>
+          </article>
+          <article className="pass">
+            <div className="guide-product-icon">
+              <Dumbbell size={23} aria-hidden="true" />
+            </div>
+            <span className="guide-product-kicker">FLEXIBLE ACCESS</span>
+            <h3>Passes</h3>
+            <p>
+              Access for one class or a limited number of visits, without the
+              commitment of an ongoing membership.
+            </p>
+            <strong>Best for trying something or mixing it up</strong>
+          </article>
+          <article className="event">
+            <div className="guide-product-icon">
+              <CalendarDays size={23} aria-hidden="true" />
+            </div>
+            <span className="guide-product-kicker">DATED EXPERIENCE</span>
+            <h3>Events</h3>
+            <p>
+              A ticket for a specific fitness or community experience, with the
+              date, location and what is included made clear.
+            </p>
+            <strong>Best for a shared moment</strong>
+          </article>
+        </div>
+
+        <div className="guide-sponsored-event">
+          <div className="guide-sponsored-icon">
+            <BadgeCheck size={24} aria-hidden="true" />
+          </div>
+          <div>
+            <span className="eyebrow">SPONSORED EVENTS</span>
+            <h3>A business can help cover the cost of showing up.</h3>
+            <p>
+              A sponsor funds all or part of an event so people can attend for
+              free or at a lower price. It is still an event—not a contest,
+              prize pool or vote.
             </p>
           </div>
-          <UserRound size={54} strokeWidth={1.2} aria-hidden="true" />
         </div>
-        <div className="guide-steps">
-          <article>
-            <div className="guide-step-top">
-              <span className="guide-step-number">
-                01 <Compass size={22} aria-hidden="true" />
-              </span>
-              <span className="guide-status available">Preview available</span>
-            </div>
-            <h3>Discover your next move</h3>
-            <p>
-              Browse demonstration classes, studios, events and challenges.
-              Public Explore and Challenges need no login or wallet.
-            </p>
-          </article>
-          <article>
-            <div className="guide-step-top">
-              <span className="guide-step-number">
-                02 <Users size={22} aria-hidden="true" />
-              </span>
-              <span className="guide-status planned">Access planned</span>
-            </div>
-            <h3>Choose your kind of together</h3>
-            <p>
-              Compare classes, events and challenge rules before committing.
-              Real booking, entry and payment flows are not live yet.
-            </p>
-          </article>
-          <article>
-            <div className="guide-step-top">
-              <span className="guide-step-number">
-                03 <Flag size={22} aria-hidden="true" />
-              </span>
-              <span className="guide-status preview">
-                Browser draft preview
-              </span>
-            </div>
-            <h3>Create with your community</h3>
-            <p>
-              Plan a challenge or event around your people. Current drafts stay
-              in this browser and are not published or funded.
-            </p>
-          </article>
-          <article>
-            <div className="guide-step-top">
-              <span className="guide-step-number">
-                04 <BadgeCheck size={22} aria-hidden="true" />
-              </span>
-              <span className="guide-status planned">Shared data planned</span>
-            </div>
-            <h3>Make real progress social</h3>
-            <p>
-              Confirmed participation can later become trusted community
-              activity. A plan, payment or wallet connection is not attendance.
-            </p>
-          </article>
-        </div>
-        <div className="guide-choices">
-          <span className="eyebrow">FOUR WAYS TO TAKE PART</span>
-          <h3>Pick what moves you.</h3>
-          <div className="guide-choice-grid">
-            <article>
-              <Dumbbell size={23} />
-              <h4>Classes</h4>
-              <p>
-                Find a studio and a dated session, then buy a class pass. A pass
-                grants class access; staff confirmation separately records your
-                visit.
-              </p>
-              <Link href="/explore" className="text-link">
-                Find a class <ArrowRight size={15} />
-              </Link>
-            </article>
-            <article>
-              <Coffee size={23} />
-              <h4>Events</h4>
-              <p>
-                Pay for a shared experience with something included for every
-                ticket holder. Run & Coffee includes a social 5K and a coffee.
-                No prize, winner or vote.
-              </p>
-              <Link href="/explore?view=events" className="text-link">
-                Explore events <ArrowRight size={15} />
-              </Link>
-            </article>
-            <article>
-              <Users size={23} />
-              <h4>Community challenges</h4>
-              <p>
-                Participants contribute to a shared pool and vote after the
-                challenge. At least half must vote; below that turnout at the
-                deadline, the pool is shared evenly among participants.
-              </p>
-              <Link href="/challenges?mode=community" className="text-link">
-                See community challenges <ArrowRight size={15} />
-              </Link>
-            </article>
-            <article>
-              <Flag size={23} />
-              <h4>Sponsored challenges</h4>
-              <p>
-                The creator funds the prize and chooses the winner under the
-                challenge rules. If no winner is chosen within 24 hours of the
-                end, the pool is shared evenly among participants.
-              </p>
-              <Link href="/challenges?mode=sponsored" className="text-link">
-                See sponsored challenges <ArrowRight size={15} />
-              </Link>
-            </article>
-          </div>
-        </div>
+
         <div className="discovery-links">
           <Link className="button dark" href="/explore">
-            Explore as a participant <ArrowRight size={17} />
-          </Link>
-          <Link className="button secondary" href="/challenges">
-            Find a challenge
+            Explore activities <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </div>
       </section>
@@ -194,157 +192,165 @@ export function HowItWorksScreen() {
         aria-labelledby="community-loop-title"
       >
         <div>
-          <span className="eyebrow">ONE COMMUNITY LOOP</span>
+          <span className="eyebrow">WHERE COMMUNITY FITS</span>
           <h2 id="community-loop-title">
-            Clubs create the reasons to show up. People make them social.
+            Access gets you through the door. Showing up builds the community.
           </h2>
         </div>
         <div className="guide-loop-steps">
           <span>
-            <Building2 size={21} aria-hidden="true" />
-            Clubs shape activities
+            <Building2 size={21} aria-hidden="true" />A business offers access
+          </span>
+          <ArrowRight size={18} aria-hidden="true" />
+          <span>
+            <UserRound size={21} aria-hidden="true" />A person chooses what fits
           </span>
           <ArrowRight size={18} aria-hidden="true" />
           <span>
             <Users size={21} aria-hidden="true" />
-            People discover and participate
-          </span>
-          <ArrowRight size={18} aria-hidden="true" />
-          <span>
-            <BadgeCheck size={21} aria-hidden="true" />
-            Verified activity can become shared progress
+            Participation creates connection
           </span>
         </div>
         <p>
-          Public discovery is available as a preview. Persistent publishing,
-          confirmed participation and shared activity remain planned.
+          The shared activity view will stay intentionally small: useful updates
+          about real participation, without engagement mechanics.
         </p>
       </section>
 
       <section className="guide-clubs" id="for-clubs">
-        <div className="guide-clubs-heading">
+        <div className="guide-section-heading guide-section-heading-wide">
           <div>
-            <span className="eyebrow">FOR FITNESS AND SPORTS CLUBS</span>
-            <h2>Turn activities into a community people return to.</h2>
-            <p>
-              MovX Club gives clubs one public place to help people discover
-              what is happening, join shared experiences and keep showing up
-              together.
-            </p>
+            <span className="eyebrow">FOR FITNESS BUSINESSES</span>
+            <h2>Make it easier for people to say yes.</h2>
           </div>
-          <Building2 size={54} strokeWidth={1.2} aria-hidden="true" />
+          <p>
+            Present your access options clearly, reach people looking for their
+            next activity and use events to bring your community together.
+          </p>
         </div>
         <div className="guide-club-grid">
           <article>
-            <span className="guide-status available">Preview available</span>
             <Compass size={22} aria-hidden="true" />
-            <h3>Reach new participants</h3>
+            <h3>Publish access</h3>
             <p>
-              Classes, events and challenges can appear together in public
-              discovery. Current listings are demonstration data rather than
-              live club inventory.
+              List memberships, passes and events together, with the terms a
+              person needs to choose confidently.
             </p>
           </article>
           <article>
-            <span className="guide-status preview">Browser draft preview</span>
             <CalendarDays size={22} aria-hidden="true" />
-            <h3>Shape club experiences</h3>
+            <h3>Welcome new people</h3>
             <p>
-              Plan events and sponsored challenges that fit your community.
-              Drafts currently stay in one browser and are not published.
+              Use flexible passes and dated events to create a low-commitment
+              first step into your business.
             </p>
           </article>
           <article>
-            <span className="guide-status planned">Planned shared data</span>
-            <Users size={22} aria-hidden="true" />
-            <h3>Strengthen participation</h3>
+            <BadgeCheck size={22} aria-hidden="true" />
+            <h3>Sponsor attendance</h3>
             <p>
-              Confirmed attendance and shared activity can later help members
-              see progress and give one another a reason to return.
-            </p>
-          </article>
-          <article>
-            <span className="guide-status prepared">Prepared access</span>
-            <ShieldCheck size={22} aria-hidden="true" />
-            <h3>Keep club authority separate</h3>
-            <p>
-              Administrators sign in as themselves. Prepared clubs use a
-              distinct wallet proof for bounded club authority, separate from
-              personal accounts and wallets.
+              Fund or subsidize an event to make participation more accessible
+              and connect your brand to a real experience.
             </p>
           </article>
         </div>
         <div className="guide-club-future">
-          <WalletCards size={21} aria-hidden="true" />
+          <ShieldCheck size={21} aria-hidden="true" />
           <p>
-            Class-pass and event-ticket sales, sponsorship funding and refunds
-            are planned for Solana Devnet test funds. No payment, balance or
-            transaction capability is live on this club page today.
+            Business tools, live inventory and payments are not live yet. The
+            current club area demonstrates the planned access and authority
+            model using fixture data only.
           </p>
         </div>
         <div className="discovery-links">
           <Link className="button lime" href="/clubs/sign-in">
-            Manage a club <ArrowRight size={17} />
+            Manage a club <ArrowRight size={17} aria-hidden="true" />
           </Link>
           <Link className="button secondary" href="/explore">
             See public discovery
           </Link>
         </div>
       </section>
+
+      <section className="guide-now" aria-labelledby="guide-now-title">
+        <div className="guide-section-heading">
+          <span className="eyebrow">AN HONEST PREVIEW</span>
+          <h2 id="guide-now-title">What works today—and what comes next.</h2>
+        </div>
+        <div className="guide-now-grid">
+          <article>
+            <span className="guide-now-label available">YOU CAN TRY NOW</span>
+            <h3>Explore the product direction</h3>
+            <ul>
+              <li>Browse demonstration activities and places</li>
+              <li>Open event and class details</li>
+              <li>Preview checkout and club access screens</li>
+              <li>Sign in and connect a wallet without moving funds</li>
+            </ul>
+          </article>
+          <article>
+            <span className="guide-now-label planned">PLANNED NEXT</span>
+            <h3>Use real access products</h3>
+            <ul>
+              <li>Buy and manage memberships or passes</li>
+              <li>Purchase event tickets</li>
+              <li>Transfer eligible access when terms permit it</li>
+              <li>Publish business inventory and sponsored events</li>
+            </ul>
+          </article>
+        </div>
+        <p className="guide-fixture-note">
+          Everything currently shown is demonstration data. No membership, pass,
+          ticket or sponsorship purchase is live, and no real funds move.
+        </p>
+      </section>
+
       <section className="guide-faq">
-        <h2>A few things to know</h2>
+        <span className="eyebrow">GOOD TO KNOW</span>
+        <h2>A few common questions.</h2>
+        <details>
+          <summary>Can I browse without an account?</summary>
+          <p>
+            Yes. Public discovery is open. An account will be needed for
+            personal actions such as managing access, tickets and transfers.
+          </p>
+        </details>
         <details>
           <summary>Do I need a wallet?</summary>
           <p>
-            You can browse and sign in without one. You may link Phantom to your
-            personal account later. A prepared club administrator proves the
-            club wallet separately. Payments are not live, and each future
-            transaction will need its own approval.
+            Not to browse or sign in. A wallet may support future test payments
+            and transfers, but connecting one does not approve a transaction.
+            Each payment will need its own clear confirmation.
           </p>
         </details>
         <details>
-          <summary>Is this real money?</summary>
+          <summary>What can be transferred?</summary>
           <p>
-            No. The hackathon targets test EURC on Solana Devnet, with test SOL
-            for network costs. Today’s balances, pools and receipts are
-            examples; no funds are deposited or paid.
+            Only access marked as transferable by the fitness business. Its
+            rules, timing and any limits must be visible before a transfer.
+            Transfer capability is planned and is not live in this preview.
           </p>
         </details>
         <details>
-          <summary>What if a plan is cancelled?</summary>
+          <summary>What is a sponsored event?</summary>
           <p>
-            A challenge cancelled before it starts returns contributions to the
-            participants, or sponsored funds to the creator. Class passes bought
-            less than 24 hours before the class and no-shows are non-refundable
-            for customer cancellation. The full class refund policy and
-            event-specific cancellation terms are still being finalized and must
-            be shown before real test-token purchases.
-          </p>
-        </details>
-        <details>
-          <summary>Can I organize something?</summary>
-          <p>
-            Yes. Friends, trainers, gyms, businesses and community organizations
-            can plan a challenge or event. Try saving a draft now; it stays in
-            this browser and is not published. Authenticated creation,
-            invitations and funding come with the backend integration.
+            It is a normal event whose cost is partly or fully covered by a
+            sponsor. People attend the experience; there is no winner, voting
+            process or prize pool.
           </p>
         </details>
       </section>
+
       <section className="guide-preview">
-        <span className="eyebrow">WHAT YOU CAN TRY TODAY</span>
-        <h2>Explore the preview. Make a little plan.</h2>
+        <span className="eyebrow">START WITH DISCOVERY</span>
+        <h2>See what moving with MovX Club could feel like.</h2>
         <p>
-          Browse, save inspiration and create local drafts. Venues, schedules
-          and activity are demonstration data. Entry, checkout and attendance
-          flows are not live yet.
+          Browse the demonstration catalogue and compare the kinds of fitness
+          experiences the access model is designed to support.
         </p>
         <div className="discovery-links">
           <Link className="button lime" href="/explore">
-            Explore activities <ArrowRight size={17} />
-          </Link>
-          <Link className="button secondary" href="/challenges">
-            Find a challenge
+            Explore activities <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </div>
       </section>

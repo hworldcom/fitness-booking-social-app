@@ -5,7 +5,7 @@
 - Last updated: 2026-09-21
 - Milestone: M0 frontend visual refinement
 - Coordination: None — independent development ticket
-- Related records: Historical baseline [DEV0008](../../archive/frontend/DEV0008-repx-club-frontend.md); downstream social behavior [DEV0023](../../current/backend/DEV0023-shared-social-feed-and-cheers.md)
+- Related records: Historical baseline [DEV0008](../../archive/frontend/DEV0008-repx-club-frontend.md); downstream social behavior [DEV0023](../../current/backend/DEV0023-minimal-shared-activity-feed.md)
 
 ## Objective and context
 
@@ -51,16 +51,16 @@ Implemented the first restrained concept as a shared visual system and a rebuilt
 
 ### Affected files
 
-| File | Responsibility |
-| --- | --- |
-| [Feed](../../../src/features/feed/feed.tsx) | Hero, working discovery links, catalogue-derived studio cards and existing feed/follow controls. |
-| [Club theme](../../../src/app/club-theme.css) | Shared typography/surfaces, hero/rail composition, phone/tablet layouts and reduced-motion treatment. |
-| [Global styles](../../../src/app/globals.css) | Colour/radius tokens; remove obsolete dark-hero rules. |
-| [Layout](../../../src/app/layout.tsx) | Load the local display font and theme after existing styles, preserving Auth/preview providers. |
-| [Package manifest](../../../package.json) and [lockfile](../../../package-lock.json) | Pin Bricolage Grotesque 5.3.0; no unrelated dependency upgrades. |
-| [Asset record](../../../docs/design/DEV0043-assets.md) | Image provenance, final built-in generation prompts, reference and local WebP paths. |
-| [Redesign checks](../../../tests/browser/redesign.spec.ts) and [preview checks](../../../tests/browser/preview.spec.ts) | Hero/rail destinations, keyboard use, responsive text clipping/image checks and updated home heading assertions. |
-| [Specification](../../../docs/mvp-spec.md#visual-design-direction--21-september-2026), [README](../../../README.md), [index](../../README.md) | Accepted visual direction, setup/asset navigation and actual delivery status. |
+| File                                                                                                                                          | Responsibility                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [Feed](../../../src/features/feed/feed.tsx)                                                                                                   | Hero, working discovery links, catalogue-derived studio cards and existing feed/follow controls.                 |
+| [Club theme](../../../src/app/club-theme.css)                                                                                                 | Shared typography/surfaces, hero/rail composition, phone/tablet layouts and reduced-motion treatment.            |
+| [Global styles](../../../src/app/globals.css)                                                                                                 | Colour/radius tokens; remove obsolete dark-hero rules.                                                           |
+| [Layout](../../../src/app/layout.tsx)                                                                                                         | Load the local display font and theme after existing styles, preserving Auth/preview providers.                  |
+| [Package manifest](../../../package.json) and [lockfile](../../../package-lock.json)                                                          | Pin Bricolage Grotesque 5.3.0; no unrelated dependency upgrades.                                                 |
+| [Asset record](../../../docs/design/DEV0043-assets.md)                                                                                        | Image provenance, final built-in generation prompts, reference and local WebP paths.                             |
+| [Redesign checks](../../../tests/browser/redesign.spec.ts) and [preview checks](../../../tests/browser/preview.spec.ts)                       | Hero/rail destinations, keyboard use, responsive text clipping/image checks and updated home heading assertions. |
+| [Specification](../../../docs/mvp-spec.md#visual-design-direction--21-september-2026), [README](../../../README.md), [index](../../README.md) | Accepted visual direction, setup/asset navigation and actual delivery status.                                    |
 
 ### Decisions and deviations
 
@@ -87,12 +87,12 @@ No data/API/schema/authentication/financial changes. Added the exact local font 
 - Confirmed PID 31792 belonged to this project, stopped it and ran `npm run start` with the existing localhost:3100 origin. A successful `curl --fail --silent http://localhost:3100/` response contained the redesigned slogan and studio image path, with no development client. Browser storage and the database were not reset.
 - No new domain logic, migrations or financial paths: domain/database resets and real-Phantom/devnet rehearsals were not repeated. Existing authentication presentation tests passed; this ticket makes no claim of new identity or transaction implementation.
 
-| Criterion | Evidence | Result |
-| --- | --- | --- |
-| AC1 | Actual desktop/mobile screenshots, local font/assets, hero/rail link checks and fixture labels | Passed |
-| AC2 | Full browser suite plus final narrow/tablet, keyboard, modal/error and four-route checks | Passed |
-| AC3 | Lint/type/format/build and 38-test initial + 8-test final affected-flow runs | Passed |
-| AC4 | Specification/provenance/link checks and verified restarted production response | Passed |
+| Criterion | Evidence                                                                                       | Result |
+| --------- | ---------------------------------------------------------------------------------------------- | ------ |
+| AC1       | Actual desktop/mobile screenshots, local font/assets, hero/rail link checks and fixture labels | Passed |
+| AC2       | Full browser suite plus final narrow/tablet, keyboard, modal/error and four-route checks       | Passed |
+| AC3       | Lint/type/format/build and 38-test initial + 8-test final affected-flow runs                   | Passed |
+| AC4       | Specification/provenance/link checks and verified restarted production response                | Passed |
 
 ## Risks, limitations, and follow-ups
 

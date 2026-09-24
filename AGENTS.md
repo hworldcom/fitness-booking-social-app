@@ -68,7 +68,7 @@ Use the development ticket's implementation record and validation results as the
 
 ## Product requirements
 
-Implement against the specification's [participation/attendance evidence](docs/mvp-spec.md#4-participation-and-attendance-evidence), [challenge settlement contract](docs/mvp-spec.md#6-challenge-contract-and-settlement), [class-pass payments/refunds](docs/mvp-spec.md#7-class-passes-payments-and-refunds), [demo integrity rules](docs/mvp-spec.md#8-asset-wallet-and-demo-integrity), and [social permissions](docs/mvp-spec.md#9-social-behavior-and-permissions). Use its [confirmed and proposed decision register](docs/mvp-spec.md#confirmed-target-and-decisions), [definition of done](docs/mvp-spec.md#10-definition-of-done) and [acceptance matrix](docs/mvp-spec.md#12-acceptance-matrix) to select checks. Keep the requirements in that document rather than restating them here.
+Implement against the specification's [participation/attendance evidence](docs/mvp-spec.md#4-participation-and-attendance-evidence), [programmable membership contract](docs/mvp-spec.md#6-programmable-membership-contract), [class-pass and event payments/refunds](docs/mvp-spec.md#7-class-passes-payments-and-refunds), [demo integrity rules](docs/mvp-spec.md#8-asset-wallet-and-demo-integrity), and [social permissions](docs/mvp-spec.md#9-social-behavior-and-permissions). Use its [confirmed and proposed decision register](docs/mvp-spec.md#confirmed-target-and-decisions), [definition of done](docs/mvp-spec.md#10-definition-of-done) and [acceptance matrix](docs/mvp-spec.md#12-acceptance-matrix) to select checks. Keep the requirements in that document rather than restating them here.
 
 ## Validation and definition of done
 

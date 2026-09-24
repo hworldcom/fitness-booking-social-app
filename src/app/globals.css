@@ -3935,6 +3935,332 @@ legend > span {
 .guide-preview .button.secondary {
   background: #fff;
 }
+
+/* Access-focused public guide */
+.how-it-works {
+  padding: 14px 0 45px;
+}
+.guide-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  align-items: end;
+  gap: clamp(32px, 6vw, 72px);
+  overflow: hidden;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 86% 12%, rgb(198 239 139 / 24%), transparent 27%),
+    #1e3025;
+  padding: clamp(30px, 6vw, 64px);
+  color: #fff;
+}
+.guide-hero-copy {
+  max-width: 730px;
+}
+.guide-hero .eyebrow {
+  color: #cbea99;
+}
+.guide-hero h1 {
+  max-width: 720px;
+  margin: 14px 0 20px;
+  font-size: clamp(40px, 6vw, 70px);
+  line-height: 0.98;
+  letter-spacing: -3.5px;
+}
+.guide-hero-copy > p {
+  max-width: 650px;
+  color: #d5dfd0;
+  font-size: clamp(14px, 1.7vw, 17px);
+  line-height: 1.75;
+}
+.guide-hero .discovery-links {
+  margin-top: 30px;
+}
+.guide-ghost-button {
+  border: 1px solid rgb(255 255 255 / 34%);
+  background: transparent;
+  color: #fff;
+}
+.guide-ghost-button:hover {
+  background: rgb(255 255 255 / 9%);
+}
+.guide-hero-summary {
+  display: grid;
+  align-content: end;
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 17px;
+  background: rgb(255 255 255 / 7%);
+  padding: 22px;
+}
+.guide-hero-summary > span {
+  margin-bottom: 14px;
+  color: #cbea99;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+.guide-hero-summary strong {
+  border-bottom: 1px solid rgb(255 255 255 / 13%);
+  padding: 9px 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: 24px;
+}
+.guide-hero-summary p {
+  margin-top: 16px;
+  color: #cfd9ca;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.guide-audiences {
+  margin: 18px 0 48px;
+}
+.guide-section-heading {
+  max-width: 720px;
+  margin-bottom: 28px;
+}
+.guide-section-heading h2,
+.guide-faq h2,
+.guide-preview h2 {
+  margin: 9px 0 12px;
+  font-size: clamp(27px, 3.6vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -1.4px;
+}
+.guide-section-heading p,
+.guide-section-heading-wide > p {
+  color: #626c56;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.guide-section-heading-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  align-items: center;
+  gap: 40px;
+  max-width: none;
+}
+.guide-section-heading-wide h2 {
+  margin-bottom: 0;
+}
+.guide-journey {
+  scroll-margin-top: 96px;
+  margin: 0 0 52px;
+}
+.guide-journey-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid #dfe4d9;
+  border-radius: 18px;
+  background: #fff;
+  list-style: none;
+}
+.guide-journey-steps li {
+  position: relative;
+  min-width: 0;
+  padding: 25px 23px 27px;
+}
+.guide-journey-steps li + li {
+  border-left: 1px solid #e4e8df;
+}
+.guide-journey-steps li > svg {
+  color: #64734f;
+}
+.guide-journey-steps .guide-step-number {
+  position: absolute;
+  top: 23px;
+  right: 22px;
+  display: block;
+  color: #a4ac9a;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.guide-journey-steps h3 {
+  margin: 25px 0 9px;
+  font-size: 17px;
+}
+.guide-journey-steps p,
+.guide-access-grid p,
+.guide-sponsored-event p,
+.guide-club-grid p,
+.guide-club-future p,
+.guide-faq p,
+.guide-preview p {
+  color: #626c56;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.guide-people {
+  scroll-margin-top: 96px;
+  margin: 0 0 28px;
+  border-radius: 22px;
+  padding: clamp(26px, 5vw, 48px);
+}
+.guide-access-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.guide-access-grid article {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border: 1px solid #e3dce9;
+  border-radius: 15px;
+  background: #fff;
+  padding: 24px;
+}
+.guide-product-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background: #edf4df;
+  color: #50643c;
+}
+.guide-access-grid .pass .guide-product-icon {
+  background: #f0e9f5;
+  color: #745e83;
+}
+.guide-access-grid .event .guide-product-icon {
+  background: #fff0d9;
+  color: #825f24;
+}
+.guide-product-kicker {
+  color: #737b6b;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+.guide-access-grid h3 {
+  margin: 7px 0 11px;
+  font-size: 22px;
+}
+.guide-access-grid p {
+  margin-bottom: 21px;
+}
+.guide-access-grid article > strong {
+  margin-top: auto;
+  border-top: 1px solid #ecefe8;
+  padding-top: 14px;
+  color: #46513f;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.guide-sponsored-event {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 14px;
+  border: 1px solid #ead7aa;
+  border-radius: 15px;
+  background: #fff8e8;
+  padding: 23px 25px;
+}
+.guide-sponsored-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f3dda8;
+  color: #725319;
+}
+.guide-sponsored-event h3 {
+  margin: 6px 0 7px;
+  font-size: 18px;
+}
+.guide-community-loop {
+  margin: 28px 0;
+}
+.guide-clubs {
+  scroll-margin-top: 96px;
+}
+.guide-club-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.guide-club-grid h3 {
+  margin-top: 18px;
+}
+.guide-now {
+  margin: 0 0 46px;
+}
+.guide-now-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid #dfe4d9;
+  border-radius: 18px;
+  background: #fff;
+}
+.guide-now-grid article {
+  padding: clamp(24px, 4vw, 34px);
+}
+.guide-now-grid article + article {
+  border-left: 1px solid #dfe4d9;
+  background: #f6f7f4;
+}
+.guide-now-label {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 6px 9px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.guide-now-label.available {
+  background: #e3f2c5;
+  color: #405623;
+}
+.guide-now-label.planned {
+  background: #e8eae5;
+  color: #5c6256;
+}
+.guide-now-grid h3 {
+  margin: 17px 0 15px;
+  font-size: 19px;
+}
+.guide-now-grid ul {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+}
+.guide-now-grid li {
+  position: relative;
+  padding-left: 18px;
+  color: #596550;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.guide-now-grid li::before {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8aa45d;
+  content: "";
+}
+.guide-fixture-note {
+  border: 1px solid #ead7aa;
+  border-top: 0;
+  border-radius: 0 0 14px 14px;
+  background: #fff8e8;
+  padding: 15px 20px;
+  color: #6e5b31;
+  font-size: 11px;
+  line-height: 1.65;
+}
+.guide-faq h2 {
+  margin-bottom: 18px;
+}
+.guide-preview {
+  border-radius: 20px;
+  padding: clamp(26px, 5vw, 44px);
+}
 .club-entry {
   max-width: 1080px;
   margin: 0 auto;
@@ -4326,5 +4652,94 @@ legend > span {
   }
   .how-it-works-link {
     font-size: 10px;
+  }
+}
+
+@media (max-width: 1010px) {
+  .guide-hero {
+    grid-template-columns: minmax(0, 1fr) 190px;
+  }
+  .guide-journey-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .guide-journey-steps li:nth-child(3) {
+    border-left: 0;
+  }
+  .guide-journey-steps li:nth-child(n + 3) {
+    border-top: 1px solid #e4e8df;
+  }
+  .guide-access-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .how-it-works {
+    padding-top: 3px;
+  }
+  .guide-hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 28px 22px;
+  }
+  .guide-hero h1 {
+    font-size: clamp(38px, 12vw, 52px);
+    letter-spacing: -2.2px;
+  }
+  .guide-hero-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 12px;
+  }
+  .guide-hero-summary > span,
+  .guide-hero-summary p {
+    grid-column: 1 / -1;
+  }
+  .guide-hero-summary strong {
+    font-size: 17px;
+  }
+  .guide-audiences {
+    margin-bottom: 40px;
+  }
+  .guide-section-heading-wide {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .guide-journey {
+    margin-bottom: 40px;
+  }
+  .guide-journey-steps {
+    grid-template-columns: 1fr;
+  }
+  .guide-journey-steps li + li,
+  .guide-journey-steps li:nth-child(3) {
+    border-top: 1px solid #e4e8df;
+    border-left: 0;
+  }
+  .guide-access-grid article {
+    padding: 22px;
+  }
+  .guide-sponsored-event {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+  .guide-club-grid {
+    grid-template-columns: 1fr;
+  }
+  .guide-now-grid {
+    grid-template-columns: 1fr;
+  }
+  .guide-now-grid article + article {
+    border-top: 1px solid #dfe4d9;
+    border-left: 0;
+  }
+  .guide-preview,
+  .guide-people,
+  .guide-clubs {
+    padding: 22px;
+  }
+  .guide-section-heading h2,
+  .guide-faq h2,
+  .guide-preview h2 {
+    font-size: 27px;
   }
 }

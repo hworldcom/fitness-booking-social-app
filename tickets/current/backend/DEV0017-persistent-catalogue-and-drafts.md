@@ -1,80 +1,90 @@
-# Ticket DEV0017: Persistent catalogue and private drafts
+# Ticket DEV0017: Persistent access catalogue and private drafts
 
 - Status: Draft
 - Created: 2026-09-19
-- Last updated: 2026-09-22
-- Milestone: M0 shared app data
+- Last updated: 2026-09-24
+- Milestone: M1 persistent access catalogue
 - Coordination: None — independent development ticket
-- Related records: [DEV0014 — Plan](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on [DEV0015](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0038](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md), completed [DEV0039](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md), and completed [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md) under [COR0002](../organisatory/COR0002-phantom-auth-and-demo-access.md); follows completed [DEV0052 — Account-backed personal profile](../../archive/frontend/DEV0052-account-backed-personal-profile.md); precedes [DEV0018](DEV0018-class-pass-reservations-and-confirmed-visits.md)
+- Related records: planned by [DEV0014](../../archive/backend/DEV0014-database-and-backend-plan.md); depends on completed database/identity/protected-context work and [DEV0058 — Adopt the fitness-access MVP contract](../../archive/organisatory/DEV0058-fitness-access-mvp-contract.md); follows completed [DEV0052](../../archive/frontend/DEV0052-account-backed-personal-profile.md); precedes [DEV0018](DEV0018-class-pass-reservations-and-confirmed-visits.md) and [DEV0023](DEV0023-minimal-shared-activity-feed.md)
 
 ## Objective and context
 
-Deliver the first useful shared-backend checkpoint: guests browse the public Explore/Challenges catalogue and details; two authenticated users see that same catalogue and manage their own persistent event/challenge drafts, follows and bookmarks across browsers. Use the [screen contract](../../../docs/mvp-spec.md#2-screens-and-actions), [public access contract](../../../docs/mvp-spec.md#public-browsing-and-sign-in-boundaries), [database phases](../../../docs/mvp-spec.md#database-delivery-phases) and [social permissions](../../../docs/mvp-spec.md#9-social-behavior-and-permissions). Keep the existing visual design.
+Deliver the first shared product-data checkpoint for the access-focused MVP. Guests browse public fitness businesses, membership/pass products, classes and ordinary/sponsored events; two authenticated users see the same catalogue and manage their own event/product drafts, follows and bookmarks across browsers. Use the [screen contract](../../../docs/mvp-spec.md#2-screens-and-actions), [public boundary](../../../docs/mvp-spec.md#public-browsing-and-sign-in-boundaries) and [database phases](../../../docs/mvp-spec.md#database-delivery-phases).
+
+The ticket previously planned challenge catalogue and drafts. DEV0058 removed product challenges before implementation, so this revision preserves the ID and useful persistence/authorization boundary while replacing that scope with access products and events.
 
 ## Scope and non-goals
 
-- In scope: DB-backed public catalogue/list/detail reads, authorized profile reads, owner-scoped challenge/event drafts, follows/bookmarks, capability-owned catalogue/profile/draft/social repositories and services, server validation and authorization, frontend loading/error states and an explicit boundary between fixture preview and database mode.
-- Existing identity boundary: completed DEV0052 removed the hardcoded current user and connected the minimal owner profile/shell to DEV0046's actor snapshot. This ticket expands that real profile with persistent permitted data and must not reintroduce a preselected persona or fabricated personal history.
-- Out of scope: reservations, shared booking/feed events, Cheers/reactions, tickets, real balances, challenge publication/funding, voting, uploads, notifications, Realtime, paid organization onboarding or importing the entire browser store.
+- In scope: database-backed public business/product/class/event list/detail reads; authorized profile reads; owner- or organization-scoped membership/pass/event drafts; sponsorship presentation fields that do not claim funding; follows/bookmarks; capability-owned repositories/services; validation, authorization, loading/error states and explicit fixture-versus-database mode.
+- Existing identity boundary: the current account-backed profile and server-derived actor remain authoritative. Organization attribution requires a verified role; text labels grant nothing.
+- Out of scope: on-chain membership state, published transferable entitlement, reservations, payments, sponsorship funding, redemption, shared activity delivery, challenge data, reactions, live inventory, uploads, notifications, Realtime or automatic import of browser preview data.
 
 ## Expected behavior and edge cases
 
-Dates, activities and studio/event details retain current Explore behavior. Saving/reloading/deleting a draft works on another browser signed in as the same user, but the other actor cannot list, inspect or mutate it. An organization-hosted draft requires that actor's permitted organization role; a text host name grants nothing. Follows are one-way without approval/reciprocity, require an accessible same-run profile, reject self-follow and are unique per directed pair. Explicit followed/unfollowed writes are idempotent; retried requests cannot toggle twice. Profile reads are signed-in and omit private wallet, receipt and granular attendance data. Duplicate saves remain idempotent. Version conflicts or lost save responses must not silently overwrite a newer draft or duplicate it.
+Guests browse/filter supported public businesses, membership/pass products, classes and events without a session or wallet. Public responses use a server-selected active catalogue and safe-field allowlist; client IDs cannot expose private/retired datasets, drafts, access records, receipts, sponsorship obligations or personal claims.
 
-Guests need no session, wallet or enrollment to browse/filter Explore Classes/Events/Studios, public community/sponsored challenges and public details. Use a server-selected active public catalogue and explicitly safe fields; client-supplied IDs cannot expose private/retired runs, drafts, restricted challenges, invitation rosters, access records, receipts or personal claims. Public challenge visibility does not grant entry rights. Keep private overlays separate from anonymous responses/caches; public read privileges never grant writes or inherit a previous pooled user's context.
+An authenticated actor's draft survives another browser and server restart. Another user cannot list, inspect or mutate it. Organization-owned drafts require a server-derived role. Save retries are idempotent; version conflicts/lost responses do not silently overwrite newer data or duplicate records. Follows are one-way, unique, idempotent, same-dataset and reject self-follow. Bookmarks are private overlays, not public popularity or access evidence.
 
-SQL rows distinguish local/seeded examples and off-chain drafts from future verified funding/entry state. A database outage reports an error and preserves unsaved text; it cannot report a successful save or silently show local fixtures as shared data. No local sample balances, visits, bookings or challenge pools are imported as authoritative facts. Existing frontend-only data remains accessible in explicitly separate preview mode.
+Membership/pass/event product rows are catalogue offers, not paid entitlements. Sponsored-event presentation distinguishes a proposed/frozen sponsor label and attendee benefit from verified funding. A database outage reports an error and preserves unsaved text; it cannot silently display fixtures as shared data or claim a successful save.
 
 ## Assumptions, decisions, and dependencies
 
-Private reads and mutations require the verified session/identity/run context delivered by DEV0038–DEV0040; public discovery uses its own restricted server read path under C17. DEV0015 provides the connection and Drizzle table mappings but no catalogue repository. This ticket owns the first public catalogue/profile and private draft/follow/bookmark repository methods plus the services that map their raw rows into `src/domain` or explicit response contracts. Use those server-side services and existing components rather than client Data API writes. Catalogue prices become exact base-unit strings at the server boundary while UI formatting stays familiar. Draft past dates are allowed for planning; real publication will validate future time and resolved policy separately. Seeding examples must never populate funded/payment states. Do not build a draft-import feature unless separately requested.
+Use the verified actor/run context for private work and a separate restricted public service for discovery. Keep browser Supabase access limited to Auth; business writes use Next.js services. Prices cross server boundaries as exact base-unit strings. Draft past dates may be allowed for planning; publication validates future time and resolved policy separately.
+
+The membership product schema may store display/frozen intended terms but cannot create the on-chain entitlement contract before P09–P11 and the future membership tickets are reviewed. Sponsored-event drafts cannot accept funding before P12 is resolved.
 
 ## Implementation plan
 
-1. Add metadata/draft, follow and bookmark migrations with ownership/run/visibility constraints, unique directed follow pairs and no-self-follow checks, versioning/idempotent save semantics and feature-specific RLS.
-2. Add capability-owned repositories and services for public catalogue/list/detail reads with restricted read-only SQL access and safe row/field projections; keep the Data API disabled. Separately add authenticated profile/draft/follow/bookmark repositories and services. Validate input, derive the public catalogue scope on the server and derive actor/run for private operations from verified context; return only fields appropriate to that viewer. Raw Drizzle row types remain inside `src/server/db`.
-3. Adapt Explore, profile, challenge/event creation/detail and save/follow controls to server-backed data, retaining preview adapters and visible fixture labels. Hide/disable unimplemented financial controls instead of deriving their state from sample rows.
-4. Handle save/delete conflicts, loading and backend failures without losing text or mixing users' caches. Confirm ordinary profile displays never include private wallet/receipt fields.
-5. Verify persistence from two authenticated browsers and ownership denial with direct API attempts. Add an anonymous context for direct public routes, expired sessions, detail/private-ID/run probes and sign-out/cache leakage; preserve class/event filter boundaries, keyboard flows and current routes.
+1. Freeze safe public and private draft contracts for businesses, membership/pass products, classes and ordinary/sponsored events.
+2. Add bounded migrations with same-dataset ownership/organization constraints, versioning, directed follows/bookmarks and feature-specific row-level security.
+3. Implement public catalogue services plus authenticated profile/draft/follow/bookmark repositories using the existing server authorization boundary.
+4. Adapt Explore, product/event detail/draft and profile/follow/bookmark controls to server data while retaining explicitly separate preview fixtures and honest nonfinancial states.
+5. Validate two-user persistence/ownership, guest public access, private-ID probes, pooling/cache isolation, retries/conflicts, backend failure, mobile/desktop keyboard use and existing auth/public-route regressions.
 
 ## Acceptance criteria
 
-- [ ] AC1: Anonymous and authenticated catalogue reads preserve Classes/Events/Studios and public community/sponsored challenge browsing, filters, dates, prices and public details. No wallet/enrollment/login is required for public routes, including direct visits/reloads with an expired session; seeded examples remain visibly examples.
-- [ ] AC2: An actor's challenge/event draft survives another browser and server restart; create retry, edit conflict and delete are handled without duplicate rows or silent overwrites.
-- [ ] AC3: Another user/run cannot read/change private drafts; organization attribution requires authorization; directed follow/bookmark uniqueness and visibility are enforced. Self-follow, cross-run/inaccessible targets and anonymous personal profile reads fail; repeated follow/unfollow has no inverse or approval side effect.
-- [ ] AC4: No local balance/visit/booking/payment state becomes authoritative; missing config/backend outage never triggers silent fixture fallback or fabricated save success.
-- [ ] AC5: Two-user integration/browser, desktop/mobile/keyboard/error, lint/type/build checks pass; no funded challenge, booked seat or usable paid ticket is claimed by this slice.
-- [ ] AC6: Guest list/detail/API responses and caches exclude private drafts/restricted challenge data, invitations, access records, receipts and personal claims. Private/run-ID probes and guest mutations fail; sign-out cannot expose stale personalized state. Public visibility does not grant participation permission.
+- [ ] AC1: Guests and authenticated users browse the same safe public businesses, membership/pass products, classes and events without a wallet/login; seeded examples stay labelled examples.
+- [ ] AC2: Owner and authorized organization drafts persist across browser/server restart with idempotent create, conflict-safe edit and deterministic delete; no record claims published/funded access.
+- [ ] AC3: Another user/dataset cannot access private drafts; organization attribution is role-derived; follow/bookmark uniqueness, self-follow denial and idempotent desired-state behavior hold.
+- [ ] AC4: Catalogue/draft/sponsor presentation cannot fabricate entitlement, payment, transfer, reservation or sponsor funding; backend outage never falls back silently to fixtures.
+- [ ] AC5: Anonymous/private-ID/cache probes, two-user database/browser checks, desktop/mobile/keyboard/error flows, lint, typecheck and build pass.
+- [ ] AC6: No product challenge catalogue, draft, save or field is introduced. Wallet-authentication challenge records remain outside this product-data ticket.
 
 ## Validation plan
 
-Run real database migration/ownership/idempotency/version tests and two independent authenticated contexts. Exercise direct unauthorized requests, same-run and cross-run records, reload/server restart, concurrent saves, deletion and network failure while editing. Run affected existing browser/domain checks plus lint/types/build. Source/cache review must show use of the shared authorization helper rather than trusting browser persona data. No live financial test applies to this nonfinancial slice.
-
-For A54–A55, use a third, anonymous context with no wallet/session and one expired session. Test list/detail/filter requests, protected controls, private/run-ID probes, explicit public-field responses, read-only SQL grants and alternating guest/user pooled requests. Revisit public pages after sign-out and verify no private overlays/cached responses survive. Public catalogue reads must use the scoped guest service; private services must use the authenticated helper.
-
-## Risks, limitations, and follow-ups
-
-Browser-only drafts are not automatically moved to server accounts. Hosted data persists beyond a local Profile reset; define reset as preview-only and use scoped run tooling for shared data. Shared feed bookings and attendance begin in DEV0018; chronological feed/profile activity and Cheers follow in [DEV0023](DEV0023-shared-social-feed-and-cheers.md), verified challenge sources in [DEV0024](../blockchain/DEV0024-verified-challenge-activity.md). Financial receipts remain later milestones.
+Run migrated database constraint/RLS/repository tests and two independent authenticated contexts plus an anonymous and cross-dataset context. Exercise direct unauthorized requests, reload/restart, concurrent saves, delete, network failure, public filters/details and sign-out/cache leakage. Run affected domain/browser checks plus lint, typecheck and build. No live financial or Devnet test applies because this slice publishes no entitlement/payment.
 
 ## Implementation record
 
-Planning update, 2026-09-20 ([DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md)): clarify C19 directed/idempotent follows and signed-in profile visibility. Reactions and full feed queries stay in DEV0023; no follower-request state, chat or notification schema is added here. No backend was implemented by this update.
+Not started. Planning revisions on 19–20 September established public access, repository ownership and social boundaries. On 24 September DEV0058 removed challenge catalogue/drafts and replaced them with membership/pass products and sponsored-event presentation before any implementation existed.
 
-Planning update, 2026-09-19 ([DEV0020](../../archive/frontend/DEV0020-discovery-and-how-it-works.md)): preserve public global search/grouping, challenge filters/order and rules, guide links, copy-link fallback and related catalogue destinations when replacing fixtures. Search must use the safe public projection and exclude private drafts. Keep the entry panel in an honest preview/draft state until M2 verified funding/registration/decision/claim state supplies the real next action and deadline; never derive these states from fixture dates.
+### Changes and rationale
 
-Planning update, 2026-09-19 ([DEV0019](../../archive/frontend/DEV0019-public-discovery-access.md)): replaced the authenticated-only catalogue plan with C17 guest discovery, separate private overlays and explicit anonymous privacy/route tests. The same first checkpoint now covers visitors and authenticated users.
+Pending implementation.
 
-Planning refinement, 2026-09-20: this ticket, not DEV0015 or DEV0025, owns catalogue/profile/draft/follow/bookmark repositories and their application services. DEV0015 owns only the foundation connection/mappings and DEV0025 enforces the server dependency boundary.
+### Affected files
 
-Not started. This ticket defines future work only; no code, dependencies, database objects or service configuration have been created. Update this section with affected files, decisions/deviations, contracts and actual evidence during implementation.
+Planned: new product/event migrations and server repositories/services plus existing Explore/profile/draft/follow/bookmark surfaces and tests. Record actual paths during implementation.
+
+### Decisions and deviations
+
+- 2026-09-24: Materially revised before implementation for the confirmed access pivot. No challenge persistence or compatibility API is required because no shared challenge records exist.
+
+### Contracts, configuration, and operations
+
+Planned public/private catalogue and draft contracts only. No applied migration, provider, secret or environment change.
 
 ## Validation results
 
-Not run — implementation has not started. Planning/link checks do not satisfy the acceptance criteria above. Record exact implemented commands, environment, failures and passed results before completion.
+Not run — implementation has not started. Documentation/link checks do not satisfy AC1–AC6.
+
+## Risks, limitations, and follow-ups
+
+Browser-only legacy challenge/event data is not automatically imported. DEV0060 owns safe preview-store challenge cleanup; this backend ticket must not accept legacy client records as authority. Membership/program and sponsored-funding implementation require separate future tickets.
 
 ## Completion and review references
 
 - Completed: Not completed.
 - Commit: Not created.
-- Review: Planning self-review only; no independent implementation review.
-- Deployment: None.
+- Review: Planning self-review only; no independent review.
+- Deployment or release: None.

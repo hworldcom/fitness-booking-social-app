@@ -1,15 +1,17 @@
 # Ticket DEV0024: Verified challenge activity
 
-- Status: Draft
+- Status: Cancelled
 - Created: 2026-09-20
-- Last updated: 2026-09-20
-- Milestone: M4 challenge social sources
+- Last updated: 2026-09-24
+- Milestone: Superseded M4 challenge social sources
 - Coordination: None — independent development ticket
-- Related tickets: Planning [DEV0022](../../archive/backend/DEV0022-social-contract-and-delivery-plan.md); shared data [DEV0017](../backend/DEV0017-persistent-catalogue-and-drafts.md), delivery infrastructure [DEV0018](../backend/DEV0018-class-pass-reservations-and-confirmed-visits.md), feed/reactions [DEV0023](../backend/DEV0023-shared-social-feed-and-cheers.md); requires future M2 challenge projection/reconciliation tickets
+- Related tickets: Planning [DEV0022](../backend/DEV0022-social-contract-and-delivery-plan.md); superseded by [DEV0058 — Adopt the fitness-access MVP contract](../organisatory/DEV0058-fitness-access-mvp-contract.md); shared data [DEV0017](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), delivery infrastructure [DEV0018](../../current/backend/DEV0018-class-pass-reservations-and-confirmed-visits.md), and minimal feed [DEV0023](../../current/backend/DEV0023-minimal-shared-activity-feed.md) remain current with revised scope
 
 ## Objective and context
 
 Connect verified challenge publication, entry and outcomes to the shared social feed under the actor's sharing choice and challenge visibility. Implement [source evidence and privacy](../../../docs/mvp-spec.md#source-evidence-sharing-and-privacy), [M4](../../../docs/mvp-spec.md#m4--social-loop-and-demo-delivery) and A62. The frontend's sample challenge activity is not evidence of a funded challenge or paid reward.
+
+**Cancellation — 24 September 2026:** the user removed challenge mode and reactions from the current product direction. No implementation, migration, program integration or commit exists for this ticket. DEV0058 replaced the current contract with memberships, passes, ordinary/sponsored events and a reaction-free feed, so every acceptance criterion below became intentionally out of scope. The original planning text is retained as historical evidence of the superseded direction.
 
 ## Scope and non-goals
 
@@ -66,7 +68,7 @@ Planned extension of activity source types and sharing preference persistence; n
 
 ## Validation results
 
-Not run — dependencies and implementation are outstanding. Planning checks are not application, database or devnet evidence.
+Not run — cancelled before implementation. No application, database or Devnet behavior was created or removed by archiving this record. DEV0058 owns the documentation/link consistency checks for the pivot.
 
 ## Risks, limitations, and follow-ups
 
@@ -74,7 +76,7 @@ M2 projection/reconciliation tickets do not yet exist; this ticket remains Draft
 
 ## Completion and review references
 
-- Completed: Not completed.
+- Completed: Cancelled on 2026-09-24 before implementation; replaced by the access-focused contract and DEV0023's minimal activity scope.
 - Commit: Not created.
 - Review: Planning self-review only; no implementation or independent review.
 - Deployment or release: None.

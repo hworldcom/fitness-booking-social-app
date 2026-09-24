@@ -10,11 +10,11 @@ import { initialAuthorizationState } from "@/server/authorization/service";
 
 export const metadata: Metadata = {
   title: {
-    default: "MovX Club — Social fitness, onchain.",
+    default: "MovX Club — Flexible fitness access, built around people.",
     template: "%s | MovX Club",
   },
   description:
-    "Find your people. Discover a place to train. Create a fitness challenge with MovX Club. Hackathon frontend preview.",
+    "Discover fitness businesses, memberships, passes and community events with MovX Club. Frontend preview.",
   robots: { index: false, follow: false },
 };
 export default async function RootLayout({

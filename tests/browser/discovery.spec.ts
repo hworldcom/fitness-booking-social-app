@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("public guide is reachable by keyboard and explains distinct participation flows", async ({
+test("public guide is reachable by keyboard and explains the access model clearly", async ({
   page,
 }, testInfo) => {
   await page.goto("/explore");
@@ -15,9 +15,22 @@ test("public guide is reachable by keyboard and explains distinct participation 
   const peopleAudience = page.locator('.guide-audiences a[href="#for-people"]');
   const clubAudience = page.locator('.guide-audiences a[href="#for-clubs"]');
   await expect(peopleAudience).toContainText("FOR PEOPLE");
-  await expect(peopleAudience).toContainText("The social layer");
-  await expect(clubAudience).toContainText("FOR FITNESS AND SPORTS CLUBS");
-  await expect(clubAudience).toContainText("The community channel");
+  await expect(peopleAudience).toContainText("Find flexible access");
+  await expect(clubAudience).toContainText("FOR FITNESS BUSINESSES");
+  await expect(clubAudience).toContainText("Offer access people can use");
+
+  await expect(
+    page.getByRole("heading", {
+      name: "Find how you want to move. Choose access that fits.",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "From discovery to showing up." }),
+  ).toBeVisible();
+  for (const name of ["Discover", "Choose access", "Show up", "Stay connected"])
+    await expect(
+      page.getByRole("heading", { name, exact: true }),
+    ).toBeVisible();
 
   const audienceSections = page.locator("#for-people, #for-clubs");
   await expect(audienceSections).toHaveCount(2);
@@ -29,22 +42,22 @@ test("public guide is reachable by keyboard and explains distinct participation 
   const peopleSection = page.locator("#for-people");
   await expect(
     peopleSection.getByRole("heading", {
-      name: "Turn showing up into something you share.",
+      name: "Three clear ways to take part.",
     }),
   ).toBeVisible();
-  for (const name of [
-    "Discover your next move",
-    "Choose your kind of together",
-    "Create with your community",
-    "Make real progress social",
-  ]) {
+  for (const name of ["Memberships", "Passes", "Events"]) {
     await expect(
       peopleSection.getByRole("heading", { name, exact: true }),
     ).toBeVisible();
   }
-  await expect(peopleSection.getByText("Preview available")).toBeVisible();
-  await expect(peopleSection.getByText("Access planned")).toBeVisible();
-  await expect(peopleSection.getByText("Shared data planned")).toBeVisible();
+  await expect(
+    peopleSection.getByRole("heading", {
+      name: "A business can help cover the cost of showing up.",
+    }),
+  ).toBeVisible();
+  await expect(peopleSection).toContainText(
+    "not a contest, prize pool or vote",
+  );
 
   await clubAudience.focus();
   await expect(clubAudience).toBeFocused();
@@ -52,49 +65,82 @@ test("public guide is reachable by keyboard and explains distinct participation 
   await expect(page).toHaveURL(/\/how-it-works#for-clubs$/);
   await expect(
     page.getByRole("heading", {
-      name: "Turn activities into a community people return to.",
+      name: "Make it easier for people to say yes.",
     }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
-      name: "Clubs create the reasons to show up. People make them social.",
+      name: "Access gets you through the door. Showing up builds the community.",
     }),
   ).toBeVisible();
 
   for (const name of [
-    "Classes",
-    "Events",
-    "Community challenges",
-    "Sponsored challenges",
+    "Publish access",
+    "Welcome new people",
+    "Sponsor attendance",
   ])
     await expect(
       page.getByRole("heading", { name, exact: true }),
     ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "What works today—and what comes next.",
+    }),
+  ).toBeVisible();
+  const guide = page.locator(".how-it-works");
+  await expect(guide).not.toContainText(/challenge/i);
+  await expect(guide).not.toContainText(/reaction/i);
+
   const walletQuestion = page.getByText("Do I need a wallet?", { exact: true });
   await walletQuestion.focus();
   await page.keyboard.press("Enter");
   await expect(
-    page.getByText(/A prepared club administrator proves/),
+    page.getByText(/connecting one does not approve a transaction/),
   ).toBeVisible();
-  const organizerQuestion = page.getByText("Can I organize something?", {
+  const sponsoredQuestion = page.getByText("What is a sponsored event?", {
     exact: true,
   });
-  await organizerQuestion.focus();
+  await sponsoredQuestion.focus();
   await page.keyboard.press("Enter");
   await expect(
-    page.getByText(
-      /Friends, trainers, gyms, businesses and community organizations/,
-    ),
+    page.getByText(/cost is partly or fully covered by a sponsor/),
   ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
   await page.screenshot({
     path: testInfo.outputPath("how-it-works.png"),
     fullPage: true,
   });
-  await page.getByRole("link", { name: "See sponsored challenges" }).click();
-  await expect(page.locator(".challenge-card")).toHaveCount(1);
-  await expect(
-    page.getByRole("button", { name: "Sponsored", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
+  if (testInfo.project.name === "mobile") {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: testInfo.outputPath("how-it-works-tablet.png"),
+      fullPage: true,
+    });
+    await page.setViewportSize({ width: 320, height: 800 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: testInfo.outputPath("how-it-works-narrow.png"),
+      fullPage: true,
+    });
+  }
+  await page
+    .getByRole("link", { name: "Explore activities", exact: true })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/explore$/);
 });
 
 test("challenge comparison filters, chronology and reset work together", async ({

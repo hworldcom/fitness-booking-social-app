@@ -5,7 +5,7 @@
 - Last updated: 2026-09-21
 - Milestone: M0 identity and protected access
 - Coordination: [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0025 — Next.js backend boundary](DEV0025-nextjs-backend-boundary.md); enables [DEV0017 — Persistent catalogue and private drafts](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018 — Class-pass reservations and confirmed visits](../../current/backend/DEV0018-class-pass-reservations-and-confirmed-visits.md), and [DEV0023 — Shared social feed and Cheers](../../current/backend/DEV0023-shared-social-feed-and-cheers.md)
+- Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md) and [DEV0025 — Next.js backend boundary](DEV0025-nextjs-backend-boundary.md); enables [DEV0017 — Persistent access catalogue and private drafts](../../current/backend/DEV0017-persistent-catalogue-and-drafts.md), [DEV0018 — Class-pass reservations and confirmed visits](../../current/backend/DEV0018-class-pass-reservations-and-confirmed-visits.md), and [DEV0023 — Minimal shared activity feed](../../current/backend/DEV0023-minimal-shared-activity-feed.md)
 
 ## Objective and context
 

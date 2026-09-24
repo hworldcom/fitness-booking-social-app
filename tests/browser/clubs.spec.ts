@@ -7,24 +7,21 @@ test("club value proposition leads to the bounded club access page", async ({
   const clubSection = page.locator("#for-clubs");
   await expect(
     clubSection.getByRole("heading", {
-      name: "Turn activities into a community people return to.",
+      name: "Make it easier for people to say yes.",
     }),
   ).toBeVisible();
   for (const heading of [
-    "Reach new participants",
-    "Shape club experiences",
-    "Strengthen participation",
-    "Keep club authority separate",
+    "Publish access",
+    "Welcome new people",
+    "Sponsor attendance",
   ]) {
     await expect(
       clubSection.getByRole("heading", { name: heading, exact: true }),
     ).toBeVisible();
   }
-  await expect(clubSection.getByText("Preview available")).toBeVisible();
-  await expect(clubSection.getByText("Planned shared data")).toBeVisible();
   await expect(
     clubSection.getByText(
-      /No payment, balance or transaction capability is live/,
+      /Business tools, live inventory and payments are not live yet/,
     ),
   ).toBeVisible();
   await page.screenshot({

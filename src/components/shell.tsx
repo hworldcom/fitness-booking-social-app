@@ -58,7 +58,7 @@ export function Shell({
           <Brand />
         </Link>
         <div className="sidebar-caption">
-          FIND YOUR PEOPLE.
+          FIND YOUR ACCESS.
           <br />
           MOVE TOGETHER.
         </div>
@@ -88,13 +88,14 @@ export function Shell({
           <div className="club-note">
             <span className="little-spark">✳</span>
             <strong>
-              A little motivation.
-              <br />A lot of community.
+              More ways to move.
+              <br />
+              One place to start.
             </strong>
             <p>
-              Your next chapter starts
+              Discover flexible fitness
               <br />
-              with showing up.
+              access around you.
             </p>
             <Link href="/explore">
               Find your next session <ArrowUpRight size={16} />
@@ -115,9 +116,9 @@ export function Shell({
             </Link>
           )}
           <span className="sidebar-tagline">
-            Social fitness,
+            Flexible fitness,
             <br />
-            <span>onchain.</span>
+            <span>built around people.</span>
           </span>
         </div>
       </aside>
@@ -176,7 +177,9 @@ export function Shell({
               hello@movx.club
             </a>
           </span>
-          <span className="footer-tagline">Social fitness, onchain.</span>
+          <span className="footer-tagline">
+            Flexible fitness, built around people.
+          </span>
           <Pill>Solana Devnet target · Test EURC</Pill>
         </footer>
       </div>
@@ -212,22 +215,21 @@ export function Shell({
           ) : (
             <>
               <p className="dialog-copy">
-                Social fitness, onchain. Find your people, discover a place to
-                train and make a little progress together.
+                Discover memberships, passes and events, then choose the kind of
+                fitness access that fits your life.
               </p>
               <div className="notice">
                 <strong>Everything here is demonstration data.</strong>
                 <p>
-                  Try creating a challenge draft or previewing a class-pass
-                  checkout. Your changes stay in this browser. Venues, visits,
-                  pools and people are fixtures, not live partnerships or real
-                  funds.
+                  Browse activities and preview access or checkout screens. Your
+                  changes stay in this browser. Venues, visits, products and
+                  people are fixtures, not live partnerships or real funds.
                 </p>
               </div>
               <p className="small-copy">
-                The next implementation stages add authenticated accounts, gym
-                operations and real test-EURC transactions. Financial policy
-                details marked proposed are still being finalized.
+                Membership purchases, pass sales, event tickets, sponsorship
+                funding and transfers are planned. None of those transactions
+                are live in this preview.
               </p>
               <button
                 className="button lime full"
