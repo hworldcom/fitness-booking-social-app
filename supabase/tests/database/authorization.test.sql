@@ -38,7 +38,7 @@ select is(
       and policyname in (
         'profiles_authorized_actor_select',
         'demo_runs_authorized_actor_select',
-        'demo_run_memberships_authorized_actor_select'
+        'demo_run_participants_authorized_actor_select'
       )
   ),
   3,
@@ -63,7 +63,7 @@ select ok(
 select ok(
   has_table_privilege(
     'app_runtime',
-    'app.demo_run_memberships',
+    'app.demo_run_participants',
     'select'
   ),
   'app_runtime may select dataset participation through row-level security'
@@ -86,17 +86,17 @@ select ok(
 select ok(
   not has_table_privilege(
     'app_runtime',
-    'app.demo_run_memberships',
+    'app.demo_run_participants',
     'insert'
   )
     and not has_table_privilege(
       'app_runtime',
-      'app.demo_run_memberships',
+      'app.demo_run_participants',
       'update'
     )
     and not has_table_privilege(
       'app_runtime',
-      'app.demo_run_memberships',
+      'app.demo_run_participants',
       'delete'
     ),
   'app_runtime has no dataset-participation write privilege'
@@ -176,8 +176,8 @@ select set_config(
 );
 
 select set_config(
-  'app.test_membership_count',
-  (select count(*)::text from app.demo_run_memberships),
+  'app.test_participant_count',
+  (select count(*)::text from app.demo_run_participants),
   true
 );
 
@@ -224,7 +224,7 @@ select is(
 );
 
 select is(
-  current_setting('app.test_membership_count')::integer,
+  current_setting('app.test_participant_count')::integer,
   1,
   'the actor can read only their exact active participation row'
 );
@@ -235,7 +235,7 @@ select is(
   'another fixture profile stays hidden'
 );
 
-update app.demo_run_memberships
+update app.demo_run_participants
 set status = 'revoked', revoked_at = statement_timestamp()
 where run_id = '20000000-0000-4000-8000-000000000001'
   and profile_id = current_setting('app.test_actor_profile_id')::uuid;

@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = extensions, public, pg_catalog;
 
-select plan(23);
+select plan(26);
 
 select has_schema('app', 'app schema exists');
 
@@ -16,7 +16,7 @@ select is(
       and table_name in (
         'profiles',
         'demo_runs',
-        'demo_run_memberships',
+        'demo_run_participants',
         'organizations',
         'organization_memberships',
         'venues',
@@ -27,6 +27,11 @@ select is(
   ),
   9,
   'app schema has exactly nine foundation tables'
+);
+
+select ok(
+  to_regclass('app.demo_run_memberships') is null,
+  'the ambiguous legacy dataset-membership relation is absent'
 );
 
 select ok(
@@ -61,7 +66,7 @@ select is(
       and c.relname in (
         'profiles',
         'demo_runs',
-        'demo_run_memberships',
+        'demo_run_participants',
         'organizations',
         'organization_memberships',
         'venues',
@@ -170,13 +175,56 @@ select is(
   'class schedule lookup indexes exist'
 );
 
+select ok(
+  not exists (
+    select 1
+    from pg_constraint
+    where conname like 'demo_run_memberships%'
+  )
+    and not exists (
+      select 1
+      from pg_indexes
+      where schemaname = 'app'
+        and indexname like 'demo_run_memberships%'
+    )
+    and not exists (
+      select 1
+      from pg_trigger
+      where not tgisinternal
+        and tgname like 'demo_run_memberships%'
+    )
+    and not exists (
+      select 1
+      from pg_policies
+      where schemaname = 'app'
+        and policyname like 'demo_run_memberships%'
+    ),
+  'participant-owned constraints, indexes, triggers and policies use the new name'
+);
+
+select ok(
+  not exists (
+    select 1
+    from pg_proc as routine
+    join pg_namespace as namespace on namespace.oid = routine.pronamespace
+    where namespace.nspname = 'app'
+      and routine.proname in (
+        'current_application_identity',
+        'enroll_application_identity',
+        'authorized_actor_context_valid'
+      )
+      and pg_get_functiondef(routine.oid) like '%app.demo_run_memberships%'
+  ),
+  'current identity and actor functions contain no legacy relation reference'
+);
+
 select is(
   (
     with expected(table_name, column_count) as (
       values
         ('profiles', 11),
         ('demo_runs', 11),
-        ('demo_run_memberships', 8),
+        ('demo_run_participants', 8),
         ('organizations', 10),
         ('organization_memberships', 8),
         ('venues', 16),
@@ -212,7 +260,7 @@ select is(
       and table_record.relname in (
         'profiles',
         'demo_runs',
-        'demo_run_memberships',
+        'demo_run_participants',
         'organizations',
         'organization_memberships',
         'venues',
@@ -237,7 +285,7 @@ select is(
       and table_record.relname in (
         'profiles',
         'demo_runs',
-        'demo_run_memberships',
+        'demo_run_participants',
         'organizations',
         'organization_memberships',
         'venues',
@@ -256,7 +304,7 @@ select is(
       values
         ('demo_runs_one_active_public_idx'),
         ('demo_runs_status_visibility_idx'),
-        ('demo_run_memberships_profile_status_run_idx'),
+        ('demo_run_participants_profile_status_run_idx'),
         ('organizations_run_kind_status_idx'),
         ('organization_memberships_run_profile_status_idx'),
         ('venues_run_kind_status_idx'),
@@ -325,11 +373,11 @@ $time_constraint_test$;
 
 do $duplicate_constraint_test$
 declare
-  membership_record app.demo_run_memberships%rowtype;
+  participant_record app.demo_run_participants%rowtype;
 begin
-  select * into membership_record from app.demo_run_memberships limit 1;
+  select * into participant_record from app.demo_run_participants limit 1;
   begin
-    insert into app.demo_run_memberships (
+    insert into app.demo_run_participants (
       run_id,
       profile_id,
       role,
@@ -340,16 +388,16 @@ begin
       updated_at
     )
     values (
-      membership_record.run_id,
-      membership_record.profile_id,
-      membership_record.role,
-      membership_record.status,
-      membership_record.joined_at,
-      membership_record.revoked_at,
-      membership_record.created_at,
-      membership_record.updated_at
+      participant_record.run_id,
+      participant_record.profile_id,
+      participant_record.role,
+      participant_record.status,
+      participant_record.joined_at,
+      participant_record.revoked_at,
+      participant_record.created_at,
+      participant_record.updated_at
     );
-    raise exception 'duplicate run membership was accepted';
+    raise exception 'duplicate run participant was accepted';
   exception when unique_violation then
     null;
   end;

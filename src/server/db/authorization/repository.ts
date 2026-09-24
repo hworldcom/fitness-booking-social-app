@@ -3,7 +3,7 @@ import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import type { AuthorizedActor } from "@/server/authorization/contracts";
 import { databaseConnection, type DatabaseConnection } from "../client";
-import { demoRunMemberships, demoRuns, profiles } from "../schema";
+import { demoRunParticipants, demoRuns, profiles } from "../schema";
 
 export type ActorDatabaseTransaction = Parameters<
   Parameters<DatabaseConnection["db"]["transaction"]>[0]
@@ -66,17 +66,17 @@ export async function currentActorProjection(
       displayName: profiles.displayName,
       runSlug: demoRuns.slug,
       runName: demoRuns.name,
-      role: demoRunMemberships.role,
+      role: demoRunParticipants.role,
     })
     .from(profiles)
     .innerJoin(
-      demoRunMemberships,
+      demoRunParticipants,
       and(
-        eq(demoRunMemberships.profileId, profiles.id),
-        eq(demoRunMemberships.runId, actor.runId),
+        eq(demoRunParticipants.profileId, profiles.id),
+        eq(demoRunParticipants.runId, actor.runId),
       ),
     )
-    .innerJoin(demoRuns, eq(demoRuns.id, demoRunMemberships.runId))
+    .innerJoin(demoRuns, eq(demoRuns.id, demoRunParticipants.runId))
     .where(and(eq(profiles.id, actor.profileId), eq(demoRuns.id, actor.runId)));
 
   const row = rows[0];

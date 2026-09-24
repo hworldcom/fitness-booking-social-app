@@ -14,7 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 import {
   app,
-  demoRunMemberships,
+  demoRunParticipants,
   demoRuns,
   organizationMemberships,
   organizations,
@@ -83,7 +83,10 @@ export const authChallenges = app.table(
     foreignKey({
       name: "auth_challenges_personal_target_fkey",
       columns: [table.runId, table.profileId],
-      foreignColumns: [demoRunMemberships.runId, demoRunMemberships.profileId],
+      foreignColumns: [
+        demoRunParticipants.runId,
+        demoRunParticipants.profileId,
+      ],
     }).onDelete("restrict"),
     foreignKey({
       name: "auth_challenges_organization_target_fkey",
@@ -209,7 +212,10 @@ export const walletBindings = app.table(
     foreignKey({
       name: "wallet_bindings_personal_target_fkey",
       columns: [table.runId, table.profileId],
-      foreignColumns: [demoRunMemberships.runId, demoRunMemberships.profileId],
+      foreignColumns: [
+        demoRunParticipants.runId,
+        demoRunParticipants.profileId,
+      ],
     }).onDelete("restrict"),
     foreignKey({
       name: "wallet_bindings_organization_target_fkey",

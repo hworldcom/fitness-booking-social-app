@@ -110,7 +110,7 @@ async function removeFixtures() {
     where id in (${firstOrganizationId}::uuid, ${secondOrganizationId}::uuid)
   `;
   await admin`
-    delete from app.demo_run_memberships
+    delete from app.demo_run_participants
     where profile_id in (
       select id from app.profiles
       where auth_user_id in (${firstAuthUserId}::uuid, ${secondAuthUserId}::uuid)

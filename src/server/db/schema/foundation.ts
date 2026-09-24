@@ -135,8 +135,8 @@ export const demoRuns = app.table(
   ],
 );
 
-export const demoRunMemberships = app.table(
-  "demo_run_memberships",
+export const demoRunParticipants = app.table(
+  "demo_run_participants",
   {
     runId: uuid("run_id")
       .notNull()
@@ -158,22 +158,22 @@ export const demoRunMemberships = app.table(
   },
   (table) => [
     primaryKey({
-      name: "demo_run_memberships_pkey",
+      name: "demo_run_participants_pkey",
       columns: [table.runId, table.profileId],
     }),
     check(
-      "demo_run_memberships_role_check",
+      "demo_run_participants_role_check",
       sql`${table.role} in ('member', 'operator')`,
     ),
     check(
-      "demo_run_memberships_status_check",
+      "demo_run_participants_status_check",
       sql`${table.status} in ('active', 'revoked')`,
     ),
     check(
-      "demo_run_memberships_revoked_state_check",
+      "demo_run_participants_revoked_state_check",
       sql`(${table.status} = 'revoked') = (${table.revokedAt} is not null)`,
     ),
-    index("demo_run_memberships_profile_status_run_idx").on(
+    index("demo_run_participants_profile_status_run_idx").on(
       table.profileId,
       table.status,
       table.runId,
@@ -250,7 +250,10 @@ export const organizationMemberships = app.table(
     foreignKey({
       name: "organization_memberships_run_profile_fkey",
       columns: [table.runId, table.profileId],
-      foreignColumns: [demoRunMemberships.runId, demoRunMemberships.profileId],
+      foreignColumns: [
+        demoRunParticipants.runId,
+        demoRunParticipants.profileId,
+      ],
     }).onDelete("restrict"),
     check(
       "organization_memberships_role_check",
@@ -364,7 +367,10 @@ export const venueStaff = app.table(
     foreignKey({
       name: "venue_staff_run_profile_fkey",
       columns: [table.runId, table.profileId],
-      foreignColumns: [demoRunMemberships.runId, demoRunMemberships.profileId],
+      foreignColumns: [
+        demoRunParticipants.runId,
+        demoRunParticipants.profileId,
+      ],
     }).onDelete("restrict"),
     check(
       "venue_staff_role_check",
@@ -410,7 +416,10 @@ export const trainerAffiliations = app.table(
     foreignKey({
       name: "trainer_affiliations_run_profile_fkey",
       columns: [table.runId, table.profileId],
-      foreignColumns: [demoRunMemberships.runId, demoRunMemberships.profileId],
+      foreignColumns: [
+        demoRunParticipants.runId,
+        demoRunParticipants.profileId,
+      ],
     }).onDelete("restrict"),
     check(
       "trainer_affiliations_activity_tags_check",

@@ -26,7 +26,7 @@ Only staff assigned to the class venue and dataset may redeem valid access. An a
 
 DEV0015, DEV0040 and DEV0017 provide base mappings, verified users/roles and shared screens. A separate future ticket must own payment intent, wallet transaction, server verification and refund obligations before this ticket can become Ready. This ticket owns the repositories and services for the reservation/access/check-in/visit/activity tables it introduces. **P07 remains proposed:** decide daily visit deduplication and the check-in window before freezing schema indexes/check-in rules. Class schedules and venue operators are hackathon fixtures; authorization and database transitions are real.
 
-`demo_run_memberships` remains an internal record meaning that a profile participates in one isolated application dataset. It is not a consumer membership, class subscription or proof of class access. This ticket may not recreate the removed entitlement table, eligibility flag or no-payment preview branch. A future verified membership source must use its own reviewed contract before DEV0018 can consume it.
+`demo_run_participants` remains an internal record meaning that a profile participates in one isolated application dataset. It is not a consumer membership, class subscription or proof of class access. This ticket may not recreate the removed entitlement table, eligibility flag or no-payment preview branch. A future verified membership source must use its own reviewed contract before DEV0018 can consume it.
 
 ## Implementation plan
 

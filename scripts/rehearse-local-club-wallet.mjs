@@ -55,12 +55,12 @@ async function prepareClub(email, walletAddress) {
         select
           auth_user.id as auth_user_id,
           profile.id as profile_id,
-          membership.run_id
+          participant.run_id
         from auth.users as auth_user
         join app.profiles as profile on profile.auth_user_id = auth_user.id
-        join app.demo_run_memberships as membership
-          on membership.profile_id = profile.id
-          and membership.status = 'active'
+        join app.demo_run_participants as participant
+          on participant.profile_id = profile.id
+          and participant.status = 'active'
         where lower(auth_user.email) = ${email}
       `;
       assert.equal(people.length, 1);

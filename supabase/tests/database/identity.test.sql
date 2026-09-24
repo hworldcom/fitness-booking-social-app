@@ -75,7 +75,7 @@ select ok(
   not has_table_privilege('app_runtime', 'app.profiles', 'insert')
     and not has_table_privilege(
       'app_runtime',
-      'app.demo_run_memberships',
+      'app.demo_run_participants',
       'insert'
     ),
   'app_runtime cannot write identity tables directly'
@@ -206,8 +206,8 @@ select is(
 select is(
   (
     select count(*)::integer
-    from app.demo_run_memberships as membership
-    join app.profiles as profile on profile.id = membership.profile_id
+    from app.demo_run_participants as participant
+    join app.profiles as profile on profile.id = participant.profile_id
     where profile.auth_user_id = '91000000-0000-4000-8000-000000000001'
   ),
   1,
@@ -227,9 +227,9 @@ select is(
 
 select is(
   (
-    select membership.role
-    from app.demo_run_memberships as membership
-    join app.profiles as profile on profile.id = membership.profile_id
+    select participant.role
+    from app.demo_run_participants as participant
+    join app.profiles as profile on profile.id = participant.profile_id
     where profile.auth_user_id = '91000000-0000-4000-8000-000000000001'
   ),
   'member',
@@ -297,7 +297,7 @@ select throws_ok(
 select is(
   (
     select count(*)::integer
-    from app.demo_run_memberships
+    from app.demo_run_participants
     where profile_id = '91000000-0000-4000-8000-000000000010'
   ),
   0,

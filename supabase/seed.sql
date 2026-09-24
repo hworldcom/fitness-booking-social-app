@@ -47,7 +47,7 @@ values (
 )
 on conflict do nothing;
 
-insert into app.demo_run_memberships (
+insert into app.demo_run_participants (
   run_id,
   profile_id,
   role,

@@ -68,7 +68,7 @@ async function removeFixture() {
     )
   `;
   await admin`
-    delete from app.demo_run_memberships
+    delete from app.demo_run_participants
     where profile_id in (
       select id from app.profiles
       where auth_user_id in (
@@ -138,8 +138,8 @@ test("the runtime login cannot write identity tables directly", async () => {
     /permission denied for table profiles/,
   );
   await assert.rejects(
-    runtimeA`insert into app.demo_run_memberships (run_id) values (${runId}::uuid)`,
-    /permission denied for table demo_run_memberships/,
+    runtimeA`insert into app.demo_run_participants (run_id) values (${runId}::uuid)`,
+    /permission denied for table demo_run_participants/,
   );
 });
 
@@ -187,12 +187,12 @@ test("simultaneous enrollment and retries converge on one ordinary profile", asy
   >`
     select
       count(distinct profile.id)::text as profile_count,
-      count(distinct membership.profile_id)::text as participation_count,
+      count(distinct participant.profile_id)::text as participation_count,
       count(distinct binding.id)::text as wallet_count,
-      array_agg(distinct membership.role) as roles
+      array_agg(distinct participant.role) as roles
     from app.profiles as profile
-    join app.demo_run_memberships as membership
-      on membership.profile_id = profile.id
+    join app.demo_run_participants as participant
+      on participant.profile_id = profile.id
     left join app.wallet_bindings as binding
       on binding.profile_id = profile.id
     where profile.auth_user_id = ${authUserId}::uuid
@@ -219,12 +219,12 @@ test("invalid input and an old prepared fixture fail without partial state", asy
     enrollApplicationProfile(conflictingAuthUserId, "Replacement Name"),
     ApplicationIdentityConflictError,
   );
-  const rows = await admin<{ membership_count: string }[]>`
-    select count(*)::text as membership_count
-    from app.demo_run_memberships
+  const rows = await admin<{ participant_count: string }[]>`
+    select count(*)::text as participant_count
+    from app.demo_run_participants
     where profile_id = ${fixtureProfileId}::uuid
   `;
-  assert.equal(rows[0]?.membership_count, "0");
+  assert.equal(rows[0]?.participant_count, "0");
 });
 
 function authorizedActor(
