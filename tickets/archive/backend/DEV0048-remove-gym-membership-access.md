@@ -5,7 +5,7 @@
 - Last updated: 2026-09-21
 - Milestone: MVP product cleanup
 - Coordination: None — independent development ticket
-- Related records: corrects the database foundation from [DEV0015](DEV0015-supabase-database-foundation.md) and the frontend preview from [DEV0008](../frontend/DEV0008-repx-club-frontend.md); revises downstream [DEV0018 — Class-pass reservations and confirmed visits](../../current/backend/DEV0018-class-pass-reservations-and-confirmed-visits.md); preserves the application dataset-participation boundary delivered by [DEV0040](DEV0040-protected-access-and-database-context.md)
+- Related records: corrects the database foundation from [DEV0015](DEV0015-supabase-database-foundation.md) and the frontend preview from [DEV0008](../frontend/DEV0008-repx-club-frontend.md); revises downstream [DEV0018 — Class-pass reservations and confirmed visits](DEV0018-class-pass-reservations-and-confirmed-visits.md), later cancelled; preserves the application dataset-participation boundary delivered by [DEV0040](DEV0040-protected-access-and-database-context.md)
 
 ## Objective and context
 

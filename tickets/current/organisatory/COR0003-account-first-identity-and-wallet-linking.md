@@ -2,7 +2,7 @@
 
 - Status: In progress
 - Created: 2026-09-21
-- Last updated: 2026-09-22
+- Last updated: 2026-09-25
 - Milestone: Prioritized identity and onboarding
 - Converted from: Not applicable — created after DEV0046 already had planning commit history
 - Tracked development tickets: completed [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md) and [DEV0047 — Personal wallet linking and replacement](../backend/DEV0047-personal-wallet-linking-and-replacement.md)
@@ -28,7 +28,7 @@ Every implementation part is assigned exactly once. No implementation may be per
 - DEV0038–DEV0040 are completed historical baselines. DEV0046 deliberately replaces their wallet-dependent login/enrollment/actor assumptions while preserving verified sessions, server-derived authority, row-level security and transaction-local isolation.
 - DEV0048 removed the separate gym-membership capability and does not belong to this identity coordination. DEV0046 can now start without accidentally creating the removed entitlement.
 - DEV0041 remains a COR0002 member for club-wallet authority. DEV0047 now owns the shared challenge schema because personal linking is prioritized first; DEV0041 later extends its purpose/organization-owner contract.
-- DEV0037 remains a blocked, independent embedded-wallet provider refinement. Embedded wallet creation never becomes the application account authority.
+- Cancelled [DEV0037](../../archive/blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) is optional embedded-wallet history. Embedded wallet creation is not part of the focused MVP and never becomes the application account authority.
 
 ## Delivery sequence and completion conditions
 

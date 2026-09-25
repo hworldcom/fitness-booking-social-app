@@ -2,7 +2,7 @@
 
 - Status: In progress
 - Created: 2026-09-23
-- Last updated: 2026-09-24
+- Last updated: 2026-09-25
 - Milestone: M0 hosted integration environment
 - Coordination: [COR0004 — Hosted staging deployment](../organisatory/COR0004-hosted-staging-deployment.md)
 - Related records: [DEV0015 — Supabase database foundation](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0040 — Protected access and database context](../../archive/backend/DEV0040-protected-access-and-database-context.md), [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md), and [DEV0047 — Personal wallet linking and replacement](DEV0047-personal-wallet-linking-and-replacement.md)
@@ -11,7 +11,7 @@
 
 Create a dedicated, non-production Supabase staging environment that can support the current MovX Club email-account, application-profile and protected-database flows from `https://staging.movx.club`. The current repository proves these boundaries locally, but no hosted project is linked, migrated or accepted.
 
-This ticket applies the specification's [database-provider recommendation](../../../docs/mvp-spec.md#database-provider-recommendation--19-september-2026), [security boundary](../../../docs/mvp-spec.md#security-boundary) and [migration/environment rules](../../../docs/mvp-spec.md#migrations-environments-and-seed-boundaries) without treating a hosted service dashboard as a substitute for recorded migration and authorization evidence.
+This ticket applies the specification's [architecture boundary](../../../docs/mvp-spec.md#6-architecture-and-delivery-boundaries) and [identity, wallet and demo-integrity rules](../../../docs/mvp-spec.md#9-asset-wallet-and-demo-integrity) without treating a hosted service dashboard as a substitute for recorded migration and authorization evidence.
 
 ## Scope and non-goals
 

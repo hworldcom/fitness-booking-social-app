@@ -5,7 +5,7 @@
 - Last updated: 2026-09-25
 - Milestone: M0 frozen product contracts
 - Coordination: None — independent development ticket
-- Related records: revises the contract frozen by [DEV0066 — Freeze membership product rules](DEV0066-freeze-membership-product-rules.md); affects completed [DEV0067 — Add membership catalogue schema](../backend/DEV0067-membership-catalogue-schema.md), [COR0006 — Persistent access catalogue](../../current/organisatory/COR0006-persistent-access-catalogue.md), and planned [DEV0018 — Class-pass reservations and confirmed visits](../../current/backend/DEV0018-class-pass-reservations-and-confirmed-visits.md)
+- Related records: revises the contract frozen by [DEV0066 — Freeze membership product rules](DEV0066-freeze-membership-product-rules.md); affects completed [DEV0067 — Add membership catalogue schema](../backend/DEV0067-membership-catalogue-schema.md), [COR0006 — Persistent access catalogue](../../current/organisatory/COR0006-persistent-access-catalogue.md), and later-cancelled [DEV0018 — Class-pass reservations and confirmed visits](../backend/DEV0018-class-pass-reservations-and-confirmed-visits.md)
 
 ## Objective and context
 

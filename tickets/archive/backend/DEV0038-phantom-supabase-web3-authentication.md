@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M0 identity / M2 wallet prerequisite
 - Coordination: [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md)
-- Related records: depends on completed [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md), [DEV0025 — Next.js backend boundary](DEV0025-nextjs-backend-boundary.md), and [DEV0027 — Phantom wallet connection foundation](../blockchain/DEV0027-phantom-wallet-connection-foundation.md); enables completed [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md); [DEV0037 — Phantom embedded-wallet onboarding](../../current/blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) is a non-blocking follow-up
+- Related records: depends on completed [DEV0015 — Supabase database foundation](DEV0015-supabase-database-foundation.md), [DEV0025 — Next.js backend boundary](DEV0025-nextjs-backend-boundary.md), and [DEV0027 — Phantom wallet connection foundation](../blockchain/DEV0027-phantom-wallet-connection-foundation.md); enables completed [DEV0039 — Prepared identity and wallet bindings](DEV0039-prepared-identity-and-wallet-bindings.md); [DEV0037 — Phantom embedded-wallet onboarding](../blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) was later cancelled as optional post-MVP work
 
 ## Objective and context
 

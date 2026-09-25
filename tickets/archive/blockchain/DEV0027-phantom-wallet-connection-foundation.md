@@ -5,7 +5,7 @@
 - Last updated: 2026-09-20
 - Milestone: M0 wallet foundation / M2 prerequisite
 - Coordination: [COR0001 — Project structure](../../current/organisatory/COR0001-project-structure.md)
-- Related tickets: supersedes the implementation choice from [DEV0006 — Simple devnet demo wallet](DEV0006-simple-devnet-demo-wallet.md) while retaining the EURC and personal/company separation from [DEV0007 — EURC-only wallet contract](DEV0007-eurc-only-wallet-contract.md); enables [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016; [DEV0037 — Phantom embedded-wallet onboarding](../../current/blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) is a blocked follow-up
+- Related tickets: supersedes the implementation choice from [DEV0006 — Simple devnet demo wallet](DEV0006-simple-devnet-demo-wallet.md) while retaining the EURC and personal/company separation from [DEV0007 — EURC-only wallet contract](DEV0007-eurc-only-wallet-contract.md); enables [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), converted from retired DEV0016; [DEV0037 — Phantom embedded-wallet onboarding](DEV0037-phantom-embedded-wallet-onboarding.md) was later cancelled as optional post-MVP work
 
 ## Objective and context
 
@@ -84,7 +84,7 @@ The existing shell wallet preview became a real connection surface. Its first se
 | `src/features/discovery/how-it-works.tsx`, `src/features/profile/profile.tsx` | Keeps product guidance and sample-balance labels honest now that connection exists but authentication/balances do not.                           |
 | `tests/wallet-presentation.test.ts`, `tests/browser/wallet.spec.ts`           | Covers address/error presentation and wallet-free desktop/mobile guidance, focus-safe dialog behavior and preserved public navigation.           |
 | `tests/boundaries.test.ts`, existing browser specs                            | Protects the browser-Solana/server boundary and updates established keyboard/copy assertions without weakening prior regression checks.          |
-| README, MVP specification and work records                                    | Records extension-first behavior, the Portal blocker, blocked DEV0037 follow-up, actual structure and the remaining real-extension rehearsal.    |
+| README, MVP specification and work records                                    | Records extension-first behavior, the Portal blocker, DEV0037 follow-up later cancelled by the focused-MVP audit, actual structure and remaining real-extension rehearsal. |
 
 No data shape, database schema, hosted service, environment variable, RPC endpoint or migration changed. Rollback is removal of the three wallet packages/client UI and restoration of the static preview; it does not require data migration. The wallet plugin may retain its public connection reference in local storage, while Phantom remains the authority for connection approval and key material.
 

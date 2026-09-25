@@ -2,11 +2,11 @@
 
 - Status: In progress
 - Created: 2026-09-19
-- Last updated: 2026-09-22
+- Last updated: 2026-09-25
 - Milestone: M0 identity / M2 wallet prerequisite
 - Converted from: Retired `DEV0016`
 - Tracked development tickets: completed [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md), completed [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md), completed [DEV0040 — Protected access and database context](../../archive/backend/DEV0040-protected-access-and-database-context.md), and [DEV0041 — Club wallet authorization](../backend/DEV0041-club-wallet-authorization.md)
-- Related records: depends on completed [DEV0015 — Supabase database foundation](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0025 — Next.js backend boundary](../../archive/backend/DEV0025-nextjs-backend-boundary.md), and [DEV0027 — Phantom wallet connection foundation](../../archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md); enables [COR0006 — Persistent access catalogue](COR0006-persistent-access-catalogue.md), converted from retired DEV0017; completed [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md) independently replaced the personal entry path under COR0003; blocked [DEV0037 — Phantom embedded-wallet onboarding](../blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) is a separate follow-up
+- Related records: depends on completed [DEV0015 — Supabase database foundation](../../archive/backend/DEV0015-supabase-database-foundation.md), [DEV0025 — Next.js backend boundary](../../archive/backend/DEV0025-nextjs-backend-boundary.md), and [DEV0027 — Phantom wallet connection foundation](../../archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md); enables [COR0006 — Persistent membership catalogue](COR0006-persistent-access-catalogue.md) and [COR0007 — Core multi-gym membership MVP](COR0007-core-multigym-membership-mvp.md); completed [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md) independently replaced the personal entry path under COR0003; cancelled [DEV0037 — Phantom embedded-wallet onboarding](../../archive/blockchain/DEV0037-phantom-embedded-wallet-onboarding.md) is historical optional work
 
 ## Objective and boundaries
 
@@ -14,7 +14,7 @@ Coordinate the replacement of the implicit Anna preview persona with verified Mo
 
 This record preserves the complete planning intent of retired DEV0016 while assigning each implementation boundary to one small peer development ticket. It does not authorize source, dependency, configuration, migration or test changes and is never used in a commit subject.
 
-The coordinated result implements the specification's [authentication and data access recommendation](../../../docs/mvp-spec.md#authentication-and-data-access-recommendation), [demo account model](../../../docs/mvp-spec.md#3-demo-fixtures-and-account-model), public-access rules C17/C19, and prepared-wallet decisions C12/C14/P08. It does not implement payments, token balances, transaction submission, open signup, embedded wallets or a general organization-admin interface.
+The coordinated result implements the specification's [roles and fixtures](../../../docs/mvp-spec.md#5-roles-screens-and-fixtures), public-access rule C17, social rule C19, and identity/wallet boundaries C12/C14. It does not implement payments, token balances, transaction submission, embedded wallets or a general organization-admin interface.
 
 ## Direct development work
 
@@ -32,9 +32,9 @@ Every former DEV0016 implementation concern has one owner. Cross-ticket integrat
 - Completed DEV0015 supplies `auth.users`, profiles, runs, dataset participation, organizations/roles and default-deny database foundations; it does not own the new Auth/identity repositories or policies.
 - Completed DEV0025 supplies server-only/import enforcement; each direct ticket must preserve its service/repository direction.
 - Completed DEV0027 supplies the normalized Phantom Wallet Standard account and signer but grants no application authority.
-- COR0006's direct development tickets are downstream consumers of the DEV0038–DEV0040 identity/access sequence. They own catalogue/profile/draft/follow/bookmark persistence rather than authentication.
-- DEV0018 and DEV0023 consume the same verified access context later. They are not direct COR0002 members.
-- DEV0037 may later add embedded Phantom onboarding. Its Portal blocker does not prevent this extension-first sequence.
+- COR0006's catalogue tickets and COR0007's membership tickets are downstream consumers of the DEV0038–DEV0040 identity/access sequence. They own their feature persistence and operations rather than authentication.
+- DEV0023 consumes the same verified access context later. Cancelled DEV0018 is historical; neither is a direct COR0002 member.
+- DEV0037 was cancelled as optional post-MVP work. Any future embedded Phantom onboarding requires a new ticket with current provider evidence and does not affect this extension-first sequence.
 - Completed [DEV0051 — Club value proposition and sign-in entry](../../archive/frontend/DEV0051-club-value-proposition-and-sign-in-entry.md) is a downstream, independent frontend consumer. It owns the public club explanation and dedicated club-facing entrance, not authorization.
 - Financial and on-chain tickets may later consume DEV0041's club-authority result; DEV0041 itself signs no transaction and verifies no payment.
 
@@ -52,7 +52,7 @@ DEV0040 and DEV0046 are complete. On 2026-09-21 the user prioritized account-fir
 
 The original DEV0016 was created on 2026-09-19 as a broad follow-up to the database plan. It accumulated Supabase Web3 Auth, replay-resistant enrollment, identity repositories, SQL authorization context, route guards, personal/organization bindings, provider abuse controls and browser integration. No Auth source, dependency, configuration, database migration, application session, implementation evidence or commit was created under DEV0016.
 
-On 2026-09-20, the browser connection boundary had already been split into completed DEV0027. The authentication plan briefly changed to embedded-first Phantom Connect, then returned to the prepared extension when Phantom Portal paused new developer sign-ups; blocked DEV0037 preserves that future direction.
+On 2026-09-20, the browser connection boundary had already been split into completed DEV0027. The authentication plan briefly changed to embedded-first Phantom Connect, then returned to the prepared extension when Phantom Portal paused new developer sign-ups. DEV0037 preserved that idea until the 2026-09-25 active-work audit cancelled it as unnecessary for the focused MVP.
 
 Pre-implementation review on 2026-09-20 found that the remaining plan still contained four independently reviewable security boundaries. In accordance with the repository's flat workflow, DEV0016 was retired and converted to COR0002. Fresh DEV0038–DEV0041 now own the implementation. The split changes no product behavior or accepted security rule.
 
@@ -99,7 +99,7 @@ DEV0041 now has a replayable session-bound club-authority migration, bounded ser
 
 Supabase Web3 Auth compatibility with the installed Solana Kit wallet signer is proven by completed DEV0038. Provider proof authenticates a wallet only; DEV0039 combines it with private server configuration and database constraints rather than browser-selected profile/run data. Club-wallet switching must preserve the personal administrator session while changing only separately proved club authority.
 
-Extension-first onboarding adds a setup step and does not support ordinary mobile browsers. DEV0037 can change that experience only after Portal access returns and its migration/account-linking behavior is reviewed.
+Extension-first onboarding adds a setup step and does not support ordinary mobile browsers. A future embedded-wallet project would need a new ticket after Portal access, provider terms and migration/account-linking behavior are reviewed.
 
 ## Completion and review references
 

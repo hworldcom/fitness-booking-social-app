@@ -1,17 +1,19 @@
 # Ticket DEV0037: Phantom embedded-wallet onboarding
 
-- Status: Blocked
+- Status: Cancelled
 - Created: 2026-09-20
-- Last updated: 2026-09-20
-- Milestone: Post-MVP wallet onboarding refinement
+- Last updated: 2026-09-25
+- Milestone: Deferred post-MVP wallet onboarding history
 - Coordination: None — independent development ticket
-- Related records: follows completed [DEV0027 — Phantom wallet connection foundation](../../archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md); may refine [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md), especially completed [DEV0038 — Phantom Supabase Web3 authentication](../../archive/backend/DEV0038-phantom-supabase-web3-authentication.md), after the extension-first authentication slice exists
+- Related records: follows completed [DEV0027 — Phantom wallet connection foundation](DEV0027-phantom-wallet-connection-foundation.md); may have refined [COR0002 — Phantom authentication and demo access](../../current/organisatory/COR0002-phantom-auth-and-demo-access.md), especially completed [DEV0038 — Phantom Supabase Web3 authentication](../backend/DEV0038-phantom-supabase-web3-authentication.md), after the extension-first authentication slice existed; cancelled by [DEV0071](../organisatory/DEV0071-audit-active-work-after-multigym-pivot.md)
 
 ## Objective and context
 
 Add low-friction embedded Solana wallet onboarding through Phantom Connect when Phantom Developer Portal access becomes available. Ordinary participants should be able to create or restore a Phantom-managed wallet through supported social onboarding without first installing the browser extension, while the existing external Phantom path and separate club-wallet authority remain available.
 
 This behavior was originally planned inside DEV0027 after the user preferred Polymarket-style account onboarding. On 2026-09-20, Phantom Portal displayed `New sign ups are paused` for new developer accounts. The user chose not to block the MVP: DEV0027 continues with the prepared extension, and this record preserves the embedded-wallet outcome for later.
+
+On 25 September 2026, the active-work audit cancelled this optional post-MVP ticket. The focused multi-gym membership demo already has email accounts plus optional external Phantom linking, and embedded onboarding is neither required nor currently implementable. A future decision to add it must use a new ticket and revalidate the provider rather than reopening this stale plan.
 
 ## Scope and non-goals
 
@@ -68,11 +70,11 @@ No source implementation exists. The embedded-first planning text was moved out 
 
 Provider availability, identity methods and SDK contracts may differ when sign-ups reopen. Revalidate rather than assuming the 20 September 2026 documentation still applies. The same person may receive a different embedded address from their prepared extension account, so any later link/migration flow needs explicit proof from both accounts and its own security review.
 
-Next action: obtain Phantom Developer Portal access and a public App ID, then move this ticket from `Blocked` to `Ready` only after the provider contract and migration decisions are current.
+There is no active next action. If embedded onboarding becomes a priority after the MVP, create a new development ticket only after Phantom Portal access, the current SDK contract and account-migration behavior have been revalidated.
 
 ## Completion and review references
 
-- Completed: Not completed — blocked on Phantom Developer Portal access.
+- Completed: Cancelled and archived on 2026-09-25 — optional embedded onboarding is outside the focused MVP and had no implementation.
 - Commit: Not created.
-- Review: Planning self-review only; no independent review.
+- Review: Cancellation reviewed under DEV0071; no independent implementation review.
 - Deployment or release: None.

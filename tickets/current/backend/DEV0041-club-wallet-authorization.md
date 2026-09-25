@@ -2,7 +2,7 @@
 
 - Status: In progress
 - Created: 2026-09-20
-- Last updated: 2026-09-22
+- Last updated: 2026-09-25
 - Milestone: M0 identity / M2 club authority prerequisite
 - Coordination: [COR0002 — Phantom authentication and demo access](../organisatory/COR0002-phantom-auth-and-demo-access.md)
 - Related records: depends on completed [DEV0039 — Prepared identity and wallet bindings](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md), [DEV0040 — Protected access and database context](../../archive/backend/DEV0040-protected-access-and-database-context.md) and [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md), plus in-progress [DEV0047 — Personal wallet linking and replacement](DEV0047-personal-wallet-linking-and-replacement.md); supplies club authority consumed by completed [DEV0051 — Club value proposition and sign-in entry](../../archive/frontend/DEV0051-club-value-proposition-and-sign-in-entry.md) and later financial tickets; implements C14 from [DEV0007 — EURC-only wallet contract](../../archive/blockchain/DEV0007-eurc-only-wallet-contract.md)
@@ -13,7 +13,7 @@ Authorize a prepared fitness or sports club's distinct Phantom wallet only when 
 
 A club workspace is not a separate Supabase identity. Every administrator signs in with their own email account, then deliberately acts in an authorized club context. DEV0051 owns the dedicated club-facing sign-in entrance and public explanation; this ticket owns the server-derived club authority that entrance consumes.
 
-This is an authorization prerequisite, not a payment ticket. It implements the identity-side portion of C14/P08 and the specification's [club wallet rule](../../../docs/mvp-spec.md#authentication-and-data-access-recommendation) without constructing, signing, simulating or submitting a transaction.
+This is an authorization prerequisite, not a payment ticket. It implements the identity-side portion of C12/C14 and the specification's [role](../../../docs/mvp-spec.md#roles) and [wallet-integrity](../../../docs/mvp-spec.md#9-asset-wallet-and-demo-integrity) rules without constructing, signing, simulating or submitting a transaction.
 
 ## Scope and non-goals
 

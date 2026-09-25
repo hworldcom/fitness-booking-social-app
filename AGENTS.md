@@ -2,7 +2,7 @@
 
 ## Document ownership and project context
 
-- Read [README.md](README.md) for navigation and [the MVP specification](docs/mvp-spec.md) for the single current product contract, including scope, behavior, architecture, [milestones](docs/mvp-spec.md#11-delivery-milestones), and [acceptance scenarios](docs/mvp-spec.md#12-acceptance-matrix).
+- Read [README.md](README.md) for navigation and [the MVP specification](docs/mvp-spec.md) for the single current product contract, including scope, behavior, architecture, [milestones](docs/mvp-spec.md#12-delivery-milestones), and [acceptance scenarios](docs/mvp-spec.md#13-acceptance-matrix).
 - This `AGENTS.md` is the authoritative contributor/workflow policy. The ticket guide links to these rules; the template supplies record fields, not a separate policy.
 - The [ticket index](tickets/README.md) tracks development tickets and coordination records. Development tickets record the scope and evidence for individual changes; coordination records group peer development tickets without authorizing implementation. Neither is an alternative product contract. Update the specification in the same change when a development ticket changes overall product behavior or design.
 - Keep confirmed user constraints distinct from proposed implementation defaults as described in the specification. Record adopted choices and reasons in the relevant ticket; do not silently treat proposals as user decisions.
@@ -68,7 +68,7 @@ Use the development ticket's implementation record and validation results as the
 
 ## Product requirements
 
-Implement against the specification's [participation/attendance evidence](docs/mvp-spec.md#4-participation-and-attendance-evidence), [programmable membership contract](docs/mvp-spec.md#6-programmable-membership-contract), [class-pass and event payments/refunds](docs/mvp-spec.md#7-class-passes-payments-and-refunds), [demo integrity rules](docs/mvp-spec.md#8-asset-wallet-and-demo-integrity), and [social permissions](docs/mvp-spec.md#9-social-behavior-and-permissions). Use its [confirmed and proposed decision register](docs/mvp-spec.md#confirmed-target-and-decisions), [definition of done](docs/mvp-spec.md#10-definition-of-done) and [acceptance matrix](docs/mvp-spec.md#12-acceptance-matrix) to select checks. Keep the requirements in that document rather than restating them here.
+Implement against the specification's [core multi-gym membership](docs/mvp-spec.md#7-core-multi-gym-membership), [reservations and member-priced visits](docs/mvp-spec.md#8-reservations-and-member-priced-visits), [asset, wallet and demo integrity](docs/mvp-spec.md#9-asset-wallet-and-demo-integrity), and [social behavior and permissions](docs/mvp-spec.md#10-social-behavior-and-permissions). Use its [confirmed and proposed decision register](docs/mvp-spec.md#2-confirmed-target-and-decisions), [definition of done](docs/mvp-spec.md#11-definition-of-done) and [acceptance matrix](docs/mvp-spec.md#13-acceptance-matrix) to select checks. Keep the requirements in that document rather than restating them here.
 
 ## Validation and definition of done
 

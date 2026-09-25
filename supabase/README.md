@@ -48,11 +48,11 @@ With the Auth stack, runtime role and configured production app already running 
 - `app_runtime` is `NOLOGIN`, cannot bypass row-level security (RLS), and has only the data privileges that forced RLS permits.
 - `anon`, `authenticated` and `service_role` have no `app` schema usage. The `app` schema is absent from the local Data API schema list.
 
-## Membership catalogue foundation
+## Legacy private membership catalogue foundation
 
-The additive DEV0067 migration creates `app.membership_products` for stable gym/product identity and `app.membership_product_versions` for frozen offer terms. The deterministic seed contains Annual Unlimited and Six-Month Flex 12 as private drafts with `NULL` purchase prices. They are not public offers, paid customer memberships or access entitlements.
+The additive DEV0067 migration creates `app.membership_products` for stable gym/product identity and `app.membership_product_versions` for frozen offer terms. The deterministic seed contains Annual Unlimited and Six-Month Flex 12 as private drafts with `NULL` purchase prices. They are not public offers, paid customer memberships or access entitlements, and their single-gym transfer model is no longer the current product contract.
 
-Published versions require an exact EURC base-unit price and become immutable. The database enforces the two MVP duration/access shapes, the 10-EURC transfer fee and 30-day transfer thresholds, a single currently published version per product and one-way retirement. Both tables force row-level security and deliberately have no feature policy yet, so `app_runtime` sees no rows. A later COR0006 development ticket must add an allowlisted server service and authorized draft mutations before any product screen uses these records.
+The existing schema still enforces the former duration/access shapes, 10-EURC transfer fee and 30-day transfer thresholds, plus a single currently published version and one-way retirement. Both tables force row-level security and deliberately have no feature policy, so `app_runtime` sees no rows. Do not publish or reuse these drafts as the focused Basic/Classic multi-gym product. A future COR0006 development ticket must add a forward migration for plan pricing, ten-versus-unlimited access and gym eligibility before adding allowlisted services or product screens; shared migration history is not squashed.
 
 For local development, `npm run db:runtime` provisions the legacy `repx_runtime_login` described above. Hosted environments use a distinct login outside migrations so a password rotation never rewrites schema history.
 

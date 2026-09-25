@@ -2,7 +2,7 @@
 
 - Status: In progress
 - Created: 2026-09-21
-- Last updated: 2026-09-22
+- Last updated: 2026-09-25
 - Milestone: Prioritized identity and onboarding
 - Coordination: [COR0003 — Account-first identity and wallet linking](../organisatory/COR0003-account-first-identity-and-wallet-linking.md)
 - Related records: follows completed [DEV0046 — Email OTP registration and application profiles](../../archive/backend/DEV0046-email-otp-registration-and-application-profiles.md); reuses the wallet connection delivered by [DEV0027](../../archive/blockchain/DEV0027-phantom-wallet-connection-foundation.md), the binding foundation from [DEV0039](../../archive/backend/DEV0039-prepared-identity-and-wallet-bindings.md), and the actor boundary from [DEV0040](../../archive/backend/DEV0040-protected-access-and-database-context.md); supplies the shared challenge foundation later consumed by [DEV0041 — Club wallet authorization](DEV0041-club-wallet-authorization.md)
@@ -14,7 +14,7 @@ Let a signed-in email account optionally prove and link one personal Phantom wal
 ## Scope and non-goals
 
 - In scope: one active personal wallet per account; server-issued short-lived, single-use message challenges; account/origin/cluster/address/purpose binding; atomic unique ownership; wallet settings; connection versus linked state; recent email reauthentication before unlink/replacement; new-wallet proof; audit history; collision-safe errors; tests and real Phantom rehearsal.
-- Out of scope: account registration/profile creation owned by DEV0046; wallet login; automatic account merging; requiring the lost old wallet to approve replacement; several active personal wallets; club authority owned by DEV0041; embedded wallet creation owned by DEV0037; transactions, balances, payments, delegated signing, fee sponsorship or custody.
+- Out of scope: account registration/profile creation owned by DEV0046; wallet login; automatic account merging; requiring the lost old wallet to approve replacement; several active personal wallets; club authority owned by DEV0041; embedded wallet creation (cancelled historical DEV0037); transactions, balances, payments, delegated signing, fee sponsorship or custody.
 
 ## Expected behavior and edge cases
 
