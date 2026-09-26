@@ -1,23 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, CreditCard, Repeat2 } from "lucide-react";
-
-const accessKinds = [
-  {
-    title: "Memberships",
-    description: "No active or transferable membership yet.",
-    Icon: Repeat2,
-  },
-  {
-    title: "Passes",
-    description: "No class or visit pass yet.",
-    Icon: CreditCard,
-  },
-  {
-    title: "Event tickets",
-    description: "No event ticket yet.",
-    Icon: CalendarDays,
-  },
-];
+import { ArrowRight, Dumbbell } from "lucide-react";
 
 export function MyAccess({ preview }: { preview: boolean }) {
   return (
@@ -26,12 +8,12 @@ export function MyAccess({ preview }: { preview: boolean }) {
         <div>
           <span className="eyebrow">YOUR ACCESS</span>
           <h1 id="my-access-title">
-            Your memberships, passes and tickets will live here
+            Your MovX membership will live here
             <span className="lime-text">.</span>
           </h1>
           <p>
-            See what is active, what can be used next and which eligible
-            memberships can be transferred.
+            This area will show your plan, selected gyms and included usage
+            after membership activation is implemented.
           </p>
         </div>
       </div>
@@ -42,21 +24,19 @@ export function MyAccess({ preview }: { preview: boolean }) {
         <h2>No active access yet.</h2>
         <p>
           {preview
-            ? "This frontend preview does not create or assign paid access. Exploring a class or event will not add anything here."
-            : "This account does not have a membership, pass or event ticket yet. Browsing alone never creates paid access."}
+            ? "This frontend preview does not create or assign a paid membership. Browsing gyms will not add anything here."
+            : "This account does not have an active MovX membership. Browsing gyms alone never creates paid access."}
         </p>
         <div className="access-kind-grid">
-          {accessKinds.map(({ title, description, Icon }) => (
-            <div className="access-kind" key={title}>
-              <Icon size={22} strokeWidth={1.5} aria-hidden="true" />
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </div>
-          ))}
+          <div className="access-kind">
+            <Dumbbell size={22} strokeWidth={1.5} aria-hidden="true" />
+            <h3>Multi-gym membership</h3>
+            <p>No active membership has been assigned.</p>
+          </div>
         </div>
         <div className="access-actions">
           <Link href="/explore" className="button dark">
-            Explore activities <ArrowRight size={17} />
+            Explore gyms <ArrowRight size={17} />
           </Link>
           <Link href="/how-it-works" className="button secondary">
             How access works

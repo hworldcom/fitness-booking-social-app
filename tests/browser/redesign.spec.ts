@@ -19,41 +19,28 @@ test("home discovery links preserve usable catalogue destinations", async ({
   });
   const explore = page
     .locator(".club-hero")
-    .getByRole("link", { name: "Explore activities" });
+    .getByRole("link", { name: "Explore gyms" });
   await explore.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/explore$/);
-  await expect(page.getByRole("tab", { name: /Classes/ })).toHaveAttribute(
-    "aria-selected",
-    "true",
-  );
+  await expect(
+    page.getByRole("heading", { name: "Explore participating gyms." }),
+  ).toBeVisible();
   await page.goto("/");
   await page
     .locator(".club-hero")
     .getByRole("link", { name: "How it works" })
     .click();
   await expect(page).toHaveURL(/\/how-it-works$/);
-  for (const studio of ["Fabrik Training", "Kru Tiger"]) {
+  for (const studio of ["Fabrik Training", "Northside Combat"]) {
     await page.goto("/");
     await page.locator(".club-studio-card").filter({ hasText: studio }).click();
-    await expect(page).toHaveURL(/view=studios&q=/);
+    await expect(page).toHaveURL(/\/explore\?q=/);
     expect(new URL(page.url()).searchParams.get("q")).toBe(studio);
-    await expect(page.getByRole("tab", { name: /Studios/ })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
     await expect(page.locator(".studio-card")).toHaveCount(1);
     await expect(page.locator(".studio-card")).toContainText(studio);
   }
-  await page.goto("/");
-  await page
-    .locator(".club-event-card")
-    .getByRole("link", { name: "View event" })
-    .click();
-  await expect(page).toHaveURL(/\/events\/run-and-coffee$/);
-  await expect(
-    page.getByRole("heading", { name: "Run & Coffee", exact: true }),
-  ).toBeVisible();
+  await expect(page.locator(".club-event-card")).toHaveCount(0);
 });
 
 test("club layout remains usable at narrow and intermediate widths", async ({
@@ -86,7 +73,7 @@ test("club layout remains usable at narrow and intermediate widths", async ({
     ).toBe(true);
     const button = page
       .locator(".club-hero")
-      .getByRole("link", { name: "Explore activities" });
+      .getByRole("link", { name: "Explore gyms" });
     await button.focus();
     await expect(button).toBeFocused();
     await expect(button).toBeInViewport();
@@ -159,7 +146,7 @@ test("simplified navigation keeps destinations and nested selection without head
     ).toHaveCount(0);
   }
   await page.screenshot({ path: testInfo.outputPath("navigation.png") });
-  await page.goto("/events/run-and-coffee");
+  await page.goto("/explore?q=Fabrik");
   await expect(
     nav.getByRole("link", { name: "Explore", exact: true }),
   ).toHaveAttribute("aria-current", "page");

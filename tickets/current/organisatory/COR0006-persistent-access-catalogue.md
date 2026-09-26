@@ -22,7 +22,7 @@ Catalogue publication never implies payment, membership ownership, reservation, 
 | --- | --- | --- | --- |
 | Initial membership product storage | Completed [DEV0067 — Add membership catalogue schema](../../archive/backend/DEV0067-membership-catalogue-schema.md) | Historical product/version foundation, two obsolete private drafts, Drizzle mappings and database tests; no entitlement or UI | Delivered under the superseded DEV0066 contract |
 | Multi-gym plan and gym-eligibility schema revision | Required backend peer ticket not yet created | Additive Basic/Classic version fields, participating-gym eligibility, fictional fixtures and retirement of obsolete draft publication paths without rewriting migration history | After DEV0069; before any offer is published |
-| Membership catalogue services and screens | Required frontend-primary peer ticket not yet created | Safe public gym/plan projections, authorized catalogue mutations, Explore/detail integration and honest loading/error states | After the schema revision; can coordinate with COR0007 public-positioning work |
+| Persistent catalogue services and preview-adapter replacement | Required backend-primary peer ticket not yet created | Safe public gym/plan projections, authorized catalogue mutations and replacement of DEV0074's preview adapter without redesigning its Explore/detail presentation | After the schema revision and reviewed DEV0074 frontend read contracts |
 
 Every direct ticket must link back to COR0006. No pass/event or social schema may be added under this record.
 
@@ -30,13 +30,15 @@ Every direct ticket must link back to COR0006. No pass/event or social schema ma
 
 - [DEV0069](../../archive/organisatory/DEV0069-adopt-core-multigym-membership-mvp.md) supplies the focused product contract and [DEV0070](../../archive/organisatory/DEV0070-revise-multigym-plan-pricing.md) supplies the latest price/allowance amendment; neither implements the catalogue.
 - [COR0007](COR0007-core-multigym-membership-mvp.md) consumes published plan and gym eligibility. It owns selection, activation, check-ins, payments, allocation, gym/member operational views and social integration.
+- [DEV0074](../frontend/DEV0074-preview-multigym-discovery.md) owns the frontend plan/gym read contracts and preview discovery presentation under COR0007. It is a downstream consumer, not a direct COR0006 member; the catalogue service ticket replaces its fixture adapter without taking over its screen design.
+- [DEV0075](../frontend/DEV0075-preview-membership-selection.md) consumes those frontend contracts for a local draft selection. It does not create catalogue or membership state.
 - DEV0067 remains valid historical implementation evidence. Its `Annual Unlimited` and `Flex 12` private drafts are obsolete and must not be published as Basic/Classic.
 - Follows and explicitly shared check-ins belong to DEV0023 under COR0007, not to the catalogue.
 - Archived DEV0066/DEV0068 preserve prior single-gym transfer and pass-resale decisions but do not define current persistence work.
 
 ## Delivery sequence and completion conditions
 
-DEV0067 established the first product/version foundation. The additive schema peer next models Basic/Classic and gym eligibility while preserving forward migration history. Public services and screens follow that reviewed model. COR0007 may build membership lifecycle contracts in parallel but cannot activate an offer that is draft, inactive or ineligible.
+DEV0067 established the first product/version foundation. DEV0074 may establish the reviewed frontend read contract and clearly labelled preview adapter while the additive schema peer models Basic/Classic and gym eligibility with forward migration history. The public service peer follows that schema and replaces the preview adapter without duplicating or redesigning the frontend. COR0007 may build membership lifecycle contracts in parallel but cannot activate an offer that is draft, inactive or ineligible.
 
 Complete COR0006 only after every mapped row has a direct DEV ticket that is Completed or explicitly Cancelled/replaced, guests and authenticated users receive the same safe published catalogue, obsolete drafts remain private/retired, authorized mutations are isolated and durable, and no catalogue row fabricates access or financial state.
 
@@ -48,6 +50,7 @@ Final integration must include anonymous/private-ID probes, two independent auth
 - 2026-09-24: Completed DEV0067 as the first bounded schema slice with price-pending private drafts.
 - 2026-09-25: DEV0068 revised those intended offers toward fixed-term subscription/pass-resale behavior, leaving an additive schema update necessary before publication.
 - 2026-09-25: DEV0069 replaced that direction with Basic/Classic four-gym membership only. Pass/event and follow/bookmark rows were removed; membership operations and social moved to COR0007.
+- 2026-09-25: DEV0074 was created under COR0007 to own preview discovery and stable frontend read contracts. COR0006 now limits its uncreated service peer to persistence, authority and adapter integration rather than duplicating the screen.
 
 ## Validation results
 
@@ -55,7 +58,7 @@ DEV0069 checks the revised work map and links. Direct implementation validation 
 
 ## Risks, limitations, and follow-ups
 
-The public catalogue cannot be populated honestly until the additive plan/eligibility revision lands. €80 Basic, €150 Classic, €8 non-core access and four core gyms remain configurable hypotheses, not production commitments. Later services must not expose private obsolete drafts or silently fall back to browser fixtures during backend failure.
+The public catalogue cannot be populated honestly until the additive plan/eligibility revision lands. €80 Basic, €150 Classic, €8 non-core access and four core gyms remain configurable hypotheses, not production commitments. DEV0074's fixtures must stay visibly preview-only. Later services must not expose private obsolete drafts or silently fall back to those fixtures during backend failure.
 
 ## Completion and review references
 

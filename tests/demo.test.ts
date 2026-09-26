@@ -6,7 +6,7 @@ import {
   reduceDemo,
 } from "../src/features/preview/state";
 
-test("legacy challenge fields are discarded while supported choices survive", () => {
+test("retired preview fields are discarded while supported follows survive", () => {
   const legacy = {
     version: 1,
     following: ["daniel", "lea"],
@@ -17,27 +17,26 @@ test("legacy challenge fields are discarded while supported choices survive", ()
   };
 
   assert.deepEqual(parseDemo(JSON.stringify(legacy)), {
-    version: 2,
+    version: 3,
     following: ["daniel", "lea"],
-    eventDrafts: [],
   });
 });
 
-test("older stores without event drafts preserve follows during migration", () => {
+test("older preview stores preserve unique follows during migration", () => {
   assert.deepEqual(
     parseDemo(
       JSON.stringify({
         version: 1,
-        following: ["daniel", "max"],
+        following: ["daniel", "max", "daniel"],
         saved: [],
         drafts: [],
       }),
     ),
-    { version: 2, following: ["daniel", "max"], eventDrafts: [] },
+    { version: 3, following: ["daniel", "max"] },
   );
 });
 
-test("malformed event drafts are dropped without erasing supported follows", () => {
+test("malformed retired state is ignored without erasing supported follows", () => {
   const parsed = parseDemo(
     JSON.stringify({
       version: 1,
@@ -48,9 +47,8 @@ test("malformed event drafts are dropped without erasing supported follows", () 
     }),
   );
   assert.deepEqual(parsed, {
-    version: 2,
+    version: 3,
     following: ["daniel", "lea"],
-    eventDrafts: [],
   });
 });
 
@@ -60,16 +58,16 @@ test("corrupt and incompatible persisted state recover without crashing", () => 
     "{broken",
     "null",
     "42",
-    JSON.stringify({ ...INITIAL_STATE, version: 3 }),
+    JSON.stringify({ ...INITIAL_STATE, version: 4 }),
     JSON.stringify({ ...INITIAL_STATE, following: [3] }),
   ]) {
     assert.equal(parseDemo(raw), INITIAL_STATE);
   }
 });
 
-test("follow and reset keep the version 2 preview shape", () => {
+test("follow and reset keep the version 3 preview shape", () => {
   const followed = reduceDemo(INITIAL_STATE, { type: "follow", id: "lea" });
   assert.deepEqual(followed.following, ["daniel", "lea"]);
   assert.deepEqual(reduceDemo(followed, { type: "reset" }), INITIAL_STATE);
-  assert.equal(INITIAL_STATE.version, 2);
+  assert.equal(INITIAL_STATE.version, 3);
 });

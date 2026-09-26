@@ -80,13 +80,9 @@ h1 {
 }
 .activity-card,
 .rail-card,
-.class-card,
-.event-card,
 .studio-card {
   box-shadow: 0 3px 14px #28251c03;
 }
-.class-card:hover,
-.event-card:hover,
 .studio-card:hover {
   box-shadow: 0 7px 24px #28251c0c;
 }
@@ -308,46 +304,6 @@ h1 {
 }
 .club-studio-card .text-link {
   font-size: 10px;
-}
-.club-event-card {
-  background: #ffc3ae;
-  border-radius: 19px;
-  padding: 22px;
-  margin-top: 18px;
-}
-.club-event-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: space-between;
-}
-.club-event-top .eyebrow {
-  font-size: 8px;
-  max-width: 140px;
-}
-.club-event-top svg {
-  flex-shrink: 0;
-  transform: rotate(8deg);
-}
-.club-event-card h3 {
-  font-size: 29px;
-  margin: 13px 0 7px;
-  font-weight: 800;
-  letter-spacing: -0.7px;
-}
-.club-event-card p {
-  font-size: 12px;
-  line-height: 1.7;
-}
-.club-event-card .fixture-note {
-  display: block;
-  color: #644637;
-  margin-top: 10px;
-}
-.club-event-card .button {
-  margin-top: 17px;
-  background: #fff8;
-  border-color: #cf927b;
 }
 @media (min-width: 1550px) {
   .club-hero-copy {

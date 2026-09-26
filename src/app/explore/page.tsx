@@ -5,11 +5,10 @@ export default async function Page({
 }: {
   searchParams: Promise<{ q?: string; view?: string }>;
 }) {
-  const { q, view } = await searchParams;
+  const { q } = await searchParams;
   return (
     <Explore
-      key={`${typeof q === "string" ? q : ""}-${view || "classes"}`}
-      initialView={view === "events" || view === "studios" ? view : "classes"}
+      key={typeof q === "string" ? q : ""}
       initialQuery={typeof q === "string" ? q : ""}
     />
   );

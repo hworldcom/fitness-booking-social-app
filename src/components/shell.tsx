@@ -41,11 +41,7 @@ export function Shell({
   const [modal, setModal] = useState<"wallet" | "about" | null>(null);
   const currentProfile = actor.status === "authorized" ? actor.profile : null;
   const active = (href: string) =>
-    href === "/"
-      ? path === "/"
-      : path.startsWith(href) ||
-        (href === "/explore" &&
-          (path.startsWith("/classes") || path.startsWith("/events")));
+    href === "/" ? path === "/" : path.startsWith(href);
   return (
     <>
       <ClubWalletAuthorityGuard />
@@ -93,7 +89,7 @@ export function Shell({
               access around you.
             </p>
             <Link href="/explore">
-              Find your next session <ArrowUpRight size={16} />
+              Explore gyms <ArrowUpRight size={16} />
             </Link>
           </div>
           <button className="preview-link" onClick={() => setModal("about")}>
@@ -210,21 +206,20 @@ export function Shell({
           ) : (
             <>
               <p className="dialog-copy">
-                Discover memberships, passes and events, then choose the kind of
-                fitness access that fits your life.
+                MovX Club is focusing on one multi-gym membership with a small
+                community layer around verified participation.
               </p>
               <div className="notice">
                 <strong>Everything here is demonstration data.</strong>
                 <p>
-                  Browse activities and preview access or checkout screens. Your
-                  changes stay in this browser. Venues, visits, products and
-                  people are fixtures, not live partnerships or real funds.
+                  Browse illustrative gyms and preview the current concept. Your
+                  follows stay in this browser. Venues, visits and people are
+                  fixtures, not live partnerships or financial records.
                 </p>
               </div>
               <p className="small-copy">
-                Membership purchases, pass sales, event tickets, sponsorship
-                funding and transfers are planned. None of those transactions
-                are live in this preview.
+                Membership activation, payment and check-ins are not live in
+                this preview.
               </p>
               <button
                 className="button lime full"

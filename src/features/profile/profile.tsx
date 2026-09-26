@@ -162,7 +162,7 @@ function OwnerProfile() {
       <div className="account-profile-empty">
         <Empty
           title="Your account starts with a clean slate."
-          description="No visits, passes, balances, sessions, follows or activity history are being claimed for this profile."
+          description="No membership, visits, balances, follows or activity history are being claimed for this profile."
           href="/explore"
           action="Find something to do"
         />
@@ -213,8 +213,8 @@ function ResetPreviewButton({
       {open && (
         <Modal title="Start with a clean slate?" onClose={() => setOpen(false)}>
           <p className="dialog-copy">
-            This clears browser-only event drafts and follows. It does not
-            change your account, funds or blockchain records.
+            This clears browser-only follows. It does not change your account,
+            funds or blockchain records.
           </p>
           <div className="button-row">
             <button

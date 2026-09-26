@@ -1,18 +1,12 @@
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  RefreshCw,
-  Sparkles,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Dumbbell, Sparkles } from "lucide-react";
 import { WaitlistRequest } from "./waitlist-request";
 
 const previewSteps = [
-  "Discover fitness businesses and experiences",
-  "Choose memberships, passes and event tickets",
-  "Use access and connect by showing up",
-  "Transfer eligible remaining membership access",
+  "Discover participating gyms",
+  "Compare Basic and Classic membership",
+  "Choose four core gyms",
+  "Share verified participation when you choose",
 ];
 
 export function ComingSoonScreen() {
@@ -25,9 +19,9 @@ export function ComingSoonScreen() {
             Flexible fitness access is getting ready to move.
           </h1>
           <p>
-            We&apos;re building one place to discover fitness, get the access
-            that fits, show up, and keep eligible memberships useful when plans
-            change.
+            We&apos;re building one membership for flexible access across four
+            selected participating gyms, with a small community layer around
+            showing up.
           </p>
           <ul>
             {previewSteps.map((step) => (
@@ -48,9 +42,9 @@ export function ComingSoonScreen() {
         <div className="coming-soon-orbit" aria-hidden="true">
           <span className="coming-soon-orbit-ring" />
           <span className="coming-soon-orbit-center">
-            <RefreshCw size={35} />
+            <Dumbbell size={35} />
           </span>
-          <strong>ACCESS THAT MOVES WITH YOU</strong>
+          <strong>FOUR GYMS · ONE MEMBERSHIP</strong>
         </div>
       </section>
 
@@ -60,7 +54,7 @@ export function ComingSoonScreen() {
           <h2>Get an invitation when the complete demo is ready.</h2>
           <p>
             Join the early-access list for product updates, demo availability
-            and the first transferable-membership walkthrough.
+            and the first complete multi-gym membership walkthrough.
           </p>
           <Link href="/how-it-works" className="coming-soon-text-link">
             <ArrowLeft size={15} aria-hidden="true" /> Review how MovX works
@@ -72,7 +66,7 @@ export function ComingSoonScreen() {
       <section className="coming-soon-return">
         <div>
           <span className="eyebrow">EXPLORE THE CURRENT PREVIEW</span>
-          <h2>The discovery experience is already open.</h2>
+          <h2>The interim gym preview is already open.</h2>
         </div>
         <Link className="button dark" href="/explore">
           Explore MovX <ArrowRight size={17} aria-hidden="true" />

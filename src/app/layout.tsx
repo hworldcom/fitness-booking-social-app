@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s | MovX Club",
   },
   description:
-    "Discover fitness businesses, memberships, passes and community events with MovX Club. Frontend preview.",
+    "Preview MovX Club, one multi-gym membership built around flexible access and verified participation.",
   robots: { index: false, follow: false },
 };
 export default async function RootLayout({
