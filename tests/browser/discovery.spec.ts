@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("public guide presents only the focused interim membership story", async ({
+test("public guide explains the complete focused membership story", async ({
   page,
 }, testInfo) => {
   await page.goto("/explore");
@@ -13,30 +13,50 @@ test("public guide presents only the focused interim membership story", async ({
 
   await expect(
     page.getByRole("heading", {
-      name: "Flexible access across four gyms.",
+      name: "More places to train. One clear membership.",
     }),
   ).toBeVisible();
   for (const heading of [
-    "Choose one plan",
-    "Pick four gyms",
-    "Show up together",
+    "Two plans. The same four-gym freedom.",
+    "From choosing gyms to showing up.",
+    "Your network extends beyond your four.",
+    "Useful for members. Understandable for gyms.",
+    "Usage informs a provisional allocation.",
+    "Solana supports the demo rails.",
   ]) {
     await expect(
       page.getByRole("heading", { name: heading, exact: true }),
     ).toBeVisible();
   }
   const guide = page.locator(".how-it-works");
-  await expect(guide).toContainText("Nothing on this page creates paid access");
+  await expect(guide).toContainText("Choose four core gyms");
+  for (const content of [
+    "€80",
+    "10",
+    "€150",
+    "unlimited included check-ins",
+    "One included check-in per venue-local day",
+    "€15",
+    "payment goes directly to the destination gym",
+    "private unless you explicitly share",
+    "not a finalized or claimable payout",
+    "Solana Devnet",
+    "No real funds",
+  ]) {
+    await expect(guide).toContainText(content);
+  }
   await expect(guide).not.toContainText(
     /\b(passes|events|transferable|sponsorships|challenges|reactions)\b/i,
   );
 
-  const clubSection = page.locator("#for-clubs");
-  await expect(clubSection).toContainText("verified usage records");
-  await expect(clubSection).toContainText("provisional allocation");
-  await expect(
-    clubSection.getByRole("link", { name: "Manage a fitness business" }),
-  ).toHaveAttribute("href", "/clubs/sign-in");
+  const gymSection = page.locator(".hiw-value-card.gyms");
+  await expect(gymSection).toContainText("Staff-confirmed evidence");
+  await expect(gymSection).toContainText("Direct payment");
+
+  const headings = await guide.locator("h1, h2").allTextContents();
+  expect(
+    headings.indexOf("Two plans. The same four-gym freedom."),
+  ).toBeLessThan(headings.indexOf("Solana supports the demo rails."));
 
   expect(
     await page.evaluate(
@@ -44,7 +64,7 @@ test("public guide presents only the focused interim membership story", async ({
     ),
   ).toBe(true);
   await page.screenshot({
-    path: testInfo.outputPath("how-it-works-interim.png"),
+    path: testInfo.outputPath("how-it-works.png"),
     fullPage: true,
   });
   await page

@@ -2,10 +2,10 @@
 
 - Status: Blocked
 - Created: 2026-09-25
-- Last updated: 2026-09-25
+- Last updated: 2026-09-26
 - Milestone: M2 frontend membership setup preview
 - Coordination: [COR0007 — Core multi-gym membership MVP](../organisatory/COR0007-core-multigym-membership-mvp.md)
-- Related records: depends on discovery contracts from [DEV0074](DEV0074-preview-multigym-discovery.md) and public terminology from [DEV0073](DEV0073-rewrite-multigym-public-story.md); future membership activation/payment work is a not-yet-created COR0007 peer
+- Related records: depends on discovery contracts from [DEV0074](DEV0074-preview-multigym-discovery.md) and public terminology from completed [DEV0073](../../archive/frontend/DEV0073-rewrite-multigym-public-story.md); future membership activation/payment work is a not-yet-created COR0007 peer
 
 ## Objective and context
 
@@ -20,13 +20,13 @@ Create an honest frontend-only membership setup and My Membership preview so the
 
 A visitor can compare plans and start a preview selection. The interface permits exactly four unique gyms that are eligible for the chosen plan, shows `0/4` through `4/4`, disables review until valid, and supports removing/replacing a choice. Switching plans revalidates the selection and removes or clearly identifies now-ineligible gyms rather than keeping an invalid hidden state.
 
-The review shows plan name, €80 or €150 monthly demo price, ten or unlimited allowance, one included check-in per day, four gym names and the separate illustrative €8 non-core visit. The final action does not create an active membership or ask for a transaction; it routes to Coming Soon/waitlist with explicit language.
+The review shows plan name, €80 or €150 monthly demo price, ten or unlimited allowance, one included check-in per day, four gym names and the separate illustrative €15 non-core visit. The final action does not create an active membership or ask for a transaction; it routes to Coming Soon/waitlist with explicit language.
 
 My Membership distinguishes `Draft selection` from `Active membership`. It never shows remaining check-ins, payment confirmation or ownership unless a later backend ticket supplies verified state. Browser-local drafts are namespaced/versioned, validated on load and safely reset when corrupt or when fixture eligibility changes.
 
 ## Assumptions, decisions, and dependencies
 
-- DEV0073 provides final public terminology and DEV0074 provides the typed plan/gym read contracts plus fictional fixtures.
+- Completed DEV0073 provides the public terminology and current €15 non-core value; DEV0074 still blocks implementation because it must provide the typed plan/gym read contracts plus fictional fixtures.
 - Keeping `/my-access` as the initial route is acceptable for compatibility, but the visible label becomes My Membership. A route rename requires redirects and must be decided before implementation starts.
 - Local draft persistence is presentation convenience only and must not reuse financial or entitlement language.
 - A later activation ticket replaces the Coming Soon handoff and owns wallet/payment/reconciliation behavior.
@@ -42,7 +42,7 @@ My Membership distinguishes `Draft selection` from `Active membership`. It never
 ## Acceptance criteria
 
 - [ ] AC1: The preview accepts exactly four distinct active gyms eligible for the selected plan and blocks fewer, more, duplicates and incompatible choices with understandable feedback.
-- [ ] AC2: Basic/Classic prices, allowances, daily rule and separate €8 non-core visit are consistent across selection, review and My Membership.
+- [ ] AC2: Basic/Classic prices, allowances, daily rule and separate €15 non-core visit are consistent across selection, review and My Membership.
 - [ ] AC3: Review/submit creates no membership, payment, entitlement, check-in or allocation; unavailable activation routes honestly to Coming Soon/waitlist.
 - [ ] AC4: Local draft load/save/reset handles malformed, stale-version and changed-eligibility state without implying ownership or breaking retained public routes.
 - [ ] AC5: Rule/storage tests, content assertions, lint, typecheck, format, build and desktop/mobile keyboard/browser flows pass.

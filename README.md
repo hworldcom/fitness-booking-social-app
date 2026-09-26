@@ -8,7 +8,7 @@ The current MVP deliberately focuses on that membership alone. Membership transf
 
 Solana provides the membership-state and test-payment layer for the hackathon demo. People create application accounts with email and later link a Phantom wallet for wallet-backed actions; financially active gyms use distinct club wallets operated by individually signed-in administrators. Devnet transactions use test EURC for membership activation and eligible visits to participating gyms outside a member's selected four; test SOL is used only for network/account costs. Product discovery, application identity, permissions and social data stay in the backend.
 
-**Current status:** the responsive Next.js frontend preview, local Supabase foundation, server-only Drizzle boundary and verified protected-actor context are implemented. Email-code accounts exist, optional personal-wallet linking is in progress and prepared gym-wallet authority awaits its real-Phantom completion rehearsal. The visible frontend and two private membership drafts still represent the superseded single-gym transfer/pass/event concept; they are legacy preview behavior, not the new target. No usable four-gym membership, published persistent catalogue, real EURC activation, check-in allocation or member-priced non-core visit exists yet. Follow-up tickets under COR0006 and COR0007 will replace the legacy presentation and data model through additive work.
+**Current status:** the responsive Next.js frontend preview, local Supabase foundation, server-only Drizzle boundary and verified protected-actor context are implemented. Email-code accounts exist, optional personal-wallet linking is in progress and prepared gym-wallet authority awaits its real-Phantom completion rehearsal. Home and How it works now explain the focused four-gym Basic/Classic concept with illustrative €80, €150 and €15 demo pricing; Explore still uses a small temporary fictional gym catalogue. No usable membership selection, activation, real EURC payment, check-in allocation or member-priced non-core visit exists yet. Follow-up tickets under COR0006 and COR0007 will add the preview selection flow and persistent product model through additive work.
 
 **Start with the [MVP specification](docs/mvp-spec.md).** It is the single current product document, including project status, scope, architecture, milestones, acceptance checks, and the demo script.
 
@@ -113,7 +113,7 @@ Recovery uses another code sent to the same verified email. Sign out in the appl
 
 ## What you can try
 
-The [frontend foundation ticket](tickets/archive/frontend/DEV0008-repx-club-frontend.md) records the original slice. You can currently explore Home, Explore, My Access and Profile and follow demonstration people in preview mode. Some routes still show legacy event, pass and transferable-membership concepts from the previous direction. Those controls are not the current product and create no payment, membership, reservation or attendance evidence. Browser-local preview choices can be cleared with **Profile → Reset preview**.
+The [frontend foundation ticket](tickets/archive/frontend/DEV0008-repx-club-frontend.md) records the original slice. You can currently explore Home, the focused How it works guide, the temporary fictional gym catalogue, My Access and Profile, and follow demonstration people in preview mode. The displayed plans and pricing explain the target concept; they do not create payment, membership, reservation or attendance evidence. Browser-local preview choices can be cleared with **Profile → Reset preview**.
 
 The header wallet control discovers Phantom through Wallet Standard on Solana Devnet. It can connect, show the public address and disconnect without authenticating or linking the wallet. The separate `/sign-in` page uses email OTP for the application account. In-progress DEV0047 adds an explicit message-only proof for optional wallet linking; connection alone still grants no identity, role, payment evidence or automatic account merge.
 
@@ -139,8 +139,8 @@ The database commands above add SQL catalogue/constraint/RLS checks and Drizzle 
 ## Application structure
 
 - `src/app/`: thin Next.js App Router adapters, shared layout and visual styles.
-- `src/features/`: capability-owned Home/feed, Explore/discovery, My Access and profile screens, plus legacy event/class preview modules awaiting removal or replacement by their owning frontend ticket.
-- `src/domain/`: framework-independent catalogue and discovery rules, including legacy preview contracts that do not define the current product; no browser, network or persistence authority.
+- `src/features/`: capability-owned Home/feed, Explore/discovery, How it works, My Access and profile screens; no standalone event/class product modules remain.
+- `src/domain/`: framework-independent gym catalogue and discovery rules; no browser, network or persistence authority.
 - `src/features/preview/`: typed demonstration catalogue, derived discovery data, validated local state transitions and browser persistence under the legacy compatibility key `repx-club-preview-v1`; never live inventory, authorization, payment proof or a financial ledger. DEV0049 retains that opaque key so the MovX Club rename does not discard existing browser choices.
 - `src/solana/client/`: browser-safe, Devnet-only Phantom discovery/connection state and accessible wallet presentation; no RPC, authentication, balance or transaction authority.
 - `src/auth/`: public Auth/identity response contracts, bounded email/code rules and the browser-side Supabase session/identity clients.

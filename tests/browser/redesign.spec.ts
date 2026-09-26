@@ -7,8 +7,32 @@ test("home discovery links preserve usable catalogue destinations", async ({
   await expect(page).toHaveTitle(/MovX Club/);
   await expect(page.locator("body")).not.toContainText("RepX Club");
   await expect(
-    page.getByRole("heading", { name: /FIND YOUR PEOPLE.*MOVE TOGETHER/ }),
+    page.getByRole("heading", {
+      name: "A MEMBERSHIP BUILT AROUND YOUR ROUTINE.",
+    }),
   ).toBeVisible();
+  const hero = page.locator(".club-hero");
+  await expect(hero).toContainText("YOUR GYMS. ONE MEMBERSHIP.");
+  await expect(hero).toContainText(
+    "Choose your core gyms and the plan that fits how often you train.",
+  );
+  const plans = page.locator(".membership-snapshot");
+  await expect(plans).toContainText("Basic");
+  await expect(plans).toContainText("€80");
+  await expect(plans).toContainText("10 included check-ins");
+  await expect(plans).toContainText("Classic");
+  await expect(plans).toContainText("€150");
+  await expect(plans).toContainText("Unlimited check-ins");
+  await expect(plans).toContainText("one included check-in per day");
+  await expect(plans).toContainText("€15");
+  await expect(plans).toContainText("paid directly to that gym");
+  await expect(hero).not.toContainText(/\bfour\b/i);
+  await expect(plans).not.toContainText(/\bfour\b/i);
+  for (const copy of await page
+    .locator(".sidebar-caption, .club-note")
+    .allTextContents()) {
+    expect(copy).not.toMatch(/\bfour\b/i);
+  }
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({
     path: testInfo.outputPath("club-home-viewport.png"),
@@ -77,6 +101,8 @@ test("club layout remains usable at narrow and intermediate widths", async ({
     await button.focus();
     await expect(button).toBeFocused();
     await expect(button).toBeInViewport();
+    await page.locator(".membership-snapshot").scrollIntoViewIfNeeded();
+    await expect(page.locator(".membership-snapshot")).toBeVisible();
     await page.locator(".club-studio-card").last().scrollIntoViewIfNeeded();
     await expect
       .poll(() =>

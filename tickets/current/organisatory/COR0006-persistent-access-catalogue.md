@@ -18,11 +18,11 @@ Catalogue publication never implies payment, membership ownership, reservation, 
 
 ## Direct development work
 
-| Implementation part | Development ticket | Owned deliverable | Start condition or dependency |
-| --- | --- | --- | --- |
-| Initial membership product storage | Completed [DEV0067 — Add membership catalogue schema](../../archive/backend/DEV0067-membership-catalogue-schema.md) | Historical product/version foundation, two obsolete private drafts, Drizzle mappings and database tests; no entitlement or UI | Delivered under the superseded DEV0066 contract |
-| Multi-gym plan and gym-eligibility schema revision | Required backend peer ticket not yet created | Additive Basic/Classic version fields, participating-gym eligibility, fictional fixtures and retirement of obsolete draft publication paths without rewriting migration history | After DEV0069; before any offer is published |
-| Persistent catalogue services and preview-adapter replacement | Required backend-primary peer ticket not yet created | Safe public gym/plan projections, authorized catalogue mutations and replacement of DEV0074's preview adapter without redesigning its Explore/detail presentation | After the schema revision and reviewed DEV0074 frontend read contracts |
+| Implementation part                                           | Development ticket                                                                                                  | Owned deliverable                                                                                                                                                               | Start condition or dependency                                          |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Initial membership product storage                            | Completed [DEV0067 — Add membership catalogue schema](../../archive/backend/DEV0067-membership-catalogue-schema.md) | Historical product/version foundation, two obsolete private drafts, Drizzle mappings and database tests; no entitlement or UI                                                   | Delivered under the superseded DEV0066 contract                        |
+| Multi-gym plan and gym-eligibility schema revision            | Required backend peer ticket not yet created                                                                        | Additive Basic/Classic version fields, participating-gym eligibility, fictional fixtures and retirement of obsolete draft publication paths without rewriting migration history | After DEV0069; before any offer is published                           |
+| Persistent catalogue services and preview-adapter replacement | Required backend-primary peer ticket not yet created                                                                | Safe public gym/plan projections, authorized catalogue mutations and replacement of DEV0074's preview adapter without redesigning its Explore/detail presentation               | After the schema revision and reviewed DEV0074 frontend read contracts |
 
 Every direct ticket must link back to COR0006. No pass/event or social schema may be added under this record.
 
@@ -58,7 +58,7 @@ DEV0069 checks the revised work map and links. Direct implementation validation 
 
 ## Risks, limitations, and follow-ups
 
-The public catalogue cannot be populated honestly until the additive plan/eligibility revision lands. €80 Basic, €150 Classic, €8 non-core access and four core gyms remain configurable hypotheses, not production commitments. DEV0074's fixtures must stay visibly preview-only. Later services must not expose private obsolete drafts or silently fall back to those fixtures during backend failure.
+The public catalogue cannot be populated honestly until the additive plan/eligibility revision lands. €80 Basic, €150 Classic, €15 non-core access and four core gyms remain configurable hypotheses, not production commitments. DEV0074's fixtures must stay visibly preview-only. Later services must not expose private obsolete drafts or silently fall back to those fixtures during backend failure.
 
 ## Completion and review references
 

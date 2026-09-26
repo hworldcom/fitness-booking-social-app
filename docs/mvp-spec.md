@@ -1,6 +1,6 @@
 # MovX Club — Hackathon MVP specification
 
-Last updated: 25 September 2026.
+Last updated: 26 September 2026.
 
 This is the single current product contract for the MovX Club hackathon MVP. MovX Club is testing one focused product: a membership that gives a member included access to four selected participating gyms, with visible usage accounting for the member and the gyms. A small social layer lets people follow one another and explicitly share verified participation.
 
@@ -10,7 +10,7 @@ The MVP no longer includes membership transfers, standalone class passes or pass
 
 This specification defines the target behavior. It does not claim that the target has already been implemented.
 
-The current frontend still presents parts of an earlier concept, including transferable single-gym memberships, passes and events. The private catalogue migration created by DEV0067 contains earlier `Annual Unlimited` and `Flex 12` drafts. Those screens and records are not the current product contract and must not be published as the new offer. Follow-up development tickets will replace them through forward-compatible application and database changes.
+Home and How it works now present the focused four-gym membership concept, while Explore still uses a small temporary fictional gym catalogue and no usable selection or activation exists. The private catalogue migration created by DEV0067 contains earlier `Annual Unlimited` and `Flex 12` drafts. Those records are not the current product contract and must not be published as the new offer. Follow-up development tickets will replace the temporary discovery data and obsolete private drafts through forward-compatible application and database changes.
 
 Completed and cancelled tickets are preserved as historical evidence. They explain previous choices but do not override this document. [The ticket index](../tickets/README.md) records current delivery work.
 
@@ -20,27 +20,27 @@ Completed and cancelled tickets are preserved as historical evidence. They expla
 
 The identifiers below remain stable so tickets can cite product decisions precisely.
 
-| ID | Confirmed decision |
-| --- | --- |
-| C01 | The target is a focused hackathon demonstration on Solana Devnet, not a production-ready commercial service. |
-| C09 | A visit becomes participation only after an authorized venue representative confirms the member's presence. Membership payment, plan selection, reservation, check-in, settlement accounting and social sharing are separate states. |
-| C10 | The MVP does not issue non-fungible tokens (NFTs), badges or collectibles. |
-| C11 | A verified check-in is private by default and appears socially only after the member explicitly shares it. |
-| C12 | A person starts with an email-backed account. A personal wallet can be linked later. Each gym uses a distinct authorized business wallet; no shared gym login is permitted. |
-| C13 | Devnet EURC is the only demonstrated payment asset. It is used for membership activation and member-priced non-core visits. |
-| C14 | Personal funds, gym funds and pooled membership funds are distinct. A UI balance must name the holder and source rather than presenting unrelated funds as one total. |
-| C15 | Financial states must be honest. Pool balance, provisional usage allocation and finalized or claimable payout are different concepts and must not be labeled interchangeably. |
-| C17 | Guests may browse participating gyms and the available membership plans without signing in. |
-| C18 | The public How it works guide must explain the member journey, the gym value proposition, the four-gym selection and the role of Devnet without presenting the concept as already production-ready. |
-| C19 | The social MVP is one-way follows plus a chronological feed of explicitly shared verified check-ins. It has no reactions, comments, direct messages, notifications, rankings or general-purpose posts. |
+| ID  | Confirmed decision                                                                                                                                                                                                                                                                   |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| C01 | The target is a focused hackathon demonstration on Solana Devnet, not a production-ready commercial service.                                                                                                                                                                         |
+| C09 | A visit becomes participation only after an authorized venue representative confirms the member's presence. Membership payment, plan selection, reservation, check-in, settlement accounting and social sharing are separate states.                                                 |
+| C10 | The MVP does not issue non-fungible tokens (NFTs), badges or collectibles.                                                                                                                                                                                                           |
+| C11 | A verified check-in is private by default and appears socially only after the member explicitly shares it.                                                                                                                                                                           |
+| C12 | A person starts with an email-backed account. A personal wallet can be linked later. Each gym uses a distinct authorized business wallet; no shared gym login is permitted.                                                                                                          |
+| C13 | Devnet EURC is the only demonstrated payment asset. It is used for membership activation and member-priced non-core visits.                                                                                                                                                          |
+| C14 | Personal funds, gym funds and pooled membership funds are distinct. A UI balance must name the holder and source rather than presenting unrelated funds as one total.                                                                                                                |
+| C15 | Financial states must be honest. Pool balance, provisional usage allocation and finalized or claimable payout are different concepts and must not be labeled interchangeably.                                                                                                        |
+| C17 | Guests may browse participating gyms and the available membership plans without signing in.                                                                                                                                                                                          |
+| C18 | The public How it works guide must explain the member journey, the gym value proposition, the four-gym selection and the role of Devnet without presenting the concept as already production-ready.                                                                                  |
+| C19 | The social MVP is one-way follows plus a chronological feed of explicitly shared verified check-ins. It has no reactions, comments, direct messages, notifications, rankings or general-purpose posts.                                                                               |
 | C20 | The demo has two configurable plan variants. Basic includes ten check-ins per membership period for an illustrative €80. Classic has no numerical monthly check-in allowance and costs an illustrative €150. Both permit at most one included check-in per venue-local calendar day. |
-| C21 | A member selects exactly four distinct, active and plan-eligible core gyms for a membership period. Four is a configurable MVP hypothesis, not a permanent infrastructure limit. |
-| C22 | Challenges and reactions are outside the MVP. |
-| C23 | The multi-gym membership is the only paid product family in the current MVP. Membership transfers, standalone passes, pass resale, ordinary events and sponsored events are outside scope. |
-| C24 | An active member may visit an eligible participating gym outside their four core gyms for an illustrative €8 Devnet-EURC member price paid directly to that gym. This visit does not consume a Basic check-in and does not enter the membership pool. |
-| C25 | Member and gym interfaces must show predictable amounts and states without hidden platform surcharges or invented payout claims. |
-| C26 | There is no membership transfer, transfer fee, recipient flow, resale listing or transferred entitlement in the current MVP. |
-| C27 | Included check-ins produce a transparent provisional usage allocation for gyms. The MVP must not make a final payout claim until unused value, refunds, reserves, taxes, aggregation and settlement timing are decided. |
+| C21 | A member selects exactly four distinct, active and plan-eligible core gyms for a membership period. Four is a configurable MVP hypothesis, not a permanent infrastructure limit.                                                                                                     |
+| C22 | Challenges and reactions are outside the MVP.                                                                                                                                                                                                                                        |
+| C23 | The multi-gym membership is the only paid product family in the current MVP. Membership transfers, standalone passes, pass resale, ordinary events and sponsored events are outside scope.                                                                                           |
+| C24 | An active member may visit an eligible participating gym outside their four core gyms for an illustrative €15 Devnet-EURC member price paid directly to that gym. This visit does not consume a Basic check-in and does not enter the membership pool.                               |
+| C25 | Member and gym interfaces must show predictable amounts and states without hidden platform surcharges or invented payout claims.                                                                                                                                                     |
+| C26 | There is no membership transfer, transfer fee, recipient flow, resale listing or transferred entitlement in the current MVP.                                                                                                                                                         |
+| C27 | Included check-ins produce a transparent provisional usage allocation for gyms. The MVP must not make a final payout claim until unused value, refunds, reserves, taxes, aggregation and settlement timing are decided.                                                              |
 
 ### Superseded decisions retained as history
 
@@ -52,15 +52,15 @@ Previous versions used C07/C08 for class-pass purchase and refunds, C16 for even
 
 These are working defaults, not confirmed production policy.
 
-| ID | Proposed default |
-| --- | --- |
-| P07 | Count at most one included check-in for a membership on a venue-local calendar date. A separately paid non-core visit is a different transaction and attendance record. |
-| P13 | Platform pricing, the party responsible for network fees and the platform's long-term revenue model remain unresolved. |
-| P15 | The demo creates one fixed monthly membership period with explicit start and end timestamps and no automatic renewal. Production billing term, renewal and cancellation behavior remain open. |
+| ID  | Proposed default                                                                                                                                                                                                       |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P07 | Count at most one included check-in for a membership on a venue-local calendar date. A separately paid non-core visit is a different transaction and attendance record.                                                |
+| P13 | Platform pricing, the party responsible for network fees and the platform's long-term revenue model remain unresolved.                                                                                                 |
+| P15 | The demo creates one fixed monthly membership period with explicit start and end timestamps and no automatic renewal. Production billing term, renewal and cancellation behavior remain open.                          |
 | P16 | Calculate a provisional pro-rata allocation for the demonstrated period. Keep zero-use and partially used value in the test pool and display it as unresolved rather than treating it as MovX revenue or a gym payout. |
-| P17 | The four core gyms are frozen after period activation. The member may choose a different eligible set for a later period. |
-| P18 | €80 Basic, €150 Classic and €8 non-core access are illustrative demo values stored as configuration or versioned plan data. |
-| P19 | Production cancellations, cooling-off rights, refunds, chargebacks and gym closure handling are unresolved. Paid but undelivered access must be treated as an obligation, never as automatic platform revenue. |
+| P17 | The four core gyms are frozen after period activation. The member may choose a different eligible set for a later period.                                                                                              |
+| P18 | €80 Basic, €150 Classic and €15 non-core access are illustrative demo values stored as configuration or versioned plan data.                                                                                           |
+| P19 | Production cancellations, cooling-off rights, refunds, chargebacks and gym closure handling are unresolved. Paid but undelivered access must be treated as an obligation, never as automatic platform revenue.         |
 
 Earlier P01 and P09–P12/P14 described removed challenges, passes, events or transfers and are retired from the current contract.
 
@@ -250,7 +250,7 @@ A membership period belongs to the activating member for its duration. There is 
 
 Membership eligibility does not guarantee space in a class. A reservation may progress through `reserved`, `cancelled`, `expired`, `checked_in` or `no_show`, subject to one active seat per member/session and atomic capacity handling. A staff-confirmed check-in remains the participation authority.
 
-An active member may purchase a visit at a participating gym that is not one of their four selected gyms when that venue supports the member price and has capacity. The illustrative €8 Devnet-EURC payment goes directly to the destination gym's authorized wallet. The system verifies the payment before confirming paid eligibility, uses an idempotent operation ID, and records the attendance separately from included usage. It does not decrement Basic, affect the daily included-check-in rule or enter the membership allocation pool.
+An active member may purchase a visit at a participating gym that is not one of their four selected gyms when that venue supports the member price and has capacity. The illustrative €15 Devnet-EURC payment goes directly to the destination gym's authorized wallet. The system verifies the payment before confirming paid eligibility, uses an idempotent operation ID, and records the attendance separately from included usage. It does not decrement Basic, affect the daily included-check-in rule or enter the membership allocation pool.
 
 There are no standalone pass, pass-bundle, resale, event or event-ticket objects in this flow.
 
@@ -341,32 +341,32 @@ The pivot is delivered only when all of the following are true:
 
 ## 13. Acceptance matrix
 
-| ID | Scenario and expected result |
-| --- | --- |
-| A01 | A guest sees only published fictional gyms and accurate Basic/Classic terms; drafts and private operations are absent. |
-| A02 | Selecting fewer or more than four gyms, the same gym twice, an inactive gym or a plan-ineligible gym cannot activate a membership. |
-| A03 | A valid four-gym selection and verified Devnet-EURC payment creates exactly one active period with snapshotted terms. |
-| A04 | Cancelling or failing the wallet approval creates no active period and a safe retry cannot double-charge or duplicate access. |
-| A05 | A Basic member completes ten valid included check-ins; an eleventh attempt is rejected without usage or allocation mutation. |
-| A06 | A Classic member can continue checking in across the period without a monthly numerical allowance. |
-| A07 | Basic and Classic both reject a second included check-in on the same venue-local calendar day. |
-| A08 | A check-in at a gym outside the selected four cannot use included membership access. |
-| A09 | Unauthorized staff, wrong-gym staff, stale reservations, duplicate identifiers and expired memberships cannot confirm included usage. |
-| A10 | Concurrent attempts for the last Basic use or final class seat produce at most one successful mutation. |
-| A11 | Every valid included check-in changes the correct usage total and provisional allocation input exactly once. |
-| A12 | The displayed provisional shares reconcile to the declared distributable pool and usage scope within explicit rounding rules. |
-| A13 | A zero-use or partially used membership leaves value labeled unresolved in the test pool and creates no invented MovX revenue or gym payout. |
+| ID  | Scenario and expected result                                                                                                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A01 | A guest sees only published fictional gyms and accurate Basic/Classic terms; drafts and private operations are absent.                                       |
+| A02 | Selecting fewer or more than four gyms, the same gym twice, an inactive gym or a plan-ineligible gym cannot activate a membership.                           |
+| A03 | A valid four-gym selection and verified Devnet-EURC payment creates exactly one active period with snapshotted terms.                                        |
+| A04 | Cancelling or failing the wallet approval creates no active period and a safe retry cannot double-charge or duplicate access.                                |
+| A05 | A Basic member completes ten valid included check-ins; an eleventh attempt is rejected without usage or allocation mutation.                                 |
+| A06 | A Classic member can continue checking in across the period without a monthly numerical allowance.                                                           |
+| A07 | Basic and Classic both reject a second included check-in on the same venue-local calendar day.                                                               |
+| A08 | A check-in at a gym outside the selected four cannot use included membership access.                                                                         |
+| A09 | Unauthorized staff, wrong-gym staff, stale reservations, duplicate identifiers and expired memberships cannot confirm included usage.                        |
+| A10 | Concurrent attempts for the last Basic use or final class seat produce at most one successful mutation.                                                      |
+| A11 | Every valid included check-in changes the correct usage total and provisional allocation input exactly once.                                                 |
+| A12 | The displayed provisional shares reconcile to the declared distributable pool and usage scope within explicit rounding rules.                                |
+| A13 | A zero-use or partially used membership leaves value labeled unresolved in the test pool and creates no invented MovX revenue or gym payout.                 |
 | A14 | An active member pays the configured price at an eligible non-core gym; the verified payment reaches that gym and does not alter included usage or the pool. |
 | A15 | A non-member, inactive member, selected-core-gym attempt, unsupported venue, full session or failed direct payment cannot produce paid non-core eligibility. |
-| A16 | Gym staff see only their gym's attendees and provisional allocation; they cannot view or mutate another gym's private data. |
-| A17 | Following and unfollowing are idempotent, self-follow is rejected and one member cannot mutate another member's choices. |
-| A18 | Only an explicitly shared verified check-in appears in Community/Following queries, in chronological order and without private financial data. |
-| A19 | Revoking sharing removes social visibility while preserving attendance and financial evidence. |
-| A20 | Current routes and controls contain no membership transfer, pass/resale, event/sponsorship, challenge or reaction action. |
-| A21 | Legacy records and migrations remain replayable while forward changes prevent obsolete drafts from becoming the published product. |
-| A22 | Home, Explore, setup, access, guide, social and gym workspace are usable at representative mobile/desktop widths and with keyboard navigation. |
-| A23 | Every payment uses the configured Devnet EURC mint and verifies expected source, destination, amount and confirmed outcome. |
-| A24 | Reloading or retrying a submitted activation, direct payment or check-in reconciles the same operation without double effects. |
+| A16 | Gym staff see only their gym's attendees and provisional allocation; they cannot view or mutate another gym's private data.                                  |
+| A17 | Following and unfollowing are idempotent, self-follow is rejected and one member cannot mutate another member's choices.                                     |
+| A18 | Only an explicitly shared verified check-in appears in Community/Following queries, in chronological order and without private financial data.               |
+| A19 | Revoking sharing removes social visibility while preserving attendance and financial evidence.                                                               |
+| A20 | Current routes and controls contain no membership transfer, pass/resale, event/sponsorship, challenge or reaction action.                                    |
+| A21 | Legacy records and migrations remain replayable while forward changes prevent obsolete drafts from becoming the published product.                           |
+| A22 | Home, Explore, setup, access, guide, social and gym workspace are usable at representative mobile/desktop widths and with keyboard navigation.               |
+| A23 | Every payment uses the configured Devnet EURC mint and verifies expected source, destination, amount and confirmed outcome.                                  |
+| A24 | Reloading or retrying a submitted activation, direct payment or check-in reconciles the same operation without double effects.                               |
 
 ## 14. Demonstration path
 
@@ -375,7 +375,7 @@ The pivot is delivered only when all of the following are true:
 3. The member activates Basic with a real Devnet-EURC payment and sees ten included check-ins.
 4. Authorized staff at a selected gym confirm a visit; the member sees nine remaining and the gym's provisional allocation input increases.
 5. A duplicate or second same-day included attempt is rejected without another decrement.
-6. The member visits the fifth participating gym, approves the illustrative €8 direct payment and receives separately recorded attendance.
+6. The member visits the fifth participating gym, approves the illustrative €15 direct payment and receives separately recorded attendance.
 7. Gym staff see their scoped visits and provisional allocation, not another gym's or member's private financial state.
 8. The member explicitly shares one verified check-in; a follower sees it chronologically and no reaction control appears.
 9. A reload shows the same confirmed membership, payments, usage and sharing state.

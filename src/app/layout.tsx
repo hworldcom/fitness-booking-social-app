@@ -12,11 +12,11 @@ import { initialAuthorizationState } from "@/server/authorization/service";
 
 export const metadata: Metadata = {
   title: {
-    default: "MovX Club — Flexible fitness access, built around people.",
+    default: "MovX Club — A membership built around your routine.",
     template: "%s | MovX Club",
   },
   description:
-    "Preview MovX Club, one multi-gym membership built around flexible access and verified participation.",
+    "Preview one MovX Club membership across selected gyms, with clear plans and a community built on shared verified participation.",
   robots: { index: false, follow: false },
 };
 export default async function RootLayout({

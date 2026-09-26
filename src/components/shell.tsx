@@ -53,7 +53,7 @@ export function Shell({
           <Brand />
         </Link>
         <div className="sidebar-caption">
-          FIND YOUR ACCESS.
+          YOUR GYMS.
           <br />
           MOVE TOGETHER.
         </div>
@@ -79,14 +79,13 @@ export function Shell({
           <div className="club-note">
             <span className="little-spark">✳</span>
             <strong>
-              More ways to move.
+              Your gyms.
               <br />
-              One place to start.
+              One membership.
             </strong>
             <p>
-              Discover flexible fitness
-              <br />
-              access around you.
+              Compare the demo plans and
+              <br /> participating gyms.
             </p>
             <Link href="/explore">
               Explore gyms <ArrowUpRight size={16} />

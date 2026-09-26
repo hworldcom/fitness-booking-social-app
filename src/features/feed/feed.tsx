@@ -3,7 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, ArrowUpRight, Check, Footprints } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  Footprints,
+  Infinity as InfinityIcon,
+} from "lucide-react";
 import { ShoeDoodle, StarDoodle } from "@/components/club-doodles";
 import { Avatar, Empty, Pill, SectionTitle } from "@/components/ui";
 import { people, studios } from "@/features/preview/catalogue";
@@ -39,15 +45,14 @@ export function Feed() {
     <>
       <section className="club-hero" aria-labelledby="club-welcome">
         <div className="club-hero-copy">
-          <span className="eyebrow">A LITTLE MOVEMENT. GOOD COMPANY.</span>
+          <span className="eyebrow">YOUR GYMS. ONE MEMBERSHIP.</span>
           <h1 id="club-welcome">
-            FIND YOUR PEOPLE.
-            <br />
-            <span>MOVE TOGETHER.</span>
+            A MEMBERSHIP BUILT AROUND <span>YOUR ROUTINE.</span>
           </h1>
           <p>
-            Discover participating gyms, find the membership that fits and share
-            verified participation when you choose.
+            Choose your core gyms and the plan that fits how often you train.
+            Move between participating gyms, discover new ways to exercise, and
+            share verified check-ins only when you choose.
           </p>
           <div className="club-hero-actions">
             <Link href="/explore" className="button lime">
@@ -69,11 +74,73 @@ export function Feed() {
             preload
           />
           <span className="club-sticker">
-            Better with
+            Built to move
             <br />
-            company <span aria-hidden="true">↗</span>
+            your way <span aria-hidden="true">↗</span>
           </span>
         </div>
+      </section>
+
+      <section className="membership-snapshot" aria-labelledby="plans-title">
+        <div className="membership-snapshot-heading">
+          <div>
+            <span className="eyebrow">TWO SIMPLE OPTIONS</span>
+            <h2 id="plans-title">Pick the rhythm that fits.</h2>
+          </div>
+          <p>
+            Illustrative demo pricing for one monthly membership period. Your
+            selected gyms form your core set for that period.
+          </p>
+        </div>
+        <div className="membership-plan-grid">
+          <article className="membership-plan-card basic">
+            <div className="membership-plan-topline">
+              <span>Basic</span>
+              <strong>€80</strong>
+            </div>
+            <h3>10 included check-ins</h3>
+            <p>
+              Across your selected core gyms, with at most one included check-in
+              per day.
+            </p>
+          </article>
+          <article className="membership-plan-card classic">
+            <div className="membership-plan-topline">
+              <span>Classic</span>
+              <strong>€150</strong>
+            </div>
+            <h3>
+              <InfinityIcon size={25} aria-hidden="true" /> Unlimited check-ins
+            </h3>
+            <p>
+              No numerical allowance; the same one-included-check-in-per-day
+              rule applies.
+            </p>
+          </article>
+          <aside
+            className="non-core-snapshot"
+            aria-label="Non-core member visit"
+          >
+            <span className="eyebrow">BEYOND YOUR CORE SET</span>
+            <strong>€15</strong>
+            <p>
+              Active members can visit an eligible participating non-core gym at
+              the illustrative member price, paid directly to that gym.
+            </p>
+          </aside>
+        </div>
+        <div className="membership-snapshot-actions">
+          <Link href="/how-it-works" className="text-link">
+            Understand the full product loop{" "}
+            <ArrowRight size={15} aria-hidden="true" />
+          </Link>
+          <Link href="/coming-soon" className="button secondary">
+            Join the waitlist <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+        <p className="fixture-note centered">
+          Concept preview · No membership, payment or gym partnership is live
+        </p>
       </section>
 
       <div className="feed-layout">

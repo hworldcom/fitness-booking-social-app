@@ -2,10 +2,10 @@
 
 - Status: Ready
 - Created: 2026-09-25
-- Last updated: 2026-09-25
+- Last updated: 2026-09-26
 - Milestone: M1 frontend membership discovery preview
 - Coordination: [COR0007 — Core multi-gym membership MVP](../organisatory/COR0007-core-multigym-membership-mvp.md)
-- Related records: depends on completed [DEV0072](../../archive/frontend/DEV0072-remove-legacy-product-ui.md); complements public story [DEV0073](DEV0073-rewrite-multigym-public-story.md); supplies discovery contracts to [DEV0075](DEV0075-preview-membership-selection.md); future persistence is coordinated by [COR0006](../organisatory/COR0006-persistent-access-catalogue.md)
+- Related records: depends on completed [DEV0072](../../archive/frontend/DEV0072-remove-legacy-product-ui.md); complements completed public story [DEV0073](../../archive/frontend/DEV0073-rewrite-multigym-public-story.md); supplies discovery contracts to [DEV0075](DEV0075-preview-membership-selection.md); future persistence is coordinated by [COR0006](../organisatory/COR0006-persistent-access-catalogue.md)
 
 ## Objective and context
 
@@ -28,7 +28,7 @@ Filters operate deterministically on the injected preview data. Empty results ar
 
 - All gym identities and content are fictional; do not reuse the actual gyms previously researched or the current `Kru Tiger` name.
 - Preview fixtures live behind a typed adapter and are not authorization, inventory, payment or partnership evidence.
-- Completed DEV0072 removed the class/event Explore implementation. DEV0073 may proceed in parallel because it owns different primary screens.
+- Completed DEV0072 removed the class/event Explore implementation, and completed DEV0073 established the public terminology and current €15 non-core member price.
 - COR0006 will later own additive persistent gym/plan data and safe public services; integration needs a separate direct DEV ticket.
 
 ## Implementation plan
