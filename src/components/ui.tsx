@@ -11,6 +11,9 @@ import {
   Flame,
   Flower2,
   Footprints,
+  MoonStar,
+  RefreshCcw,
+  Shield,
 } from "lucide-react";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
@@ -110,19 +113,35 @@ export function Artwork({
         <span className="photo-shade" />
       </div>
     );
-  const Icon = kind === "strength" ? Flame : kind === "fight" ? Zap : Flower2;
+  const Icon =
+    kind === "strength"
+      ? Flame
+      : kind === "fight"
+        ? Zap
+        : kind === "ground"
+          ? Shield
+          : kind === "recovery"
+            ? RefreshCcw
+            : kind === "night"
+              ? MoonStar
+              : Flower2;
+  const word =
+    kind === "strength"
+      ? "SHOW UP."
+      : kind === "fight"
+        ? "FIND YOUR FIRE."
+        : kind === "ground"
+          ? "FIND YOUR BASE."
+          : kind === "recovery"
+            ? "RESET WELL."
+            : kind === "night"
+              ? "MOVE AFTER DARK."
+              : "MAKE SPACE.";
   return (
     <div className={`artwork graphic ${kind} ${className}`} aria-hidden="true">
       <span className="graphic-rings" />
       <Icon className="graphic-icon" strokeWidth={1} />
-      <span className="graphic-word">
-        {title ||
-          (kind === "strength"
-            ? "SHOW UP."
-            : kind === "fight"
-              ? "FIND YOUR FIRE."
-              : "MAKE SPACE.")}
-      </span>
+      <span className="graphic-word">{title || word}</span>
       <span className="graphic-meta">MOVX CLUB / MOVEMENT FOR EVERYONE</span>
     </div>
   );

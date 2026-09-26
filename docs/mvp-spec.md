@@ -150,7 +150,7 @@ Authorization comes from server-derived identity and persisted role bindings, ne
 ### Demonstration fixtures
 
 - At least two ordinary member accounts are required to prove private state and social permissions.
-- At least five fictional participating gyms are required so a member can choose four core gyms and demonstrate one non-core visit.
+- Seven fictional participating gyms are used in the current frontend preview so a member can compare routines, choose four core gyms and demonstrate one non-core visit. Persistent catalogue rules must support at least five without treating seven as an infrastructure limit.
 - Gym wallets and staff authority must remain distinct from personal wallets and from one another.
 - Fixtures must not use an actual gym's name, logo, address, pricing or partnership claim without permission. Inspiration may be transformed into clearly fictional data.
 - The current seed still contains `Kru Tiger`; a future fixture implementation ticket must replace that legacy real-world name before the multi-gym demo is presented publicly.
@@ -371,11 +371,11 @@ The pivot is delivered only when all of the following are true:
 ## 14. Demonstration path
 
 1. A guest understands one product: choose four gyms and use one membership.
-2. A member signs in, compares Basic and Classic, and selects four of five fictional participating gyms.
+2. A member signs in, compares Basic and Classic, and selects four of seven fictional participating gyms.
 3. The member activates Basic with a real Devnet-EURC payment and sees ten included check-ins.
 4. Authorized staff at a selected gym confirm a visit; the member sees nine remaining and the gym's provisional allocation input increases.
 5. A duplicate or second same-day included attempt is rejected without another decrement.
-6. The member visits the fifth participating gym, approves the illustrative €15 direct payment and receives separately recorded attendance.
+6. The member visits another participating gym outside the core set, approves the illustrative €15 direct payment and receives separately recorded attendance.
 7. Gym staff see their scoped visits and provisional allocation, not another gym's or member's private financial state.
 8. The member explicitly shares one verified check-in; a follower sees it chronologically and no reaction control appears.
 9. A reload shows the same confirmed membership, payments, usage and sharing state.

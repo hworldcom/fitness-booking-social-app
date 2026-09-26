@@ -4,10 +4,12 @@ import { searchCatalogue } from "../src/features/discovery/queries";
 import { previewDiscoveryCatalogue } from "../src/features/preview/discovery";
 
 test("public search indexes only the interim gym catalogue", () => {
+  const yogaResults = searchCatalogue(previewDiscoveryCatalogue, "yoga");
   assert.deepEqual(
-    searchCatalogue(previewDiscoveryCatalogue, "yoga").map((item) => item.kind),
-    ["Studio"],
+    yogaResults.map((item) => item.title),
+    ["Studio Vela", "Nightshift Athletic Club"],
   );
+  assert.ok(yogaResults.every((item) => item.kind === "Studio"));
   assert.deepEqual(
     searchCatalogue(previewDiscoveryCatalogue, "mayá fabrik").map(
       (item) => item.title,

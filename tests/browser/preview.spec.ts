@@ -73,7 +73,15 @@ test("Explore filters gyms and keeps the details dialog keyboard accessible", as
   await page.goto("/explore?q=Fabrik");
   await expect(page.locator(".studio-card")).toHaveCount(1);
   await page.getByRole("button", { name: "Clear search" }).click();
-  await expect(page.locator(".studio-card")).toHaveCount(3);
+  await expect(page.locator(".studio-card")).toHaveCount(7);
+  const plans = page.locator(".explore-plans");
+  await expect(plans).toContainText("Basic");
+  await expect(plans).toContainText("€80");
+  await expect(plans).toContainText("10 included check-ins");
+  await expect(plans).toContainText("Classic");
+  await expect(plans).toContainText("€150");
+  await expect(plans).toContainText("Unlimited included check-ins");
+  await expect(plans).toContainText("€15");
 
   const activity = page.getByRole("combobox", {
     name: "Activities",
@@ -93,15 +101,29 @@ test("Explore filters gyms and keeps the details dialog keyboard accessible", as
   });
   await expect(dialog).toContainText("Illustrative gym");
   await expect(dialog).toContainText("does not show live availability");
+  await expect(dialog).toContainText("Blücherplatz 1, 10961 Berlin");
+  await expect(dialog).toContainText("not the fictional gym's address");
+  await expect(
+    dialog.getByRole("link", { name: "Open map anchor" }),
+  ).toHaveAttribute("href", /google\.com\/maps\/search/);
   await page.keyboard.press("Escape");
   await expect(openGym).toBeFocused();
 
-  await activity.selectOption("Running");
+  await activity.selectOption("Massage");
+  await expect(page.locator(".studio-card")).toHaveCount(1);
+  await page
+    .getByRole("combobox", { name: "Area", exact: true })
+    .selectOption("Kreuzberg");
   await expect(
     page.getByRole("heading", { name: "No gyms match those filters yet." }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Show all gyms" }).click();
-  await expect(page.locator(".studio-card")).toHaveCount(3);
+  await expect(page.locator(".studio-card")).toHaveCount(7);
+  const plan = page.getByRole("combobox", { name: "Plan", exact: true });
+  await plan.selectOption("basic");
+  await expect(page.locator(".studio-card")).toHaveCount(5);
+  await plan.selectOption("all");
+  await expect(page.locator(".studio-card")).toHaveCount(7);
   await page.screenshot({
     path: testInfo.outputPath("gym-only-explore.png"),
     fullPage: true,

@@ -5,7 +5,7 @@
 - Last updated: 2026-09-25
 - Milestone: M0 truthful frontend baseline
 - Coordination: [COR0007 — Core multi-gym membership MVP](../../current/organisatory/COR0007-core-multigym-membership-mvp.md)
-- Related records: follows completed product audit [DEV0071](../organisatory/DEV0071-audit-active-work-after-multigym-pivot.md); precedes completed [DEV0073](DEV0073-rewrite-multigym-public-story.md), [DEV0074](../../current/frontend/DEV0074-preview-multigym-discovery.md) and [DEV0075](../../current/frontend/DEV0075-preview-membership-selection.md); persistent catalogue work remains under [COR0006](../../current/organisatory/COR0006-persistent-access-catalogue.md)
+- Related records: follows completed product audit [DEV0071](../organisatory/DEV0071-audit-active-work-after-multigym-pivot.md); precedes completed [DEV0073](DEV0073-rewrite-multigym-public-story.md), completed [DEV0074](DEV0074-preview-multigym-discovery.md) and current [DEV0075](../../current/frontend/DEV0075-preview-membership-selection.md); persistent catalogue work remains under [COR0006](../../current/organisatory/COR0006-persistent-access-catalogue.md)
 
 ## Objective and context
 
@@ -77,7 +77,7 @@ Preview persistence advanced to version 3. Existing valid follows migrate from v
 ### Decisions and deviations
 
 - 2026-09-25: The user chose frontend cleanup before database redesign. This first slice removes the previous product rather than adding the replacement in the same review.
-- 2026-09-25: The three retained gym fixtures remain an explicitly temporary catalogue for this cleanup. DEV0074 owns the reviewed five-gym fictional dataset and final preview read contracts.
+- 2026-09-25: The three retained gym fixtures remain an explicitly temporary catalogue for this cleanup. DEV0074 was then planned to own a five-gym fictional dataset and final preview read contracts; its 2026-09-26 implementation record preserves the later user-approved expansion to seven.
 - 2026-09-25: Home keeps a minimal visual social preview using explicitly shared demo gym check-ins. It does not claim that the persistent DEV0023 social backend is delivered.
 
 ### Contracts, configuration, and operations
@@ -100,7 +100,7 @@ The browser-preview contract changed from `{ version: 2, following, eventDrafts 
 
 ## Risks, limitations, and follow-ups
 
-This ticket intentionally leaves a small interim interface. DEV0073 owns the complete public story, DEV0074 owns the five-gym plan/discovery preview and DEV0075 owns draft membership selection. The three current gym fixtures and shared check-in cards are labelled preview data and are not persistence, partnership, ownership or payment evidence.
+This ticket intentionally left a small interim interface. DEV0073 owns the complete public story, completed DEV0074 owns the final seven-gym plan/discovery preview and DEV0075 owns draft membership selection. The three fixtures retained by this earlier cleanup and its shared check-in cards were labelled preview data and were not persistence, partnership, ownership or payment evidence.
 
 The default Turbopack build could not be exercised in this restricted execution environment because its internal worker attempted a prohibited local-port bind. Webpack and vinext production builds both completed, so no implementation blocker remains for this ticket.
 

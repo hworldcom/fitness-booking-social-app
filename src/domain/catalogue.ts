@@ -1,11 +1,71 @@
-export type Discipline = "Running" | "Strength" | "Muay Thai" | "Yoga";
+export const membershipPlanIds = ["basic", "classic"] as const;
 
-export type ClubStudio = {
+export type MembershipPlanId = (typeof membershipPlanIds)[number];
+
+export type Discipline =
+  | "Grappling"
+  | "Kickboxing"
+  | "Massage"
+  | "MMA"
+  | "Muay Thai"
+  | "Strength"
+  | "Wellness"
+  | "Yoga";
+
+export type Money = {
+  amount: number;
+  currency: "EUR";
+};
+
+export type MembershipAccess =
+  { model: "limited"; includedCheckins: number } | { model: "daily-uncapped" };
+
+export type MembershipPlanSummary = {
+  id: MembershipPlanId;
+  version: string;
+  name: string;
+  price: Money;
+  priceInterval: "month";
+  access: MembershipAccess;
+  maxIncludedCheckinsPerDay: 1;
+  requiredCoreGyms: 4;
+  nonCoreVisitPrice: Money;
+  description: string;
+};
+
+export type PublicMapAnchor = {
+  label: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type GymSummary = {
   id: string;
   name: string;
   area: string;
   activities: Discipline[];
   coaches: string[];
   description: string;
-  artwork: "fight" | "strength" | "flow";
+  artwork: "fight" | "flow" | "ground" | "night" | "recovery" | "strength";
+  eligiblePlans: MembershipPlanId[];
+  supportsNonCoreVisit: boolean;
+  mapAnchor: PublicMapAnchor;
+  fixture: true;
 };
+
+// Kept as an alias while older presentation components migrate to GymSummary.
+export type ClubStudio = GymSummary;
+
+export type PublicCatalogue = {
+  source: "preview-fixtures";
+  version: string;
+  plans: MembershipPlanSummary[];
+  gyms: GymSummary[];
+};
+
+export type PublicCatalogueResult =
+  | { status: "loading" }
+  | { status: "empty" }
+  | { status: "error"; message: string }
+  | { status: "ready"; catalogue: PublicCatalogue };

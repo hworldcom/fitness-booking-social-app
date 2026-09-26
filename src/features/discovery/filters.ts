@@ -1,18 +1,33 @@
 import type { ClubStudio } from "@/domain/catalogue";
-import type { ActivityFilter } from "@/domain/discovery";
+import type {
+  ActivityFilter,
+  AreaFilter,
+  PlanFilter,
+} from "@/domain/discovery";
 
-type ActivityQuery = { activity: ActivityFilter; query?: string };
+type GymFilters = {
+  activity: ActivityFilter;
+  area?: AreaFilter;
+  plan?: PlanFilter;
+  query?: string;
+};
 
 export function filterStudios(
   catalogue: readonly ClubStudio[],
-  filters: ActivityQuery,
+  filters: GymFilters,
 ) {
   const query = (filters.query || "").trim().toLowerCase();
   return catalogue.filter(
     (studio) =>
       (filters.activity === "all" ||
         studio.activities.includes(filters.activity)) &&
-      `${studio.name} ${studio.area} ${studio.activities.join(" ")} ${studio.coaches.join(" ")}`
+      (!filters.area ||
+        filters.area === "all" ||
+        studio.area === filters.area) &&
+      (!filters.plan ||
+        filters.plan === "all" ||
+        studio.eligiblePlans.includes(filters.plan)) &&
+      `${studio.name} ${studio.area} ${studio.activities.join(" ")} ${studio.coaches.join(" ")} ${studio.mapAnchor.address}`
         .toLowerCase()
         .includes(query),
   );

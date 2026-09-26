@@ -5,7 +5,7 @@
 - Last updated: 2026-09-26
 - Milestone: M0 truthful positioning and guide
 - Coordination: [COR0007 — Core multi-gym membership MVP](../../current/organisatory/COR0007-core-multigym-membership-mvp.md)
-- Related records: depends on completed [DEV0072](DEV0072-remove-legacy-product-ui.md); uses the contract adopted by [DEV0069](../organisatory/DEV0069-adopt-core-multigym-membership-mvp.md) and amended by [DEV0070](../organisatory/DEV0070-revise-multigym-plan-pricing.md); discovery follows in [DEV0074](../../current/frontend/DEV0074-preview-multigym-discovery.md)
+- Related records: depends on completed [DEV0072](DEV0072-remove-legacy-product-ui.md); uses the contract adopted by [DEV0069](../organisatory/DEV0069-adopt-core-multigym-membership-mvp.md) and amended by [DEV0070](../organisatory/DEV0070-revise-multigym-plan-pricing.md); discovery followed in completed [DEV0074](DEV0074-preview-multigym-discovery.md)
 
 ## Objective and context
 
@@ -96,7 +96,7 @@ The confirmed illustrative non-core price in C24 and the proposed configuration 
 
 ## Risks, limitations, and follow-ups
 
-The pages remain a concept preview: no plan can be selected, activated or paid for, and the three-gym Explore fixtures are not partnership claims. DEV0074 owns the five-gym discovery/plan contracts; DEV0075 owns browser-local four-gym selection and the My Membership draft. Every unavailable activation action therefore continues to end at Coming Soon/waitlist.
+The pages remain a concept preview: no plan can be selected, activated or paid for, and the three-gym Explore fixtures present at this ticket's completion were not partnership claims. DEV0074 was then scoped for five gyms and later recorded the user-approved seven-gym discovery/plan result; DEV0075 owns browser-local four-gym selection and the My Membership draft. Every unavailable activation action therefore continues to end at Coming Soon/waitlist.
 
 The default Turbopack production command remains unexercised in this restricted environment because its internal worker requires a prohibited local port. Both the Webpack Next.js build and the Cloudflare/vinext build completed on the final source.
 

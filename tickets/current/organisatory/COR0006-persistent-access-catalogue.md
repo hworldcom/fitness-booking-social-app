@@ -30,7 +30,7 @@ Every direct ticket must link back to COR0006. No pass/event or social schema ma
 
 - [DEV0069](../../archive/organisatory/DEV0069-adopt-core-multigym-membership-mvp.md) supplies the focused product contract and [DEV0070](../../archive/organisatory/DEV0070-revise-multigym-plan-pricing.md) supplies the latest price/allowance amendment; neither implements the catalogue.
 - [COR0007](COR0007-core-multigym-membership-mvp.md) consumes published plan and gym eligibility. It owns selection, activation, check-ins, payments, allocation, gym/member operational views and social integration.
-- [DEV0074](../frontend/DEV0074-preview-multigym-discovery.md) owns the frontend plan/gym read contracts and preview discovery presentation under COR0007. It is a downstream consumer, not a direct COR0006 member; the catalogue service ticket replaces its fixture adapter without taking over its screen design.
+- Completed [DEV0074](../../archive/frontend/DEV0074-preview-multigym-discovery.md) owns the frontend plan/gym read contracts and preview discovery presentation under COR0007. It is a downstream consumer, not a direct COR0006 member; the catalogue service ticket replaces its fixture adapter without taking over its screen design.
 - [DEV0075](../frontend/DEV0075-preview-membership-selection.md) consumes those frontend contracts for a local draft selection. It does not create catalogue or membership state.
 - DEV0067 remains valid historical implementation evidence. Its `Annual Unlimited` and `Flex 12` private drafts are obsolete and must not be published as Basic/Classic.
 - Follows and explicitly shared check-ins belong to DEV0023 under COR0007, not to the catalogue.
@@ -38,7 +38,7 @@ Every direct ticket must link back to COR0006. No pass/event or social schema ma
 
 ## Delivery sequence and completion conditions
 
-DEV0067 established the first product/version foundation. DEV0074 may establish the reviewed frontend read contract and clearly labelled preview adapter while the additive schema peer models Basic/Classic and gym eligibility with forward migration history. The public service peer follows that schema and replaces the preview adapter without duplicating or redesigning the frontend. COR0007 may build membership lifecycle contracts in parallel but cannot activate an offer that is draft, inactive or ineligible.
+DEV0067 established the first product/version foundation. DEV0074 established the reviewed frontend read contract and clearly labelled preview adapter; the additive schema peer must now model Basic/Classic and gym eligibility with forward migration history. The public service peer follows that schema and replaces the preview adapter without duplicating or redesigning the frontend. COR0007 may build membership lifecycle contracts in parallel but cannot activate an offer that is draft, inactive or ineligible.
 
 Complete COR0006 only after every mapped row has a direct DEV ticket that is Completed or explicitly Cancelled/replaced, guests and authenticated users receive the same safe published catalogue, obsolete drafts remain private/retired, authorized mutations are isolated and durable, and no catalogue row fabricates access or financial state.
 

@@ -1,11 +1,11 @@
 # Ticket DEV0075: Preview membership selection
 
-- Status: Blocked
+- Status: Ready
 - Created: 2026-09-25
 - Last updated: 2026-09-26
 - Milestone: M2 frontend membership setup preview
 - Coordination: [COR0007 — Core multi-gym membership MVP](../organisatory/COR0007-core-multigym-membership-mvp.md)
-- Related records: depends on discovery contracts from [DEV0074](DEV0074-preview-multigym-discovery.md) and public terminology from completed [DEV0073](../../archive/frontend/DEV0073-rewrite-multigym-public-story.md); future membership activation/payment work is a not-yet-created COR0007 peer
+- Related records: depends on discovery contracts from completed [DEV0074](../../archive/frontend/DEV0074-preview-multigym-discovery.md) and public terminology from completed [DEV0073](../../archive/frontend/DEV0073-rewrite-multigym-public-story.md); future membership activation/payment work is a not-yet-created COR0007 peer
 
 ## Objective and context
 
@@ -26,7 +26,7 @@ My Membership distinguishes `Draft selection` from `Active membership`. It never
 
 ## Assumptions, decisions, and dependencies
 
-- Completed DEV0073 provides the public terminology and current €15 non-core value; DEV0074 still blocks implementation because it must provide the typed plan/gym read contracts plus fictional fixtures.
+- Completed DEV0073 provides the public terminology and current €15 non-core value. Completed DEV0074 now provides the typed plan/gym read contracts and seven fictional fixtures required by this ticket.
 - Keeping `/my-access` as the initial route is acceptable for compatibility, but the visible label becomes My Membership. A route rename requires redirects and must be decided before implementation starts.
 - Local draft persistence is presentation convenience only and must not reuse financial or entitlement language.
 - A later activation ticket replaces the Coming Soon handoff and owns wallet/payment/reconciliation behavior.
@@ -53,7 +53,7 @@ Test zero-to-four selection, duplicate/fifth/ineligible choices, removal/replace
 
 ## Implementation record
 
-Not started — blocked until DEV0073 and DEV0074 provide stable terminology and discovery contracts.
+Not started — ready now that DEV0073 and DEV0074 provide stable terminology and discovery contracts.
 
 ### Changes and rationale
 
